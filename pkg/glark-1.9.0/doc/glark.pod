@@ -1,0 +1,933 @@
+=head1 NAME
+
+glark - Search text files for complex regular expressions
+
+=head1 SYNOPSIS
+
+B<glark> [options] expression file ...
+
+=head1 DESCRIPTION
+
+Similar to C<grep>, C<glark> offers: Perl-compatible regular expressions, color
+highlighting of matches, context around matches, complex expressions ("and" and
+"or"), grep output emulation, and automatic exclusion of non-text files. Its
+regular expressions should be familiar to persons experienced in Perl, Python,
+or Ruby. File may also be a list of files in the form of a path.
+
+=head1 OPTIONS
+
+=head2 Input
+
+=over 4
+
+=over 4
+
+=item B<-0[nnn]>
+
+Use \nnn (octal) as the input record separator. If nnn is omitted, use '\n\n' as
+the record separator, which treats paragraphs as lines.
+
+=item B<-d ACTION>, B<--directories=ACTION>
+
+Directories are processed according to the given I<ACTION>, which by default is
+C<read>. If I<ACTION> is C<recurse>, each file in the directory is read and each
+subdirectory is recursed into (equivalent to the C<-r> option). If I<ACTION> is
+C<skip>, directories are not read, and no message is produced.
+
+=item B<--binary-files=TYPE>
+
+Specify how to handle binary files, thus overriding the default behavior, which
+is to denote the binary files that match the expression, without displaying the
+match. I<TYPE> may be one of: C<binary>, the default; C<without-match>, which
+results in binary files being skipped; and C<text>, which results in the binary
+file being treated as text, the display of which may have bad side effects with
+the terminal. Note that the default behavior has changed; this previously was to
+skip binary files. The same effect may be achieved by setting B<binary-files> to
+C<without-match> in the ~/.glarkrc file.
+
+=item B<--[with-]basename EXPR>, B<--[with-]name EXPR>
+
+Search only files whose names match the given regular expression. As in find(1),
+this works on the basename of the file. This expression can be negated and
+modified with C<!> and C<i>, such as '!/io\.[hc]$/i'.
+
+=item B<--[with-]fullname EXPR>, B<--[with-]path EXPR>
+
+Search only files whose names, including path, match the given regular
+expression. As in find(1), this works on the path of the file. This expression
+can be negated and modified with C<!> and C<i>, such as '!/Dialog.*\.java$/i'.
+
+=item B<--without-basename EXPR>, B<--without-name EXPR>
+
+Do not search files with base names matching the given regular expression.
+
+=item B<--without-fullname EXPR>, B<--without-path EXPR>
+
+Do not search files with full names matching the given regular expression.
+
+=item B<-M>, B<--exclude-matching>
+
+Do not search files whose names match the given expression. This can be useful
+for finding external references to a file, or to a class (assuming that class
+names match file names).
+
+=item B<-r>, B<--recurse>
+
+Recurse through directories. Equivalent to --directories=read.
+
+=item B<--split-as-path(=VALUE)>, B<--no-split-as-path>
+
+Sets whether, if a command line argument includes the path separator (such as
+":"), the argument should be split by the path separator. This functionality is
+useful for using environment variables as input, such as $PATH and $CLASSPATH,
+which are automatically split and processed as a list of files and directories. 
+The default value of this option is "true". C<--no-split-as-path> is equivalent
+to C<--split-as-path=false>.
+
+=item B<--size-limit=SIZE>
+
+If provided, files no larger than I<SIZE> I<bytes> will be searched. This is
+useful when running the C<--recurse> option on directories that may contain
+large files.
+
+=back
+
+=back
+
+=head2 Matching
+
+=over 4
+
+=over 4
+
+=item B<-a> NUM expr1 expr2
+
+=item B<--and> NUM expr1 expr2
+
+=item B<--and=NUM> expr1 expr2
+
+=item ( expr1 B<--and=NUM> expr2 )
+
+Match both of the two expressions, within I<NUM> lines of each other. See the
+EXPRESSIONS section for more information.
+
+=item B<-b NUM[%]>, B<--before NUM[%]>
+
+Restrict the search to before the given location, which represents either the
+number of the last line within the valid range, or the percentage of lines to be
+searched.
+
+=item B<--after NUM[%]>
+
+Restrict the search to after the given section, which represents either the
+number of the first line within the valid range, or the percentage of lines to
+be skipped.
+
+=item B<-f FILE>, B<--file=FILE>
+
+Use the lines in the given file as expressions. Each line consists of a regular
+expression.
+
+=item B<-i>, B<--ignore-case>
+
+Match regular expressions without regard to case. The default is
+case sensitive.
+
+=item B<-m NUM>, B<--match-limit NUM>
+
+Find only the first I<NUM> matches in each file.
+
+=item B<-o> expr1 expr2
+
+=item B<--or> expr1 expr2
+
+=item ( expr1 B<--or> expr2 )
+
+Match either of the two expressions. See the EXPRESSIONS section for more
+information.
+
+=item B<-R>, B<--range NUM[%],NUM[%]>
+
+Restrict the search to the given range of lines, as either line numbers or a
+percentage of the length of the file.
+
+=item B<-v>, B<--invert-match>
+
+Show lines that do not match the expression.
+
+=item B<-w>, B<--word>, B<--word-regexp>
+
+Put word boundaries around each pattern, thus matching only where
+the full word(s) occur in the text. Thus, C<glark -w Foo> is the same
+as C<glark '/\bFoo\b/'>.
+
+=item B<-x>, B<--line-regexp>
+
+Select only where the entire line matches the pattern(s).
+
+=item B<--xor> expr1 expr2
+
+=item ( expr1 B<--xor> expr2 )
+
+Match either of the two expressions, but not both. See the EXPRESSIONS section
+for more information.
+
+=back
+
+=back
+
+=head2 Output
+
+=over 4
+
+=over 4
+
+=item B<-A NUM>, B<--after-context=NUM>
+
+Print I<NUM> lines after a matched expression.
+
+=item B<-B NUM>, B<--before-context=NUM>
+
+Print I<NUM> lines before a matched expression.
+
+=item B<-C [NUM]>, B<-NUM>, B<--context[=NUM]>
+
+Output I<NUM> lines of context around a matched expression. The default is no
+context. If no I<NUM> is given for this option, the number of lines of context
+is 2.
+
+=item B<-c>, B<--count>
+
+Instead of normal output, display only the number of matches in each file.
+
+=item B<-F>, B<--file-color COLOR>
+
+Specify the highlight color for file names. See the HIGHLIGHTING section for
+the values that can be used.
+
+=item B<--no-filter>
+
+Display the entire file(s), presumably with matches highlighted.
+
+=item B<-g>, B<--grep>
+
+Produce output like the grep default: file names, no line numbers, and a single
+line of the match, which will be the first line for matches that span multiple
+lines. If the EMACS environment variable is set, this value is set to true.
+Thus, running glark under Emacs results in the output format expected by Emacs.
+
+=item B<-h>, B<--no-filename>
+
+Do not display the names of the files that matched.
+
+=item B<-H>, B<--with-filename>
+
+Display the names of the files that matched. This is the default
+behavior.
+
+=item B<-l>, B<--files-with-matches>
+
+Print only the names of the file that matched the expression.
+
+=item B<-L>, B<--files-without-match>
+
+Print only the names of the file that did not match the expression.
+
+=item B<--label=NAME>
+
+Use NAME as output file name. This is useful when reading from standard input.
+
+=item B<-n>, B<--line-number>
+
+Display the line numbers. This is the default behavior.
+
+=item B<-N>, B<--no-line-number>
+
+Do not display the line numbers.
+
+=item B<--line-number-color>
+
+Specify the highlight color for line numbers. This defaults to none (no
+highlighting). See the HIGHLIGHTING section for more information.
+
+=item B<-T>, B<--text-color COLOR>
+
+Specify the highlight color for text. See the HIGHLIGHTING section for more
+information.
+
+=item B<--text-color-NUM COLOR>
+
+Specify the highlight color for the regular expression capture NUM. Colors are
+used by regular expressions in the order they are created (that is, with the
+C<--and> and C<--or> option), or with captures within a regular expression (such
+as '/(this)|(that)/'). is See the HIGHLIGHTING section for more information.
+
+=item B<-u>, B<--highlight=[FORMAT]>
+
+Enable highlighting. This is the default behavior. Format is "single" (one
+color) or "multi" (different color per regular expression). See the HIGHLIGHTING
+section for more information.
+
+=item B<-U>, B<--no-highlight>
+
+Disable highlighting.
+
+=item B<-y>, B<--extract-matches>
+
+Display only the region that matched, not the entire line. If the expression
+contains "backreferences" (i.e., expressions bounded by "( ... )"), then only
+the portion captured will be displayed, not the entire line. This option is
+useful with C<-g>, which eliminates the default highlighting and display of file
+names.
+
+=item B<-Z>, B<--null>
+
+When in B<-l> mode, write file names followed by the ASCII NUL character ('\0')
+instead of '\n'.
+
+=back
+
+=back
+
+=head2 Debugging/Errors
+
+=over 4
+
+=over 4
+
+=item B<-?>, B<--help>
+
+Display the help message.
+
+=item B<--config>
+
+Display the settings glark is using, and exit. Since this is run after
+configuration files are read, this may be useful for determining values of
+configuration parameters.
+
+=item B<--explain>
+
+Write the expression in a more legible format, useful for debugging.
+
+=item B<-q>, B<-s>, B<--quiet>, B<--no-messages>
+
+Suppress warnings.
+
+=item B<-Q>, B<--no-quiet>
+
+Enable warnings. This is the default.
+
+=item B<-V>, B<--version>
+
+Display version information.
+
+=item B<--verbose>
+
+Display normally suppressed output, for debugging purposes.
+
+=back
+
+=back
+
+
+=head1 EXPRESSIONS
+
+=head2 Regular Expressions
+
+Regular expressions are expected to be in the Perl/Ruby format. C<perldoc
+perlre> has more general information. The expression may be of either form:
+
+    something
+    /something/
+
+There is no difference between the two forms, except that with the latter, one
+can provide the "ignore case" modifier, thus matching "someThing" and
+"SoMeThInG":
+
+    % glark /something/i
+
+Note that this is redundant with the C<-i> (C<--ignore-case>) option.
+
+All regular expression characters and options are available, such as "\w",
+".*?" and "[^9]". For example:
+
+    % glark '\b[a-z][^\d]\d{1,3}.*\s*>>\s*\d+\s*.*& +\d{3}'
+
+If the B<and> and B<or> options are not used, the last non-option is considered
+to be the expression to be matched. In the following, "printf" is used as the
+expression.
+
+    % glark -w printf *.c
+
+POSIX character classes (e.g., [[:alpha:]]) are also supported.
+
+=head2 Complex Expressions
+
+Complex expressions combine regular expressions (and complex expressions
+themselves) with logical AND, OR, and XOR operators. Both prefix and infix
+notation is supported.
+
+=over 4
+
+=over 4
+
+=item B<-o> expr1 expr2
+
+=item B<--or> expr1 expr2 B<--end-of-or>
+
+=item ( expr1 B<--or> expr2 )
+
+Match either of the two expressions. The results of the two forms are
+equivalent. In the latter syntax, the B<--end-of-or> is optional.
+
+=item B<-a> number expr1 expr2
+
+=item B<--and=number> expr1 expr2 B<--end-of-and>
+
+=item ( expr1 B<--and> number expr2 )
+
+Match both of the two expressions, within <number> lines of each other. As with
+the C<or> option, the results of the two forms are equivalent, and the
+C<--end-of-and> is optional. The forms C<-aNUM> and C<--and=NUM> are also
+supported.
+
+If the number provided is -1 (negative one), the distance is considered to be
+"infinite", and thus, the condition is satisfied if both expressions match
+within the same file.
+
+If the number provided is 0 (zero), the condition is satisfied if both
+expressions match on the same line.
+
+If the --and option is used, and the follow argument is not numeric, then the
+value defaults to zero.
+
+A warning will be issued if the value given in the number position does not
+appear to be numeric.
+
+=item B<--xor> expr1 expr2 B<--end-of-xor>
+
+=item ( expr1 B<--xor> expr2 )
+
+Match either of the two expressions, but not both. C<--end-of-xor> is optional.
+
+=back
+
+=back
+
+=head2 Negated Regular Expressions
+
+Regular expressions can be negated, by being prefixed with '!', and using the
+'/' quote characters around the expression, such as:
+
+    !/expr/
+
+This has the effect of "match anything other than this". For a single
+expression, this is no different than the -v/--invert-match option, but it can
+be useful in complex expressions, such as:
+
+    --and 0 this '!/that/'
+
+which means "match and line that has "this", but not "that".
+
+=head1 HIGHLIGHTING
+
+Matching patterns and file names can be highlighted using ANSI escape sequences.
+Both the foreground and the background colors may be specified, from the
+following:
+
+    black
+    blue
+    cyan
+    green
+    magenta
+    red
+    white
+    yellow
+
+The foreground may have any number of the following modifiers applied:
+
+    blink
+    bold
+    concealed
+    reverse
+    underline
+    underscore
+
+The format is "MODIFIERS FOREGROUND on BACKGROUND". For example:
+
+    red
+    black on yellow                    (the default for patterns)
+    reverse bold                       (the default for file names)
+    green on white
+    bold underline red on cyan
+
+By default text is highlighted as black on yellow. File names are written in
+reversed bold text.
+
+=head1 EXAMPLES
+
+=head2 Basic Usage
+
+=over 4
+
+=over 4
+
+=item B<% glark format *.h>
+
+Searches for "format" in the local .h files.
+
+=item B<% glark --ignore-case format *.h>
+
+Searches for "format" without regard to case. Short form:
+    % glark -i format *.h
+
+=item B<% glark --context=6 format *.h>
+
+Produces 6 lines of context around any match for "format". Short forms:
+    % glark -C 6 format *.h
+    % glark -6 format *.h
+
+=item B<% glark --exclude-matching Object *.java>
+
+Find references to "Object", excluding the files whose names match "Object".
+Thus, SessionBean.java would be searched; EJBObject.java would not. Short form:
+    % glark -M Object *.java
+
+=item B<% glark --grep --extract-matches '\w+\.printStackTrace\(.*\)' *.java>
+
+Show where exceptions are dumped. Note that the C<--grep> option is used, thus
+turning off highlighting and display of file names. If the C<--no-filename>
+option is used, the output will consist of only the matching portions. The short
+form of this command is:
+    % glark -gy '\w+\.printStackTrace\(.*\)' *.java
+
+=item B<% glark --grep --extract-matches '(\w+)\.printStackTrace\(.*\)' *.java>
+
+Show only the variable name of exceptions that are dumped. Short form:
+    % glark -gy '(\w+)\.printStackTrace\(.*\)' *.java
+
+=item B<% who| glark -gy '^(\S+)\s+\S+\s*May 15'>
+
+Display only the names of users who logged in today.
+
+=item B<% glark -l '\b\w{25,}\b' *.txt>
+
+Display (only) the names of the text files that contain "words" at least 25
+characters long.
+
+=item B<% glark --files-without-match '"\w+"'>
+
+Display (only) the names of the files that do not contain strings consisting of
+a single word. Short form:
+    % glark -L '"\w+"'
+
+=item B<% for i in *.jar; do jar tvf $i | glark --LABEL=$i Exception; done>
+
+Search the files for 'Exception', displaying the jar file name instead of the
+standard input marker ('-').
+
+=back
+
+=back
+
+=head2 Highlighting
+
+=over 4
+
+=over 4
+
+=item B<% glark --text-color "red on white" '\b[[:digit:]]{5}\b' *.c>
+
+Display (in red text on a white background) occurrences of exactly 5 digits.
+Short form:
+    % glark -T "red on white" '\b\d{5}\b' *.c
+
+=back
+
+See the HIGHLIGHTING section for valid colors and modifiers.
+
+=back
+
+=head2 Complex Expressions
+
+=over 4
+
+=over 4
+
+=item B<% glark --or format print *.h>
+
+Searches for either "printf" or "format". Short form:
+    % glark -o format print *.h
+
+=item B<% glark --and 4 printf format *.c *.h>
+
+Searches for both "printf" or "format" within 4 lines of each other. Short form:
+    % glark -a 4 printf format *.c *.h
+
+=item B<% glark --context=3 --and 0 printf format *.c>
+
+Searches for both "printf" or "format" on the same line ("within 0 lines of each
+other"). Three lines of context are displayed around any matches. Short form:
+    % glark -3 -a 0 printf format *.c
+
+=item B<% glark -8 -i -a 15 -a 2 pthx '\.\.\.' -o 'va_\w+t' die *.c>
+
+(In order of the options:) Produces 8 lines of context around case insensitive
+matches of ("phtx" within 2 lines of '...' (literal)) within 15 lines of (either
+"va_\w+t" or "die").
+
+=item B<% glark --and -1 '#define\s+YIELD' '#define\s+dTHR' *.h>
+
+Looks for "#define\s+YIELD" within the same file (-1 == "infinite distance") of
+"#define\s+dTHR". Short form:
+    % glark -a -1 '#define\s+YIELD' '#define\s+dTHR' *.h
+
+=back
+
+=back
+
+=head2 Range Limiting
+
+=over 4
+
+=over 4
+
+=item B<% glark --before 50% cout *.cpp>
+
+Find references to "cout", within the first half of the file. Short form:
+    % glark -b 50% cout *.cpp
+
+=item B<% glark --after 20 cout *.cpp>
+
+Find references to "cout", starting at the 20th line in the file. Short form:
+    % glark -b 50% cout *.cpp
+
+=item B<% glark --range 20 50% cout *.cpp>
+
+Find references to "cout", in the first half of the file, after the 20th line.
+Short form:
+    % glark -R 20 50% cout *.cpp
+
+=back
+
+=back
+
+=head2 File Processing
+
+=over 4
+
+=over 4
+
+=item B<% glark -r print .>
+
+Search for "print" in all files at and below the current directory.
+
+=item B<% glark --fullname='/\.java$/' -r println org>
+
+Search for "println" in all Java files at and below the "org" directory.
+
+=item B<% glark --basename='!/CVS/' -r '\b\d\d:\d\d:\d\d\b' .>
+
+Search for a time pattern in all files without "CVS" in their basenames.
+
+=item B<% glark --size-limit=1024 -r main -r .>
+
+Search for "main" in files no larger than 1024 bytes.
+
+=back
+
+=back
+
+=head1 B<ENVIRONMENT>
+
+=over 4
+
+=item B<GLARKOPTS>
+
+A string of whitespace-delimited options. Due to parsing constraints, should
+probably not contain complex regular expressions.
+
+=item B<$HOME/.glarkrc>
+
+A resource file, containing name/value pairs, separated by either ':' or '='.
+The valid fields of a .glarkrc file are as follows, with example values:
+
+    after-context:     1
+    before-context:    6
+    context:           5
+    file-color:        blue on yellow
+    highlight:         off
+    ignore-case:       false
+    quiet:             yes
+    text-color:        bold reverse
+    line-number-color: bold
+    verbose:           false
+    grep:              true
+
+"yes" and "on" are synonymnous with "true". "no" and "off" signify "false".
+
+My ~/.glarkrc file is the following:
+
+    file-color:   bold reverse
+    text-color:   bold black on yellow
+    context:      2
+    highlight:    on
+    verbose:      false
+    ignore-case:  false
+    quiet:        yes
+    word:         false
+    binary-files: without-match
+
+=item B<local .glarkrc>
+
+See the I<local-config-files> field below:
+
+=back
+
+=head2 Fields
+
+=over 4
+
+=item B<after-context>
+
+See the C<--after-context> option. For example, for 3 lines of context after the
+match:
+
+    after-context: 3
+
+=item B<basename>
+
+See the C<--basename> option. For example, to omit Subversion directories:
+
+    basename: !/\.svn/
+
+=item B<before-context>
+
+See the C<--before-context> option. For example, for 7 lines of context before
+the match:
+
+    before-context: 7
+
+=item B<binary-files>
+
+See the C<--binary-files> option. For example, to skip binary files:
+
+    binary-files: without-match
+
+=item B<context>
+
+See the C<--context> option. For example, for 2 lines before and after matches:
+
+    context: 2
+
+=item B<expression>
+
+See the I<EXPRESSION> section. Example:
+
+    expression: --or '^\s*public\s+class\s+\w+' '^\s*\w+\(
+
+=item B<file-color>
+
+See the C<--file-color> option. For example, for white on black:
+
+    file-color: white on black
+
+=item B<filter>
+
+See the C<--filter> option. For example, to show the entire file:
+
+    filter: false
+
+=item B<fullname>
+
+See the C<--fullname> and C<--basename> options. For example, to omit CVS files:
+
+    fullname: !/\bCVS\b/
+
+=item B<grep>
+
+See the C<--grep> option. For example, to always run in grep mode:
+
+    grep: true
+
+=item B<highlight>
+
+See the C<--highlight> option. To turn off highlighting:
+
+    highlight: false
+
+=item B<ignore-case>
+
+See the C<--ignore-case> option. To make matching case-insensitive:
+
+    ignore-case: true
+
+=item B<known-nontext-files>
+
+The extensions of files that should be considered to always be nontext (binary).
+If a file extension is not known, the file contents are examined for nontext
+characters. Thus, setting this field can result in faster searches. Example:
+
+    known-nontext-files: class exe dll com
+
+See the I<Exclusion of Non-Text Files> section in I<NOTES> for the default
+settings.
+
+=item B<known-text-files>
+
+The extensions of files that should be considered to always be text. See above
+for more. Example:
+
+    known-text-files: ini bat xsl xml
+
+See the I<Exclusion of Non-Text Files> section in I<NOTES> for the default
+settings.
+
+=item B<local-config-files>
+
+By default, glark uses only the configuration file ~/.glarkrc. Enabling this
+makes glark search upward from the current directory for the first .glarkrc
+file.
+
+This can be used, for example, in a Java project, where .class files are binary,
+versus a PHP project, where .class files are text:
+
+    /home/me/.glarkrc
+
+        local-config-files: true
+
+    /home/me/projects/java/.glarkrc
+
+        known-nontext-files: class
+
+    /home/me/projects/php/.glarkrc
+
+        known-text-files: class
+
+With this configuration, .class files will automatically be treated as binary
+file in Java projects, and .class files will be treated as text. This can speed
+up searches.
+
+Note that the configuration file ~/.glarkrc is read first, so the local
+configuration file can override those settings.
+
+=item B<quiet>
+
+See the C<--quiet> option.
+
+=item B<show-break>
+
+Whether to display breaks between sections, when displaying context. Example:
+
+    show-break: true
+
+By default, this is false.
+
+=item B<text-color>
+
+See the C<--text-color> option. Example:
+
+    text-color: bold blue on white
+
+=item B<verbose>
+
+See the C<--verbose> option. Example:
+
+    verbose: true
+
+=item B<verbosity>
+
+See the C<--verbosity> option. Example:
+
+    verbosity: 4
+
+=back
+
+=head1 NOTES
+
+=head2 Exclusion of Non-Text Files
+
+Non-text files are automatically skipped, by taking a sample of the file and
+checking for an excessive number of non-ASCII characters. For speed purposes,
+this test is skipped for files whose suffixes are associated with text files:
+
+    c
+    cpp
+    css
+    h
+    f
+    for
+    fpp
+    hpp
+    html
+    java
+    mk
+    php
+    pl
+    pm
+    rb
+    rbw
+    txt
+
+Similarly, this test is also skipped for files whose suffixes are associated
+with non-text (binary) files:
+
+    Z
+    a
+    bz2
+    elc
+    gif
+    gz
+    jar
+    jpeg
+    jpg
+    o
+    obj
+    pdf
+    png
+    ps
+    tar
+    zip
+
+See the C<known-text-files> and C<known-nontext-files> fields for denoting file
+name suffixes to associate as text or nontext.
+
+=head2 Exit Status
+
+The exit status is 0 if matches were found; 1 if no matches were found, and 2 if
+there was an error. An inverted match (the -v/--invert-match option) will result
+in 1 for matches found, 0 for none found.
+
+=head1 SEE ALSO
+
+For regular expressions, the C<perlre> man page.
+
+Mastering Regular Expressions, by Jeffrey Friedl, published by O'Reilly.
+
+=head1 CAVEATS
+
+"Unbalanced" leading and trailing slashes will result in those slashes being
+included as characters in the regular expression. Thus, the following pairs are
+equivalent:
+
+    /foo        "/foo"
+    /foo\/      "/foo/"
+    /foo\/i     "/foo/i"
+    foo/        "foo/"
+    foo/        "foo/"
+
+The code to detect nontext files assumes ASCII, not Unicode.
+
+=head1 AUTHOR
+
+Jeff Pace <jpace at incava dot org>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2006, Jeff Pace. 
+
+All Rights Reserved. This module is free software. It may be used, redistributed
+and/or modified under the terms of the Lesser GNU Public License. See
+http://www.gnu.org/licenses/lgpl.html for more information.
+
+=cut

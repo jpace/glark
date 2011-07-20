@@ -1,0 +1,16 @@
+--- !ruby/object:Bazr::Project 
+build: 
+  tests: tests
+  default: ''
+  type: make
+  release: 
+    - dist
+    - "./buildrpms [project]-[version].tar.gz"
+description: ''
+issues: []
+longname: ''
+owner: jpace
+rpmspec: glark.spec
+shortname: glark
+vcs: cvs
+version: 1.7.3
