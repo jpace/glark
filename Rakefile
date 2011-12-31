@@ -16,7 +16,7 @@ end
 
 $spec = Gem::Specification.new do |s| 
   s.name = "glark"
-  s.version = "1.9.0"
+  s.version = "1.9.1"
   s.author = "Jeff Pace"
   s.email = "jpace@incava.org"
   s.homepage = "http://www.incava.org/projects/glark"
