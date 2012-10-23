@@ -33,7 +33,7 @@ class TC_Glark < GlarkTestCase
         infname = write_file contents
 
         files = [ infname ]
-        glark = Glark.new expr, files
+        glark = Glark::Runner.new expr, files
         glark.search infname
       end
 

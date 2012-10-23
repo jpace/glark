@@ -24,8 +24,11 @@ $stderr.sync = true             # unbuffer
 $PACKAGE = 'glark'
 $VERSION = '1.9.1'
 
+module Glark
+end
+
 # The main processor.
-class Glark 
+class Glark::Runner
   include Loggable
 
   attr_reader :exit_status
@@ -190,7 +193,7 @@ class Glark
   def search_unknown fname
     warn "unknown file type: #{fname}"
   end
-        
+  
   def search_none fname
     write "no such file: #{fname}"
   end
@@ -209,7 +212,7 @@ class Glark
         log { "not skipping file #{name}" }
       end
     end
-        
+    
     if name == "-" 
       write "reading standard input..."
       search_text "-"
@@ -293,5 +296,5 @@ class Glark
 end
 
 if __FILE__ == $0
-  Glark.main
+  Glark::Runner.main
 end

@@ -14,7 +14,7 @@ $:.unshift libpath
 
 require 'glark/glark'
 
-Glark.main
+Glark::Runner.main
 
 __END__
 # prototype of forthcoming feature:
