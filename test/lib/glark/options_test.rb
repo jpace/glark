@@ -783,7 +783,7 @@ class TC_Options < GlarkTestCase
     [ 'red', 'blue', 'cyan', 'bold blue', 'blue bold' ].each do |color|
       (0 .. 5).each do |idx|
         expected = defaults.dup
-        expected[idx] = Text::ANSIHighlighter.make(color)
+        expected[idx] = Text::ANSIHighlighter.make color
         [
           [ '--text-color-' + idx.to_s + '="' + color + '"' ],
           [ '--text-color-' + idx.to_s + '=' + color ],
@@ -819,7 +819,7 @@ class TC_Options < GlarkTestCase
   def test_file_expression
     res = %w{ foo bar baz \w\s+\d\S\W }
     
-    t = Tempfile.new("tc_options")
+    t = Tempfile.new "tc_options"
     res.each do |re|
       t.puts re
     end
@@ -829,11 +829,11 @@ class TC_Options < GlarkTestCase
 
     orexpr   = nil
     res.each do |re| 
-      refo = RegexpFuncObj.new(Regexp.new(re), 0)
+      refo = RegexpFuncObj.new Regexp.new(re), 0
       if orexpr
         orexpr.ops << refo
       else
-        orexpr = InclusiveOrExpression.new(refo)
+        orexpr = InclusiveOrExpression.new refo
       end
     end
     
@@ -861,7 +861,7 @@ class TC_Options < GlarkTestCase
 
     re0, re1 = pats.collect { |pat| RegexpFuncObj.new(Regexp.new(pat), 0) }
     
-    orexpr = InclusiveOrExpression.new(re0, re1)
+    orexpr = InclusiveOrExpression.new re0, re1
     
     [ 
       [ '-o', *pats ],
@@ -878,7 +878,7 @@ class TC_Options < GlarkTestCase
 
     re0, re1 = pats.collect { |pat| RegexpFuncObj.new(Regexp.new(pat), 0) }
     
-    exp = AndExpression.new(0, re0, re1)
+    exp = AndExpression.new 0, re0, re1
     
     [ 
       [ '-a', 0, *pats ],

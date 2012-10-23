@@ -4,7 +4,7 @@
 testlib = File.expand_path(__FILE__).sub(Regexp.new('/test.*'), '/test')
 $:.unshift testlib
 
-applib = testlib.sub('/test', '/lib')
+applib = testlib.sub '/test', '/lib' 
 $:.unshift applib
 
 # puts "$:: #{$:.join(' ')}"
@@ -74,17 +74,12 @@ class GlarkTestCase < RUNIT::TestCase
     fname
   end
 
-  def write_file(contents, fname = nil)
+  def write_file contents, fname = nil
     fname = create_file(fname) do |file|
-      _write_file(contents, file)
+      for line in contents
+        file.puts line
+      end
     end
     fname
   end
-
-  def _write_file(contents, io)
-    for line in contents
-      io.puts line
-    end
-  end
-
 end

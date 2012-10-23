@@ -2,7 +2,6 @@
 # -*- ruby -*-
 
 class GlarkHelp
-
   def show_usage
     puts "Usage: glark [options] expression file..."
     puts "Search for expression in each file or standard input."

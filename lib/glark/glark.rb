@@ -79,32 +79,32 @@ class Glark
     end    
   end
 
-  def search_file(input)
-    output       = @out_class.new(input, @show_file_names)
+  def search_file input 
+    output       = @out_class.new input, @show_file_names 
     input.output = output
 
     input.count        = 0    if @count
     input.invert_match = true if @invert_match
     
-    @func.process(input)
+    @func.process input 
 
     if input.matched?
       @exit_status = @invert_match ? 1 : 0
     end
   end
 
-  def skip?(name, opts_with, opts_without)
+  def skip? name, opts_with, opts_without
     inc = opts_with    && !opts_with.match(name)
     exc = opts_without &&  opts_without.match(name)
     inc || exc
   end
 
-  def skipped?(fname)
-    @skip_methods.detect { |meth| meth.call(fname) }
+  def skipped? fname
+    @skip_methods.detect { |meth| meth.call fname }
   end
 
-  def search_text(fname)
-    if skipped?(fname)
+  def search_text fname
+    if skipped? fname
       log { "skipping file: #{fname}" }
     else
       log { "searching text" }
@@ -129,13 +129,13 @@ class Glark
 
       io = fname == "-" ? $stdin : File.new(fname)
 
-      input = InputFile.new(fname, io, ifile_args)
-      search_file(input)
+      input = InputFile.new fname, io, ifile_args
+      search_file input
     end
   end
 
-  def search_binary(fname)
-    if skipped?(fname)
+  def search_binary fname
+    if skipped? fname
       log { "skipping file: #{fname}" }
     else
       log { "handling binary" }
@@ -146,19 +146,19 @@ class Glark
         
       when "binary"
         log { "searching binary file #{fname} for #{@func}" }
-        f = File.new(fname)
+        f = File.new fname
         f.binmode                # for MSDOS/WinWhatever
-        bf = BinaryFile.new(fname, f)
-        search_file(bf)
+        bf = BinaryFile.new fname, f
+        search_file bf
         
       when "text"
         log { "processing binary file #{name} as text" }
-        search_text(fname)
+        search_text fname
       end
     end
   end
 
-  def search_directory(fname)
+  def search_directory fname
     log { "processing directory" }
     case @opts.directory
     when "read"
@@ -174,7 +174,7 @@ class Glark
             Log.verbose && log("file already processed: #{entname}")
           else
             @searched_files << inode
-            search(entname)
+            search entname 
           end
         end
       rescue Errno::EACCES => e
@@ -187,19 +187,19 @@ class Glark
     end
   end
 
-  def search_unknown(fname)
+  def search_unknown fname
     warn "unknown file type: #{fname}"
   end
         
-  def search_none(fname)
+  def search_none fname
     write "no such file: #{fname}"
   end
 
-  def search_unreadable(fname)
+  def search_unreadable fname
     log { "skipping unreadable: #{fname}" }
   end
 
-  def search(name)
+  def search name
     if @opts.exclude_matching
       expr = @opts.expr
       if expr.respond_to?(:re) && expr.re.match(name)
@@ -212,23 +212,23 @@ class Glark
         
     if name == "-" 
       write "reading standard input..."
-      search_text("-")
+      search_text "-"
     else
-      type = FileType.type(name)
+      type = FileType.type name
 
       case type
       when FileType::BINARY
-        search_binary(name)
+        search_binary name 
       when FileType::DIRECTORY
-        search_directory(name)
+        search_directory name 
       when FileType::NONE
-        search_none(name)
+        search_none name 
       when FileType::TEXT
-        search_text(name)
+        search_text name 
       when FileType::UNKNOWN
-        search_unknown(name)
+        search_unknown name 
       when FileType::UNREADABLE
-        search_unreadable(name)
+        search_unreadable name 
       else
         error "type unknown: file: #{name}; type: #{type}"
         exit(-2)
@@ -250,7 +250,7 @@ class Glark
       Log.log { "loading options" }
       opts = self.create_options
       
-      opts.run(ARGV)
+      opts.run ARGV 
       Log.log { "done loading options" }
 
       # To get rid of the annoying stack trace on ctrl-C:
@@ -262,7 +262,7 @@ class Glark
 
       files = if ARGV.size > 0 then
                 if opts.split_as_path
-                  ARGV.collect { |f| f.split(File::PATH_SEPARATOR) }.flatten
+                  ARGV.collect { |f| f.split File::PATH_SEPARATOR  }.flatten
                 else
                   ARGV
                 end
@@ -270,10 +270,10 @@ class Glark
                 [ '-' ]
               end
 
-      glark = self.new(opts.expr, files)
+      glark = self.new opts.expr, files 
 
       files.each do |f|
-        glark.search(f) 
+        glark.search f  
       end
 
       glark.end_processing

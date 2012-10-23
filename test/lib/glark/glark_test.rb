@@ -33,8 +33,8 @@ class TC_Glark < GlarkTestCase
         infname = write_file contents
 
         files = [ infname ]
-        glark = Glark.new(expr, files)
-        glark.search(infname)
+        glark = Glark.new expr, files
+        glark.search infname
       end
 
       do_file_test outfname, expected

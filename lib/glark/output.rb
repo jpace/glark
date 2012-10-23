@@ -21,7 +21,7 @@ class OutputFormat < Results
 
   attr_reader :formatted, :infile, :show_file_name, :has_context
 
-  def initialize(infile, show_file_names)
+  def initialize infile, show_file_names 
     @infile            = infile
     @show_file_name    = show_file_names
     @formatted         = []
@@ -37,21 +37,21 @@ class OutputFormat < Results
 
   # Prints the line, which is assumed to be 0-indexed, and is thus adjusted by
   # one.
-  def print_line_number(lnum)
+  def print_line_number lnum 
     @out.printf "%5d ", lnum + 1
   end
 
   # prints the line, and adjusts for the fact that in our world, lines are
   # 0-indexed, whereas they are displayed as if 1-indexed.
-  def print_line(lnum, ch = nil)
+  def print_line lnum, ch = nil 
     log { "lnum #{lnum}, ch: '#{ch}'" }
     begin
-      lnums = @infile.get_range(lnum)
+      lnums = @infile.get_range lnum 
       log { "lnums(#{lnum}): #{lnums}" }
       if lnums
         lnums.each do |ln|
           if show_line_numbers
-            print_line_number(ln)
+            print_line_number ln 
             if ch && has_context
               @out.printf "%s ", ch
             end
@@ -66,9 +66,9 @@ class OutputFormat < Results
     end
   end
 
-  def write_matches(matching, from, to)
+  def write_matches matching, from, to 
     if @infile.count
-      write_count(matching)
+      write_count matching 
     elsif matching
       firstline = from ? from : 0
       lastline  = to   ? to   : @infile.get_lines.length - 1
@@ -80,7 +80,7 @@ class OutputFormat < Results
               @out.puts "  ---"
             end
             
-            print_line(ln, @infile.stati[ln]) 
+            print_line ln, @infile.stati[ln]  
 
             @infile.stati[ln] = InputFile::WRITTEN
           end
@@ -93,7 +93,7 @@ class OutputFormat < Results
       (firstline .. lastline).each do |ln|
         if @infile.stati[ln] != InputFile::WRITTEN && @infile.stati[ln] != ":"
           log { "printing #{ln}" }
-          print_line(ln)
+          print_line ln 
           @infile.stati[ln] = InputFile::WRITTEN
         end
       end
@@ -102,11 +102,11 @@ class OutputFormat < Results
 
   def write_all
     (0 ... @infile.get_lines.length).each do |ln|
-      print_line(ln) 
+      print_line ln  
     end
   end
 
-  def get_line_to_print(lnum)
+  def get_line_to_print lnum 
     formatted[lnum] || infile.get_line(lnum)
   end
 
@@ -123,7 +123,7 @@ end
 
 class GlarkOutputFormat < OutputFormat
 
-  def initialize(infile, show_file_names)
+  def initialize infile, show_file_names 
     super
 
     opts = GlarkOptions.instance
@@ -138,15 +138,15 @@ class GlarkOutputFormat < OutputFormat
 
   # prints the line, and adjusts for the fact that in our world, lines are
   # 0-indexed, whereas they are displayed as if 1-indexed.
-  def print_line(lnum, ch = nil)
+  def print_line lnum, ch = nil 
     log { "lnum #{lnum}, ch: '#{ch}'" }
     begin
-      lnums = @infile.get_range(lnum)
+      lnums = @infile.get_range lnum 
       log { "lnums(#{lnum}): #{lnums}" }
       if lnums
         log { "printing" }
         lnums.each do |ln|
-          println(ln, ch)
+          println ln, ch 
         end
       end
     rescue => e
@@ -165,7 +165,7 @@ class GlarkOutputFormat < OutputFormat
     @file_header_shown = true
   end
 
-  def print_line_number(lnum)
+  def print_line_number lnum 
     if @lnum_highlighter
       lnumstr = (lnum + 1).to_s
       pad = " " * ([5 - lnumstr.length, 0].max)
@@ -175,14 +175,14 @@ class GlarkOutputFormat < OutputFormat
     end
   end
  
-  def write_count(matching = true)
+  def write_count matching = true 
     ct = matching ? @infile.count : @infile.get_lines.size - @infile.count
     @out.puts "    " + ct.to_s
   end
 
-  def write_matches(matching, from = nil, to = nil)
+  def write_matches matching, from = nil, to = nil 
     show_file_header
-    super(matching, from, to)
+    super matching, from, to 
   end
 
   def write_all
@@ -190,16 +190,16 @@ class GlarkOutputFormat < OutputFormat
     super
   end
 
-  def println(ln, ch)
+  def println ln, ch 
     if show_line_numbers
-      print_line_number(ln)
+      print_line_number ln 
     end
     
     if ch && has_context
       @out.printf "%s ", ch
     end
 
-    line = get_line_to_print(ln)
+    line = get_line_to_print ln 
     log { "line: #{line}" }
     
     @out.puts line
@@ -211,12 +211,12 @@ end
 class GlarkMatchList < GlarkOutputFormat
   attr_reader :matches
 
-  def initialize(infile, show_file_names)
+  def initialize infile, show_file_names 
     super
     @matches = Array.new
   end
 
-  def write_matches(matching, from, to)
+  def write_matches matching, from, to 
     stack "matching: #{matching}"
     from.upto(to) do |line|
       @matches[line] = true
@@ -235,7 +235,7 @@ end
 # it does not support context or highlighting.
 class GrepOutputFormat < OutputFormat
 
-  def write_count(matching = true)
+  def write_count matching = true 
     print_file_name
     ct = matching ? @infile.count : @infile.get_lines.length - @infile.count
     puts ct
@@ -243,8 +243,8 @@ class GrepOutputFormat < OutputFormat
 
   # prints the line, and adjusts for the fact that in our world, lines are
   # 0-indexed, whereas they are displayed as if 1-indexed.
-  def print_line(lnum, ch = nil)
-    ln = get_line_to_print(lnum)
+  def print_line lnum, ch = nil 
+    ln = get_line_to_print lnum 
 
     if ln
       print_file_name

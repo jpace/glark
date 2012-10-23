@@ -7,7 +7,7 @@
 require 'rubygems'
 require 'riel'
 
-# A thing that can be grepped.
+# A thing that can be grepped (er, glarked).
 class InputFile
   include Loggable
 
@@ -19,7 +19,7 @@ class InputFile
 
   WRITTEN = "written"
   
-  def initialize(fname, io, args = GlarkOptions.instance)
+  def initialize fname, io, args = GlarkOptions.instance 
     @fname        = fname
     @io           = io
     @stati        = Array.new      # index = line number, value = context character
