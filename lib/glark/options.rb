@@ -115,11 +115,11 @@ class GlarkOptions
       },
       {
         :tags => %w{ -U --no-highlight },
-        :set  => Proc.new { set_highlight(nil) }
+        :set  => Proc.new { set_highlight nil }
       },
       {
         :tags => %w{ -g --grep },
-        :set  => Proc.new { set_output_style("grep") }
+        :set  => Proc.new { set_output_style "grep" }
       },
       {
         :tags => %w{ -? --help },
@@ -144,7 +144,7 @@ class GlarkOptions
       {
         :tags => %w{ --line-number-color },
         :arg  => [ :string ],
-        :set  => Proc.new { |val| @line_number_highlight = make_highlight("line-number-color", val) },
+        :set  => Proc.new { |val| @line_number_highlight = make_highlight "line-number-color", val },
       },
       {
         :tags => %w{ -q -s --quiet --messages },
@@ -246,27 +246,27 @@ class GlarkOptions
       { 
         :tags => %w{ -u --highlight },
         :arg  => [ :optional, :regexp, %r{ ^ (?:(multi|single)|none) $ }x ],
-        :set  => Proc.new { |md| val = md ? md[1] : "multi"; set_highlight(val) }
+        :set  => Proc.new { |md| val = md ? md[1] : "multi"; set_highlight val }
       },
       { 
         :tags => %w{ --basename --name --with-basename --with-name },
         :arg  => [ :string ],
-        :set  => Proc.new { |pat| @with_basename = Regexp.create(pat) }
+        :set  => Proc.new { |pat| @with_basename = Regexp.create pat }
       },
       { 
         :tags => %w{ --without-basename --without-name },
         :arg  => [ :string ],
-        :set  => Proc.new { |pat| @without_basename = Regexp.create(pat) }
+        :set  => Proc.new { |pat| @without_basename = Regexp.create pat }
       },
       { 
         :tags => %w{ --fullname --path --with-fullname --with-path },
         :arg  => [ :string ],
-        :set  => Proc.new { |pat| @with_fullname = Regexp.create(pat) }
+        :set  => Proc.new { |pat| @with_fullname = Regexp.create pat }
       },
       { 
         :tags => %w{ --without-fullname --without-path },
         :arg  => [ :string ],
-        :set  => Proc.new { |pat| @without_fullname = Regexp.create(pat) }
+        :set  => Proc.new { |pat| @without_fullname = Regexp.create pat }
       },
       { 
         :tags    => %w{ --after },
@@ -303,7 +303,7 @@ class GlarkOptions
       {
         :tags => %w{ -T --text-color },
         :arg  => [ :string ],
-        :set  => Proc.new { |val| @text_highlights = [ make_highlight("text-color", val) ] }
+        :set  => Proc.new { |val| @text_highlights = [ make_highlight "text-color", val ] }
       },
       # no longer supported:
       #       {
@@ -317,33 +317,33 @@ class GlarkOptions
       {
         :tags => %w{ -F --file-color },
         :arg  => [ :string ],
-        :set  => Proc.new { |val| @file_highlight = make_highlight("file-color", val) }
+        :set  => Proc.new { |val| @file_highlight = make_highlight "file-color", val }
       },
       {
         :tags => %w{ -f --file },
         :arg  => [ :string ],
-        :set  => Proc.new { |fname| @expr = ExpressionFactory.new.read_file(fname) }
+        :set  => Proc.new { |fname| @expr = ExpressionFactory.new.read_file fname }
       },
       {
         :tags => %w{ -o -a },
         :set  => Proc.new do |md, opt, args|
           args.unshift opt
-          @expr = ExpressionFactory.new.make_expression(args)
+          @expr = ExpressionFactory.new.make_expression args
         end
       },
       {
-        :res => [ Regexp.new('^ -0 (\d{1,3})? $ ', Regexp::EXTENDED) ],
-        :set => Proc.new { |md| rs = md ? md[1] : 0; set_record_separator(rs) }
+        :res => [ Regexp.new '^ -0 (\d{1,3})? $ ', Regexp::EXTENDED ],
+        :set => Proc.new { |md| rs = md ? md[1] : 0; set_record_separator rs }
       }
     ]
 
-    @optset = OptProc::OptionSet.new(optdata)
+    @optset = OptProc::OptionSet.new optdata
 
     reset
   end
 
-  def [](name)
-    instance_eval("@" + name.to_s)
+  def [] name
+    instance_eval "@" + name.to_s
   end
 
   def reset
@@ -392,13 +392,13 @@ class GlarkOptions
 
     $/ = "\n"
     
-    set_output_style("ansi")
+    set_output_style "ansi"
 
     reset_colors
   end
 
-  def make_colors(limit = -1)
-    Text::Highlighter::DEFAULT_COLORS[0 .. limit].collect { |color| @highlighter.make(color) }
+  def make_colors limit = -1
+    Text::Highlighter::DEFAULT_COLORS[0 .. limit].collect { |color| @highlighter.make color }
   end
 
   def multi_colors 
@@ -406,10 +406,10 @@ class GlarkOptions
   end
 
   def single_color
-    make_colors(0)
+    make_colors 0
   end
 
-  def highlight?(str)
+  def highlight? str
     %w{ multi on true yes }.detect { |x| str == x }
   end
 
@@ -426,7 +426,7 @@ class GlarkOptions
                                  warn "highlight format '" + @highlight.to_s + "' not recognized"
                                  single_color
                                end
-      @file_highlight        = @highlighter.make("reverse bold")
+      @file_highlight        = @highlighter.make "reverse bold"
       @line_number_highlight = nil
     else
       @text_highlights       = []
@@ -435,12 +435,12 @@ class GlarkOptions
     end
   end
 
-  def set_highlight(type)
+  def set_highlight type
     @highlight = type
     reset_colors
   end
 
-  def set_output_style(output)
+  def set_output_style output
     @output      = output
 
     # log { sprintf("%s: %s\n", "text_highlights", @text_highlights.collect { |hl| hl.highlight("text") }.join(", ")) }
@@ -462,15 +462,15 @@ class GlarkOptions
     reset_colors
   end
 
-  def run(args)
+  def run args
     @args = args
 
     @exprfact = ExpressionFactory.new
     
     if hd = Env.home_directory
-      hd = Pathname.new(hd)
+      hd = Pathname.new hd
       homerc = hd + ".glarkrc"
-      read_rcfile(homerc)
+      read_rcfile homerc
     end
 
     if @local_config_files
@@ -478,7 +478,7 @@ class GlarkOptions
       while !dir.root? && dir != hd
         rcfile = dir + ".glarkrc"
         if rcfile.exist?
-          read_rcfile(rcfile)
+          read_rcfile rcfile
           break
         else
           dir = dir.dirname
@@ -490,7 +490,7 @@ class GlarkOptions
 
     # honor thy EMACS; go to grep mode
     if ENV["EMACS"]
-      set_output_style("grep") 
+      set_output_style "grep"
     end
 
     read_options
@@ -498,7 +498,7 @@ class GlarkOptions
     validate
   end
 
-  def set_record_separator(sep)
+  def set_record_separator sep
     log { "sep: #{sep}" }
     $/ = if sep && sep.to_i > 0
            begin
@@ -515,19 +515,19 @@ class GlarkOptions
     log { "record separator set to #{$/.inspect}" }
   end
 
-  def read_rcfile(rcfile)
+  def read_rcfile rcfile
     if rcfile.exist?
       rcfile.readlines.each do |line|
-        line.sub!(/\s*#.*/, "")
+        line.sub! Regexp.new('\s*#.*'), ""
         line.chomp!
-        name, value = line.split(/\s*[=:]\s*/)
+        name, value = line.split Regexp.new('\s*[=:]\s*')
         next unless name && value
 
         # rc association is somewhat supported:
         @optset.options.each do |option|
-          if option.match_rc?(name)
-            val = option.convert_value(value)
-            option.set(val)
+          if option.match_rc? name
+            val = option.convert_value value
+            option.set val
             next
           end
         end
@@ -535,45 +535,45 @@ class GlarkOptions
         case name
         when "expression"
           # this should be more intelligent than just splitting on whitespace:
-          @expr = ExpressionFactory.new.make_expression(value.split(/\s+/))
+          @expr = ExpressionFactory.new.make_expression value.split(/\s+/)
         when "file-color"
-          @file_highlight = make_highlight(name, value)
+          @file_highlight = make_highlight name, value
         when "filter"
-          @filter = to_boolean(value)
+          @filter = to_boolean value
         when "grep"
-          set_output_style("grep") if to_boolean(value)
+          set_output_style("grep") if to_boolean value
         when "highlight"
           @highlight = value
         when "ignore-case"
-          @nocase = to_boolean(value)
+          @nocase = to_boolean value
         when "known-nontext-files"
           value.split.each do |ext|
-            FileTester.set_nontext(ext)
+            FileTester.set_nontext ext
           end
         when "known-text-files"
           value.split.each do |ext|
-            FileTester.set_text(ext)
+            FileTester.set_text ext
           end
         when "local-config-files"
-          @local_config_files = to_boolean(value)
+          @local_config_files = to_boolean value
         when "line-number-color"
-          @line_number_highlight = make_highlight(name, value)
+          @line_number_highlight = make_highlight name, value
         when "output"
-          set_output_style(value)
+          set_output_style value
         when "show-break"
-          @show_break = to_boolean(value)
+          @show_break = to_boolean value
         when "quiet"
           Log.quiet = @quiet = to_boolean(value)
         when "text-color"
-          @text_highlights = [ make_highlight(name, value) ]
+          @text_highlights = [ make_highlight name, value ]
         when %r{^text\-color\-(\d+)$}
-          @text_highlights[$1.to_i] = make_highlight(name, value)
+          @text_highlights[$1.to_i] = make_highlight name, value
         when "verbose"
           Log.verbose = @verbose = to_boolean(value) ? 1 : nil
         when "verbosity"
           Log.verbose = @verbose = value.to_i
         when "split-as-path"
-          @split_as_path = to_boolean(value)
+          @split_as_path = to_boolean value
         when "size-limit"
           @size_limit = value.to_i
         end
@@ -582,10 +582,10 @@ class GlarkOptions
   end
   
   # creates a color for the given option, based on its value
-  def make_highlight(opt, value)
+  def make_highlight opt, value
     if hl = GlarkOptions.instance.highlighter
       if value
-        hl.make(value)
+        hl.make value
       else
         error opt + " requires a color"
         exit 2
@@ -596,14 +596,14 @@ class GlarkOptions
   end
 
   # returns whether the value matches a true value, such as "yes", "true", or "on".
-  def to_boolean(value)
-    [ "yes", "true", "on" ].include?(value.downcase)
+  def to_boolean value
+    [ "yes", "true", "on" ].include? value.downcase
   end
 
   def read_environment_variable
-    options = Env.split("GLARKOPTS")
+    options = Env.split "GLARKOPTS"
     while options.size > 0
-      @optset.process_option(options)
+      @optset.process_option options
     end
   end
 
@@ -635,7 +635,7 @@ class GlarkOptions
         end
         
         if @args && @args.size > 0
-          @expr = ExpressionFactory.new.make_expression(@args, !known_end)
+          @expr = ExpressionFactory.new.make_expression @args, !known_end
         end
       end
       
@@ -732,9 +732,9 @@ class GlarkOptions
   # check options for collisions/data validity
   def validate
     if @range_start && @range_end
-      pctre = Regexp.new('([\.\d]+)%')
-      smd = pctre.match(@range_start)
-      emd = pctre.match(@range_end)
+      pctre = Regexp.new '([\.\d]+)%'
+      smd = pctre.match @range_start
+      emd = pctre.match @range_end
 
       # both or neither are percentages:
       if !smd == !emd
@@ -753,7 +753,7 @@ class GlarkOptions
 
   def show_version
     puts $PACKAGE + ", version " + $VERSION
-    puts "Written by Jeff Pace (jpace@incava.org)."
+    puts "Written by Jeff Pace (jeugenepace@gmail.com)."
     puts "Released under the Lesser GNU Public License."
     exit 0
   end

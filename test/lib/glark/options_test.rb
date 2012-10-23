@@ -58,7 +58,9 @@ class TC_Options < GlarkTestCase
   }
   
   def do_test(args, exp, &blk)
-    expected = DEFAULTS.merge(exp)
+    Log.level = Log::DEBUG
+    # info "args: #{args}".red
+    expected = DEFAULTS.merge exp
 
     # ignore what they have in ENV[HOME]    
     ENV['HOME'] = '/this/should/not/exist'
@@ -66,7 +68,7 @@ class TC_Options < GlarkTestCase
     origargs = args.dup
     
     gopt = GlarkOptions.instance
-    gopt.run(args)
+    gopt.run args
 
     expected.sort { |a, b| a[0].to_s <=> b[0].to_s }.each do |opt, expval|
       expstr = "expclass: #{expval.class}; expval: #{expval.inspect}; origargs: #{origargs.inspect}"
@@ -823,7 +825,7 @@ class TC_Options < GlarkTestCase
     end
     t.close
 
-    pt = Pathname.new(t.path)
+    pt = Pathname.new t.path
 
     orexpr   = nil
     res.each do |re| 

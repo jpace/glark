@@ -30,8 +30,8 @@ class FuncObj
     @filter            = opts.filter
   end
 
-  def add_match(lnum)
-    @matches.push(lnum)
+  def add_match lnum
+    @matches.push lnum
   end
 
   def start_position
@@ -42,15 +42,15 @@ class FuncObj
     start_position
   end
 
-  def reset_file(file)
+  def reset_file file
     @match_line_number = nil
     @file              = file
     @matches           = Array.new
   end
 
-  def range(var, infile)
+  def range var, infile
     if var
-      if var.index(/([\.\d]+)%/)
+      if var.index Regexp.new('([\.\d]+)%')
         count = infile.linecount
         count * $1.to_f / 100
       else
@@ -61,12 +61,12 @@ class FuncObj
     end
   end
 
-  def process(infile)
+  def process infile
     got_match = false
-    reset_file(infile.fname)
+    reset_file infile.fname
     
-    rgstart  = range(@range_start, infile)
-    rgend    = range(@range_end,   infile)
+    rgstart  = range @range_start, infile
+    rgend    = range @range_end,   infile
 
     lastmatch = 0
     nmatches = 0
@@ -76,12 +76,12 @@ class FuncObj
           (!rgend   || lnum <= rgend)   &&
           evaluate(line, lnum, infile))
   
-        mark_as_match(infile)
+        mark_as_match infile
         got_match = true
         nmatches += 1
         
         if @display_matches
-          infile.write_matches(!@invert_match, lastmatch, lnum)
+          infile.write_matches !@invert_match, lastmatch, lnum
           lastmatch = lnum + 1
         elsif @file_names_only
           # we don't need to match more than once
@@ -106,17 +106,17 @@ class FuncObj
       end
     elsif @filter
       if @invert_match
-        infile.write_matches(false, 0, lnum)
+        infile.write_matches false, 0, lnum
       elsif got_match
-        infile.write_matches(true, 0, lnum)
+        infile.write_matches true, 0, lnum
       end
     else
       infile.write_all
     end
   end
 
-  def mark_as_match(infile)
-    infile.mark_as_match(start_position)
+  def mark_as_match infile
+    infile.mark_as_match start_position
   end
 
   def to_s
@@ -135,7 +135,7 @@ class RegexpFuncObj < FuncObj
 
   attr_reader :re
 
-  def initialize(re, hlidx, args = Hash.new)
+  def initialize re, hlidx, args = Hash.new
     @re              = re
     @file            = nil
     if @highlight = args[:highlight]
@@ -152,11 +152,11 @@ class RegexpFuncObj < FuncObj
     super()
   end
 
-  def <=>(other)
+  def <=> other
     @re <=> other.re
   end
 
-  def ==(other)
+  def == other
     @re == other.re
   end
 
@@ -164,20 +164,20 @@ class RegexpFuncObj < FuncObj
     @re.inspect
   end
 
-  def match?(line)
-    @re.match(line)
+  def match? line
+    @re.match line
   end
 
-  def evaluate(line, lnum, file)
+  def evaluate line, lnum, file
     if Log.verbose
       log { "evaluating <<<#{line[0 .. -2]}>>>" }
     end
     
-    if md = match?(line)      
+    if md = match?(line)
       log { "matched" }
       if @extract_matches
-        if md.kind_of?(MatchData)
-          line.replace(md[-1] + "\n")
+        if md.kind_of? MatchData
+          line.replace md[-1] + "\n"
         else
           warn "--not does not work with -v"
         end
@@ -188,24 +188,24 @@ class RegexpFuncObj < FuncObj
       @match_line_number = lnum
 
       if @highlight
-        highlight_match(lnum, file)
+        highlight_match lnum, file
       end
       
-      add_match(lnum)
+      add_match lnum
       true
     else
       false
     end
   end
   
-  def explain(level = 0)
+  def explain level = 0
     " " * level + to_s + "\n"
   end
 
-  def highlight_match(lnum, file)
+  def highlight_match lnum, file
     log { "lnum: #{lnum}; file: #{file}" }
     
-    lnums = file.get_range(lnum)
+    lnums = file.get_range lnum
     log { "lnums(#{lnum}): #{lnums}" }
     if lnums
       lnums.each do |ln|
@@ -221,7 +221,7 @@ class RegexpFuncObj < FuncObj
           # find the index of the first non-nil capture:
           miidx = (0 ... lastcapts.length).find { |mi| lastcapts[mi] } || @hlidx
           
-          @text_highlights[miidx].highlight(m)
+          @text_highlights[miidx].highlight m
         end
       end
     end
@@ -245,9 +245,9 @@ class CompoundExpression < FuncObj
     super()
   end
 
-  def reset_file(file)
+  def reset_file file
     @ops.each do |op|
-      op.reset_file(file)
+      op.reset_file file
     end
     super
   end
@@ -256,7 +256,7 @@ class CompoundExpression < FuncObj
     @last_start
   end
   
-  def ==(other)
+  def == other
     self.class == other.class && @ops == other.ops
   end
   
@@ -270,18 +270,18 @@ end
 # Evaluates both expressions.
 class MultiOrExpression < CompoundExpression
 
-  def evaluate(line, lnum, file)
+  def evaluate line, lnum, file
     matched_ops = @ops.select do |op|
-      op.evaluate(line, lnum, file)
+      op.evaluate line, lnum, file
     end
 
-    if is_match?(matched_ops)
+    if is_match? matched_ops
       lastmatch          = matched_ops[-1]
       @last_start        = lastmatch.start_position
       @last_end          = lastmatch.end_position
       @match_line_number = lnum
       
-      add_match(lnum)
+      add_match lnum
       true
     else
       false
@@ -296,7 +296,7 @@ class MultiOrExpression < CompoundExpression
     @last_end
   end
 
-  def explain(level = 0)
+  def explain level = 0
     str  = " " * level + criteria + ":\n"
     str += @ops.collect { |op| op.explain(level + 4) }.join(" " * level + operator + "\n")
     str
@@ -312,7 +312,7 @@ end
 # Evaluates the expressions, and is satisfied when one return true.
 class InclusiveOrExpression < MultiOrExpression
 
-  def is_match?(matched_ops)
+  def is_match? matched_ops
     return matched_ops.size > 0
   end
 
@@ -334,7 +334,7 @@ end
 # Evaluates the expressions, and is satisfied when only one returns true.
 class ExclusiveOrExpression < MultiOrExpression
 
-  def is_match?(matched_ops)
+  def is_match? matched_ops
     return matched_ops.size == 1
   end
 
@@ -356,16 +356,16 @@ end
 # Evaluates both expressions, and is satisfied when both return true.
 class AndExpression < CompoundExpression
   
-  def initialize(dist, op1, op2)
+  def initialize dist, op1, op2
     @dist = dist
-    super(op1, op2)
+    super op1, op2
   end
 
-  def mark_as_match(infile)
-    infile.mark_as_match(start_position, end_position)
+  def mark_as_match infile
+    infile.mark_as_match start_position, end_position
   end
 
-  def match_within_distance(op, lnum)
+  def match_within_distance op, lnum
     stack "op: #{op}; lnum: #{lnum}"
     op.matches.size > 0 and (op.matches[-1] - lnum <= @dist)
   end
@@ -383,15 +383,15 @@ class AndExpression < CompoundExpression
     str
   end
 
-  def match?(line, lnum, file)
+  def match? line, lnum, file
     matches = (0 ... @ops.length).select do |oi|
-      @ops[oi].evaluate(line, lnum, file)
+      @ops[oi].evaluate line, lnum, file
     end
 
     matches.each do |mi|
       oidx  = (1 + mi) % @ops.length
       other = @ops[oidx]
-      if match_within_distance(other, lnum)
+      if match_within_distance other, lnum
         # search for the maximum match within the distance limit
         other.matches.each do |m|
           if lnum - m <= @dist
@@ -412,8 +412,8 @@ class AndExpression < CompoundExpression
     @ops.collect { |op| op.end_position }.max
   end
 
-  def evaluate(line, lnum, file)
-    if match?(line, lnum, file)
+  def evaluate line, lnum, file
+    if match? line, lnum, file
       @match_line_number = lnum
       true
     else
@@ -421,7 +421,7 @@ class AndExpression < CompoundExpression
     end
   end
 
-  def explain(level = 0)
+  def explain level = 0
     str = ""
     if @dist == 0
       str += " " * level + "on the same line:\n"

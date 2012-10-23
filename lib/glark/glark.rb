@@ -21,8 +21,8 @@ require 'glark/exprfactory'
 $stdout.sync = true             # unbuffer
 $stderr.sync = true             # unbuffer
 
-$PACKAGE = "glark"
-$VERSION = "1.9.0"
+$PACKAGE = 'glark'
+$VERSION = '1.9.1'
 
 # The main processor.
 class Glark 
@@ -30,7 +30,7 @@ class Glark
 
   attr_reader :exit_status
   
-  def initialize(func, files)
+  def initialize func, files
     @opts  = GlarkOptions.instance
     @func  = func
     @searched_files = Array.new          # files searched, so we don't cycle through links

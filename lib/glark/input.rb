@@ -62,7 +62,7 @@ class InputFile
     end
   end
 
-  def set_status(from, to, ch, force = false)
+  def set_status from, to, ch, force = false
     from.upto(to) do |ln|
       if (not @stati[ln]) || (@stati[ln] != WRITTEN && force)
         @stati[ln] = ch
@@ -70,7 +70,7 @@ class InputFile
     end
   end
 
-  def mark_as_match(start_line, end_line = start_line)
+  def mark_as_match start_line, end_line = start_line
     @matched = true
 
     # even with multi-line matches (--and expressions), we'll display
@@ -84,14 +84,14 @@ class InputFile
       @count += 1
     else
       st = [0, start_line - @before].max
-      set_status(st,           start_line - 1,    "-")
-      set_status(start_line,   end_line,          ":",  true)
-      set_status(end_line + 1, end_line + @after, "+")
+      set_status st,           start_line - 1,    "-"
+      set_status start_line,   end_line,          ":",  true
+      set_status end_line + 1, end_line + @after, "+"
     end
   end
 
-  def write_matches(matching, from = nil, to = nil)
-    @output.write_matches(matching, from, to)
+  def write_matches matching, from = nil, to = nil
+    @output.write_matches matching, from, to
   end
 
   def write_all
@@ -109,7 +109,7 @@ class InputFile
                        
                        eoline    = "\n"             # should be OS-dependent
                        srclines  = @lines
-                       reallines = @lines.join("").split(ANY_END_OF_LINE)
+                       reallines = @lines.join("").split ANY_END_OF_LINE
                        
                        # "\n" after all but the last line
                        extracted = (0 ... (reallines.length - 1)).collect do |lnum|
@@ -129,15 +129,15 @@ class InputFile
 
   # Returns the given line for this file. For this method, a line ends with a
   # CR, as opposed to the "lines" method, which ends with $/.
-  def get_line(lnum)
+  def get_line lnum
     log { "lnum: #{lnum}" }
-    ln = get_lines()[lnum]
+    ln = get_lines[lnum]
     log { "ln: #{ln}" }
     ln
   end
 
   # returns the range that is represented by the region number
-  def get_range(rnum)
+  def get_range rnum
     if $/ == "\n"
       # easy case: range is the range number, unless it is out of range.
       rnum < @lines.length ? (rnum .. rnum) : nil
@@ -172,9 +172,9 @@ end
 
 class BinaryFile < InputFile
 
-  def write_matches(matching, from, to)
+  def write_matches matching, from, to
     if count
-      write_count(matching)
+      write_count matching
     else
       puts "Binary file " + @fname + " matches"
     end

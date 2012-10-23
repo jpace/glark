@@ -35,7 +35,7 @@ class ExpressionFactory
   end
 
   # reads a file containing one regular expression per line.
-  def read_file(fname)
+  def read_file fname
     log { "reading file: #{fname}" }
     expr = nil
     File.open(fname) do |file|
@@ -45,11 +45,11 @@ class ExpressionFactory
         unless line.empty?
           # flatten the or expression instead of nesting it, to avoid
           # stack overruns for very large files.
-          re = make_regular_expression(line.chomp)
+          re = make_regular_expression line.chomp
           if expr 
             expr.ops << re
           else
-            expr = InclusiveOrExpression.new(re)
+            expr = InclusiveOrExpression.new re
           end
         end
       end
@@ -60,10 +60,10 @@ class ExpressionFactory
     expr
   end
 
-  def make_regular_expression(pattern, negated = false)
+  def make_regular_expression pattern, negated = false
     # this check is because they may have omitted the pattern, e.g.:
     #   % glark *.cpp
-    if File.exists?(pattern)
+    if File.exists? pattern
       warn "pattern '#{pattern}' exists as a file.\n    Pattern may have been omitted."
     end
 
@@ -81,63 +81,63 @@ class ExpressionFactory
       :extract_matches => @extract_matches
     }    
 
-    re = RegexpFuncObj.new(regex, @regexps, regex_args)
+    re = RegexpFuncObj.new regex, @regexps, regex_args
     @regexps += 1
     re
   end
 
   # creates two expressions and returns them.
-  def make_expressions(args)
-    a1 = make_expression(args)
-    a2 = make_expression(args)
+  def make_expressions args
+    a1 = make_expression args
+    a2 = make_expression args
     
     [ a1, a2 ]
   end
 
   # removes optional end tag
-  def shift_end_tag(name, args)
+  def shift_end_tag name, args
     # explicit end tag is optional:
     args.shift if args[0] == ("--end-of-" + name)
   end
   
-  def make_not_expression(args)
-    expr = make_regular_expression(args, true)
+  def make_not_expression args
+    expr = make_regular_expression args, true
     unless expr
       error "'not' expression takes one argument"
       exit 2
     end
 
     # explicit end tag is optional:
-    shift_end_tag("not", args)
+    shift_end_tag "not", args
     expr
   end
 
-  def make_two_expressions(args, type)
-    a1, a2 = make_expressions(args)
+  def make_two_expressions args, type
+    a1, a2 = make_expressions args
     unless a1 && a2
       error "'" + type + "' expression takes two arguments"
       exit 2
     end
 
-    shift_end_tag(type, args)
+    shift_end_tag type, args
     [ a1, a2 ]
   end
 
-  def make_or_expression(args)
-    a1, a2 = make_two_expressions(args, "or")
-    InclusiveOrExpression.new(a1, a2)
+  def make_or_expression args
+    a1, a2 = make_two_expressions args, "or"
+    InclusiveOrExpression.new a1, a2
   end
 
-  def make_xor_expression(args)
-    a1, a2 = make_two_expressions(args, "xor")
-    ExclusiveOrExpression.new(a1, a2)
+  def make_xor_expression args
+    a1, a2 = make_two_expressions args, "xor"
+    ExclusiveOrExpression.new a1, a2
   end
 
-  def numeric?(x)
+  def numeric? x
     x && (x.kind_of?(Fixnum) || (x.to_i == INFINITE_DISTANCE || x.num))
   end  
 
-  def make_and_distance(arg, args)
+  def make_and_distance arg, args
     dist = nil
     if arg == "-a"
       dist = args.shift
@@ -152,7 +152,7 @@ class ExpressionFactory
     end
 
     # check to ensure that this is numeric
-    if !numeric?(dist)
+    if !numeric? dist
       error "invalid distance for 'and' expression: '#{dist}'\n" +
         "    expecting an integer, or #{INFINITE_DISTANCE} for 'infinite'" 
       exit 2
@@ -167,39 +167,39 @@ class ExpressionFactory
     dist
   end
   
-  def make_and_expression(arg, args)
-    dist = make_and_distance(arg, args)
+  def make_and_expression arg, args
+    dist = make_and_distance arg, args
 
-    a1, a2 = make_two_expressions(args, "and")
-    AndExpression.new(dist, a1, a2)
+    a1, a2 = make_two_expressions args, "and"
+    AndExpression.new dist, a1, a2
   end
 
-  def make_infix_expression(arg, args = [])
+  def make_infix_expression arg, args = []
     expr = nil
 
     while arg
       case arg
       when '('
         arg  = args.shift
-        expr = make_infix_expression(arg, args)
+        expr = make_infix_expression arg, args
       when '--or', '-o'
         arg  = args.shift
-        rhs  = make_infix_expression(arg, args)
-        expr = InclusiveOrExpression.new(expr, rhs)
+        rhs  = make_infix_expression arg, args
+        expr = InclusiveOrExpression.new expr, rhs
       when '--xor'
         arg  = args.shift
-        rhs  = make_infix_expression(arg, args)
-        expr = ExclusiveOrExpression.new(expr, rhs)
+        rhs  = make_infix_expression arg, args
+        expr = ExclusiveOrExpression.new expr, rhs
       when Regexp.new('^--and'), '-a'
-        dist = make_and_distance(arg, args)
+        dist = make_and_distance arg, args
         arg  = args.shift
-        rhs  = make_infix_expression(arg, args)
-        expr = AndExpression.new(dist, expr, rhs)
+        rhs  = make_infix_expression arg, args
+        expr = AndExpression.new dist, expr, rhs
       when ')'
         break
       else
         # blather "assuming the last argument #{arg} is a pattern"
-        expr = make_regular_expression(arg)
+        expr = make_regular_expression arg
         break
       end
       arg = args.shift
@@ -213,23 +213,23 @@ class ExpressionFactory
     expr
   end
 
-  def make_expression(args, warn_option = false)
+  def make_expression args, warn_option = false
     arg = args[0]
     
     if arg
       case arg
       when "--or", "-o"
         args.shift
-        make_or_expression(args)
+        make_or_expression args
       when "--xor"
         args.shift
-        make_xor_expression(args)
+        make_xor_expression args
       when %r{^\-\-and}, %r{^\-a}
         args.shift
-        make_and_expression(arg, args)
+        make_and_expression arg, args
       when '('
         args.shift
-        make_infix_expression(arg, args)
+        make_infix_expression arg, args
       else
         if warn_option && arg.index(/^\-{1,2}\w/)
           warn "option not understood: #{arg}"
@@ -238,7 +238,7 @@ class ExpressionFactory
 
         # blather "assuming the last argument #{arg} is a pattern"
         args.shift
-        make_regular_expression(arg)
+        make_regular_expression arg
       end
     else
       nil

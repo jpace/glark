@@ -33,12 +33,14 @@ class GlarkTestCase < RUNIT::TestCase
   class << self
     alias :unsorted_instance_methods :instance_methods
     
-    def instance_methods(b)
+    def instance_methods b
       unsorted_instance_methods(true).sort
     end
   end
   
-  def do_file_test(fname, expected)
+  def do_file_test fname, expected
+    info "fname: #{fname}".cyan
+
     lnum = 0
 
     File.open(fname) do |file|
@@ -55,16 +57,16 @@ class GlarkTestCase < RUNIT::TestCase
     
     assert_equals expected.length, lnum, "ending line number"
     
-    File.delete(fname)
+    File.delete fname
   end
 
-  def create_file(fname = nil)
+  def create_file fname = nil
     if fname
       File.open(fname, File::CREAT | File::WRONLY | File::TRUNC) do |file|
         yield file
       end
     else
-      Tempfile.open("glark") do |file|
+      Tempfile.open "glark" do |file|
         fname = file.path
         yield file
       end
