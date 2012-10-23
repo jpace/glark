@@ -7,7 +7,7 @@ require 'tempfile'
 testdir = Pathname.new(__FILE__).expand_path.dirname.to_s
 $:.unshift testdir
 
-require 'testcase'
+require 'tc'
 require 'glark/options'
 
 class TC_Options < GlarkTestCase

@@ -3,12 +3,12 @@
 
 require 'rubygems'
 require 'riel'
-require 'pathname'
+require 'glark/exprfactory'
 
 testdir = Pathname.new(__FILE__).expand_path.dirname.to_s
 $:.unshift testdir
 
-require 'testcase'
+require 'tc'
 require 'stringio'
 
 Log.level = Log::DEBUG

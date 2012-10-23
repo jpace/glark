@@ -9,17 +9,16 @@ require 'riel/log'
 require 'riel/env'
 require 'riel/optproc'
 require 'riel'
+require 'glark/exprfactory'
 
+module Glark
+  PACKAGE = 'glark'
+  VERSION = '1.9.1'
+end
 
 # -------------------------------------------------------
 # Options
 # -------------------------------------------------------
-
-class GlarkInputOptions
-  include Loggable, Singleton
-
-end
-
 
 class GlarkOptions
   include Loggable, Singleton
@@ -752,10 +751,9 @@ class GlarkOptions
   end
 
   def show_version
-    puts $PACKAGE + ", version " + $VERSION
+    puts Glark::PACKAGE + ", version " + Glark::VERSION
     puts "Written by Jeff Pace (jeugenepace@gmail.com)."
     puts "Released under the Lesser GNU Public License."
     exit 0
   end
-  
 end
