@@ -68,273 +68,273 @@ class GlarkOptions
 
   def initialize
     optdata = [ 
-      {
-        :tags => %w{ -C --context },
-        :res  => %r{ ^ - ([1-9]\d*) $ }x,
-        :arg  => [ :optional, :integer ],
-        :set  => Proc.new { |val, opt, args| @after = @before = val || 2 },
-        :rc   => %w{ context },
-      },
-      {
-        :tags => %w{ --after-context -A },
-        :arg  => [ :integer ],
-        :set  => Proc.new { |val| @after = val },
-        :rc   => %w{ after-context },
-      },
-      {
-        :tags => %w{ --before-context -B },
-        :arg  => [ :integer ],
-        :set  => Proc.new { |val| @before = val },
-        :rc   => %w{ before-context },
-      },
-      {
-        :tags => %w{ -V --version },
-        :set  => Proc.new { show_version }
-      },
-      {
-        :tags => %w{ --verbose --verbosity },
-        :arg  => [ :integer, :optional ],
-        :set  => Proc.new { |val| Log.verbose = val || 1 }
-      },
-      {
-        :tags => %w{ -v --invert-match },
-        :set  => Proc.new { @invert_match = true }
-      },
-      {
-        :tags => %w{ -i --ignore-case },
-        :set  => Proc.new { @nocase = true }
-      },
-      {
-        :tags => %w{ --filter },
-        :set  => Proc.new { @filter = true }
-      },
-      {
-        :tags => %w{ --no-filter --nofilter },
-        :set  => Proc.new { @filter = false }
-      },
-      {
-        :tags => %w{ -U --no-highlight },
-        :set  => Proc.new { set_highlight nil }
-      },
-      {
-        :tags => %w{ -g --grep },
-        :set  => Proc.new { set_output_style "grep" }
-      },
-      {
-        :tags => %w{ -? --help },
-        :set  => Proc.new { require 'glark/help';  GlarkHelp.new.show_usage; exit 0 }
-      },
-      {
-        :tags => %w{ --man },
-        :set  => Proc.new { require 'glark/help';  GlarkHelp.new.show_man; exit 0 }
-      },
-      {
-        :tags => %w{ --explain },
-        :set  => Proc.new { @explain = true }
-      },
-      {
-        :tags => %w{ -n --line-number },
-        :set  => Proc.new { @show_line_numbers = true }
-      },
-      {
-        :tags => %w{ -N --no-line-number },
-        :set  => Proc.new { @show_line_numbers = false }
-      },
-      {
-        :tags => %w{ --line-number-color },
-        :arg  => [ :string ],
-        :set  => Proc.new { |val| @line_number_highlight = make_highlight "line-number-color", val },
-      },
-      {
-        :tags => %w{ -q -s --quiet --messages },
-        :set  => Proc.new { Log.quiet = @quiet = true }
-      },
-      {
-        :tags => %w{ -Q -S --no-quiet --no-messages },
-        :set  => Proc.new { Log.quiet = @quiet = false }
-      },
-      {
-        :tags => %w{ -w --word --word-regexp },
-        :set  => Proc.new { @whole_words = true }
-      },
-      {
-        :tags => %w{ -x --line-regexp },
-        :set  => Proc.new { @whole_lines = true }
-      },
-      {
-        :tags => %w{ -l --files-with-matches },
-        :set  => Proc.new { @file_names_only = true; @invert_match = false }
-      },
-      {
-        :tags => %w{ -L --files-without-match },
-        :set  => Proc.new { @file_names_only = true; @invert_match = true }
-      },
-      {
-        :tags => %w{ --extended },
-        :set  => Proc.new { @extended = true }
-      },
-      {
-        :tags => %w{ --multiline },
-        :set  => Proc.new { @multiline = true }
-      },
-      {
-        :tags => %w{ -c --count },
-        :set  => Proc.new { @count = true }
-      },
-      {
-        :tags => %w{ -Z --null },
-        :set  => Proc.new { @write_null = true }
-      },
-      {
-        :tags => %w{ -M --exclude-matching },
-        :set  => Proc.new { @exclude_matching = true }
-      },
-      {
-        :tags => %w{ -d },
-        :arg  => [ :string ],
-        :set  => Proc.new { |val| @directory = val }
-      },
-      {
-        :tags => %w{ -r --recurse },
-        :set  => Proc.new { @directory = "recurse" }
-      },
-      {
-        :tags => %w{ -y --extract-matches },
-        :set  => Proc.new { @extract_matches = true }
-      },
-      {
-        :tags => %w{ --conf },
-        :set  => Proc.new { write_configuration; exit }
-      },
-      {
-        :tags => %w{ --dump },
-        :set  => Proc.new { dump_all_fields; exit 0 }
-      },
-      {
-        :tags => %w{ --no-split-as-path },
-        :set  => Proc.new { @split_as_path = false }
-      },
-      {
-        :tags => %w{ --split-as-path },
-        :arg  => [ :boolean, :optional ],
-        :set  => Proc.new { |val| @split_as_path = val }
-      },
-      {
-        :tags => %w{ --directories },
-        :arg  => [ :string ],
-        :set  => Proc.new { |val| @directory = val }
-      },
-      {
-        :tags => %w{ -H --with-filename },
-        :set  => Proc.new { @show_file_names = true }
-      },
-      {
-        :tags => %w{ -h --no-filename },
-        :set  => Proc.new { @show_file_names = false }
-      },
-      { 
-        :tags => %w{ --label },
-        :arg  => [ :string ],
-        :set  => Proc.new { |val| @label = val }
-      },
-      { 
-        :tags => %w{ -m --match-limit },
-        :arg  => [ :integer ],
-        :set  => Proc.new { |val| @match_limit = val }
-      },
-      { 
-        :tags => %w{ -u --highlight },
-        :arg  => [ :optional, :regexp, %r{ ^ (?:(multi|single)|none) $ }x ],
-        :set  => Proc.new { |md| val = md ? md[1] : "multi"; set_highlight val }
-      },
-      { 
-        :tags => %w{ --basename --name --with-basename --with-name },
-        :arg  => [ :string ],
-        :set  => Proc.new { |pat| @with_basename = Regexp.create pat }
-      },
-      { 
-        :tags => %w{ --without-basename --without-name },
-        :arg  => [ :string ],
-        :set  => Proc.new { |pat| @without_basename = Regexp.create pat }
-      },
-      { 
-        :tags => %w{ --fullname --path --with-fullname --with-path },
-        :arg  => [ :string ],
-        :set  => Proc.new { |pat| @with_fullname = Regexp.create pat }
-      },
-      { 
-        :tags => %w{ --without-fullname --without-path },
-        :arg  => [ :string ],
-        :set  => Proc.new { |pat| @without_fullname = Regexp.create pat }
-      },
-      { 
-        :tags    => %w{ --after },
-        :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
-        :set     => Proc.new { |md| @range_start = md[1] }
-      },
-      { 
-        :tags    => %w{ --before },
-        :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
-        :set     => Proc.new { |md| @range_end = md[1] }
-      },
-      {
-        :tags     => %w{ -R --range },
-        :arg      => [ :required, :regexp, %r{ ^ (\d+%?),(\d+%?) $ }x ],
-        :set      => Proc.new do |md, opt, args|
-          @range_start, @range_end = if md && md[1] && md[2]
-                                       [ md[1], md[2] ]
-                                     else
-                                       [ args.shift, args.shift ]
-                                     end
-        end
-      },
-      {
-        :tags    => %w{ --binary-files },
-        :arg     => [ :required, :regexp, %r{ ^ [\'\"]? (text|without\-match|binary) [\'\"]? $ }x ],
-        :set     => Proc.new { |md| @binary_files = md[1] },
-        :rc   => %w{ binary-files },
-      },
-      {
-        :tags => %w{ --size-limit },
-        :arg  => [ :integer ],
-        :set  => Proc.new { |val| @size_limit = val }
-      },
-      {
-        :tags => %w{ -T --text-color },
-        :arg  => [ :string ],
-        :set  => Proc.new { |val| @text_highlights = [ make_highlight "text-color", val ] }
-      },
-      # no longer supported:
-      #       {
-      #         :res  => [ %r{ ^ --text-color- (\d+) (?:=(.+))? $ }x ],
-      #         :set  => Proc.new do |md, opt, args|
-      #           idx = md[1].to_i
-      #           thl = md[2] || args.shift
-      #           @text_highlights[idx] = make_highlight(opt, thl)
-      #         end
-      #       },
-      {
-        :tags => %w{ -F --file-color },
-        :arg  => [ :string ],
-        :set  => Proc.new { |val| @file_highlight = make_highlight "file-color", val }
-      },
-      {
-        :tags => %w{ -f --file },
-        :arg  => [ :string ],
-        :set  => Proc.new { |fname| @expr = ExpressionFactory.new.read_file fname }
-      },
-      {
-        :tags => %w{ -o -a },
-        :set  => Proc.new do |md, opt, args|
-          args.unshift opt
-          @expr = ExpressionFactory.new.make_expression args
-        end
-      },
-      {
-        :res => [ Regexp.new '^ -0 (\d{1,3})? $ ', Regexp::EXTENDED ],
-        :set => Proc.new { |md| rs = md ? md[1] : 0; set_record_separator rs }
-      }
-    ]
+               {
+                 :tags => %w{ -C --context },
+                 :res  => %r{ ^ - ([1-9]\d*) $ }x,
+                 :arg  => [ :optional, :integer ],
+                 :set  => Proc.new { |val, opt, args| @after = @before = val || 2 },
+                 :rc   => %w{ context },
+               },
+               {
+                 :tags => %w{ --after-context -A },
+                 :arg  => [ :integer ],
+                 :set  => Proc.new { |val| @after = val },
+                 :rc   => %w{ after-context },
+               },
+               {
+                 :tags => %w{ --before-context -B },
+                 :arg  => [ :integer ],
+                 :set  => Proc.new { |val| @before = val },
+                 :rc   => %w{ before-context },
+               },
+               {
+                 :tags => %w{ -V --version },
+                 :set  => Proc.new { show_version }
+               },
+               {
+                 :tags => %w{ --verbose --verbosity },
+                 :arg  => [ :integer, :optional ],
+                 :set  => Proc.new { |val| Log.verbose = val || 1 }
+               },
+               {
+                 :tags => %w{ -v --invert-match },
+                 :set  => Proc.new { @invert_match = true }
+               },
+               {
+                 :tags => %w{ -i --ignore-case },
+                 :set  => Proc.new { @nocase = true }
+               },
+               {
+                 :tags => %w{ --filter },
+                 :set  => Proc.new { @filter = true }
+               },
+               {
+                 :tags => %w{ --no-filter --nofilter },
+                 :set  => Proc.new { @filter = false }
+               },
+               {
+                 :tags => %w{ -U --no-highlight },
+                 :set  => Proc.new { set_highlight nil }
+               },
+               {
+                 :tags => %w{ -g --grep },
+                 :set  => Proc.new { set_output_style "grep" }
+               },
+               {
+                 :tags => %w{ -? --help },
+                 :set  => Proc.new { require 'glark/help';  GlarkHelp.new.show_usage; exit 0 }
+               },
+               {
+                 :tags => %w{ --man },
+                 :set  => Proc.new { require 'glark/help';  GlarkHelp.new.show_man; exit 0 }
+               },
+               {
+                 :tags => %w{ --explain },
+                 :set  => Proc.new { @explain = true }
+               },
+               {
+                 :tags => %w{ -n --line-number },
+                 :set  => Proc.new { @show_line_numbers = true }
+               },
+               {
+                 :tags => %w{ -N --no-line-number },
+                 :set  => Proc.new { @show_line_numbers = false }
+               },
+               {
+                 :tags => %w{ --line-number-color },
+                 :arg  => [ :string ],
+                 :set  => Proc.new { |val| @line_number_highlight = make_highlight "line-number-color", val },
+               },
+               {
+                 :tags => %w{ -q -s --quiet --messages },
+                 :set  => Proc.new { Log.quiet = @quiet = true }
+               },
+               {
+                 :tags => %w{ -Q -S --no-quiet --no-messages },
+                 :set  => Proc.new { Log.quiet = @quiet = false }
+               },
+               {
+                 :tags => %w{ -w --word --word-regexp },
+                 :set  => Proc.new { @whole_words = true }
+               },
+               {
+                 :tags => %w{ -x --line-regexp },
+                 :set  => Proc.new { @whole_lines = true }
+               },
+               {
+                 :tags => %w{ -l --files-with-matches },
+                 :set  => Proc.new { @file_names_only = true; @invert_match = false }
+               },
+               {
+                 :tags => %w{ -L --files-without-match },
+                 :set  => Proc.new { @file_names_only = true; @invert_match = true }
+               },
+               {
+                 :tags => %w{ --extended },
+                 :set  => Proc.new { @extended = true }
+               },
+               {
+                 :tags => %w{ --multiline },
+                 :set  => Proc.new { @multiline = true }
+               },
+               {
+                 :tags => %w{ -c --count },
+                 :set  => Proc.new { @count = true }
+               },
+               {
+                 :tags => %w{ -Z --null },
+                 :set  => Proc.new { @write_null = true }
+               },
+               {
+                 :tags => %w{ -M --exclude-matching },
+                 :set  => Proc.new { @exclude_matching = true }
+               },
+               {
+                 :tags => %w{ -d },
+                 :arg  => [ :string ],
+                 :set  => Proc.new { |val| @directory = val }
+               },
+               {
+                 :tags => %w{ -r --recurse },
+                 :set  => Proc.new { @directory = "recurse" }
+               },
+               {
+                 :tags => %w{ -y --extract-matches },
+                 :set  => Proc.new { @extract_matches = true }
+               },
+               {
+                 :tags => %w{ --conf },
+                 :set  => Proc.new { write_configuration; exit }
+               },
+               {
+                 :tags => %w{ --dump },
+                 :set  => Proc.new { dump_all_fields; exit 0 }
+               },
+               {
+                 :tags => %w{ --no-split-as-path },
+                 :set  => Proc.new { @split_as_path = false }
+               },
+               {
+                 :tags => %w{ --split-as-path },
+                 :arg  => [ :boolean, :optional ],
+                 :set  => Proc.new { |val| @split_as_path = val }
+               },
+               {
+                 :tags => %w{ --directories },
+                 :arg  => [ :string ],
+                 :set  => Proc.new { |val| @directory = val }
+               },
+               {
+                 :tags => %w{ -H --with-filename },
+                 :set  => Proc.new { @show_file_names = true }
+               },
+               {
+                 :tags => %w{ -h --no-filename },
+                 :set  => Proc.new { @show_file_names = false }
+               },
+               { 
+                 :tags => %w{ --label },
+                 :arg  => [ :string ],
+                 :set  => Proc.new { |val| @label = val }
+               },
+               { 
+                 :tags => %w{ -m --match-limit },
+                 :arg  => [ :integer ],
+                 :set  => Proc.new { |val| @match_limit = val }
+               },
+               { 
+                 :tags => %w{ -u --highlight },
+                 :arg  => [ :optional, :regexp, %r{ ^ (?:(multi|single)|none) $ }x ],
+                 :set  => Proc.new { |md| val = md ? md[1] : "multi"; set_highlight val }
+               },
+               { 
+                 :tags => %w{ --basename --name --with-basename --with-name },
+                 :arg  => [ :string ],
+                 :set  => Proc.new { |pat| @with_basename = Regexp.create pat }
+               },
+               { 
+                 :tags => %w{ --without-basename --without-name },
+                 :arg  => [ :string ],
+                 :set  => Proc.new { |pat| @without_basename = Regexp.create pat }
+               },
+               { 
+                 :tags => %w{ --fullname --path --with-fullname --with-path },
+                 :arg  => [ :string ],
+                 :set  => Proc.new { |pat| @with_fullname = Regexp.create pat }
+               },
+               { 
+                 :tags => %w{ --without-fullname --without-path },
+                 :arg  => [ :string ],
+                 :set  => Proc.new { |pat| @without_fullname = Regexp.create pat }
+               },
+               { 
+                 :tags    => %w{ --after },
+                 :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
+                 :set     => Proc.new { |md| @range_start = md[1] }
+               },
+               { 
+                 :tags    => %w{ --before },
+                 :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
+                 :set     => Proc.new { |md| @range_end = md[1] }
+               },
+               {
+                 :tags     => %w{ -R --range },
+                 :arg      => [ :required, :regexp, %r{ ^ (\d+%?),(\d+%?) $ }x ],
+                 :set      => Proc.new do |md, opt, args|
+                   @range_start, @range_end = if md && md[1] && md[2]
+                                                [ md[1], md[2] ]
+                                              else
+                                                [ args.shift, args.shift ]
+                                              end
+                 end
+               },
+               {
+                 :tags    => %w{ --binary-files },
+                 :arg     => [ :required, :regexp, %r{ ^ [\'\"]? (text|without\-match|binary) [\'\"]? $ }x ],
+                 :set     => Proc.new { |md| @binary_files = md[1] },
+                 :rc   => %w{ binary-files },
+               },
+               {
+                 :tags => %w{ --size-limit },
+                 :arg  => [ :integer ],
+                 :set  => Proc.new { |val| @size_limit = val }
+               },
+               {
+                 :tags => %w{ -T --text-color },
+                 :arg  => [ :string ],
+                 :set  => Proc.new { |val| @text_highlights = [ make_highlight "text-color", val ] }
+               },
+               # no longer supported:
+               #       {
+               #         :res  => [ %r{ ^ --text-color- (\d+) (?:=(.+))? $ }x ],
+               #         :set  => Proc.new do |md, opt, args|
+               #           idx = md[1].to_i
+               #           thl = md[2] || args.shift
+               #           @text_highlights[idx] = make_highlight(opt, thl)
+               #         end
+               #       },
+               {
+                 :tags => %w{ -F --file-color },
+                 :arg  => [ :string ],
+                 :set  => Proc.new { |val| @file_highlight = make_highlight "file-color", val }
+               },
+               {
+                 :tags => %w{ -f --file },
+                 :arg  => [ :string ],
+                 :set  => Proc.new { |fname| @expr = ExpressionFactory.new.read_file fname }
+               },
+               {
+                 :tags => %w{ -o -a },
+                 :set  => Proc.new do |md, opt, args|
+                   args.unshift opt
+                   @expr = ExpressionFactory.new.make_expression args
+                 end
+               },
+               {
+                 :res => [ Regexp.new '^ -0 (\d{1,3})? $ ', Regexp::EXTENDED ],
+                 :set => Proc.new { |md| rs = md ? md[1] : 0; set_record_separator rs }
+               }
+              ]
 
     @optset = OptProc::OptionSet.new optdata
 
