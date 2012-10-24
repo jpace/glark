@@ -93,8 +93,7 @@ class GlarkOptions
                },
                {
                  :tags => %w{ --verbose --verbosity },
-                 :arg  => [ :integer, :optional ],
-                 :set  => Proc.new { |val| Log.verbose = val || 1 }
+                 :set  => Proc.new { |val| Log.verbose = true }
                },
                {
                  :tags => %w{ -v --invert-match },
@@ -726,6 +725,10 @@ class GlarkOptions
     fields.keys.sort.each do |field|
       printf "%*s : %s\n", len, field, fields[field]
     end
+  end
+
+  def range
+    Glark::Range.new @range_start, @range_end
   end
 
   # check options for collisions/data validity

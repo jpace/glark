@@ -16,14 +16,14 @@ Log.info "glark_test"
 
 class TC_Glark < GlarkTestCase
 
-  def do_search_test exprargs, contents, expected
+  def run_search_test exprargs, contents, expected
     info "exprargs: #{exprargs}".yellow
     opts = GlarkOptions.instance
     
     # Egads, Ruby is fun. Converting a maybe-array into a definite one:
     args = [ exprargs ].flatten
 
-    expr = ExpressionFactory.new.make_expression(args)
+    expr = ExpressionFactory.new.make_expression args
 
     outfname = infname = nil
 
@@ -37,7 +37,14 @@ class TC_Glark < GlarkTestCase
         glark.search infname
       end
 
-      do_file_test outfname, expected
+      Log.verbose = true
+
+      info "contents: #{contents}".cyan
+      info "expected: #{expected}".red
+      
+      info "IO::readlines(outfname): #{IO::readlines(outfname)}"
+
+      run_file_test outfname, expected
     ensure
       [ outfname, infname ].each do |fname|
         if fname && File.exists?(fname)
@@ -74,10 +81,10 @@ class TC_Glark < GlarkTestCase
     opts.verbose = false
     Log.verbose = false
 
-    do_search_test exprstr, contents, expected
+    run_search_test exprstr, contents, expected
   end
 
-  def do_match_test contents, patterns, regexp, exprargs
+  def run_match_test contents, patterns, regexp, exprargs
     defcolors = Text::ANSIHighlighter::DEFAULT_COLORS
 
     patdata = patterns.collect_with_index do |pat, pidx|
@@ -102,7 +109,7 @@ class TC_Glark < GlarkTestCase
     opts = GlarkOptions.instance
     opts.verbose = Log.verbose = false
 
-    do_search_test exprargs, contents, expected
+    run_search_test exprargs, contents, expected
   end
 
   def test_match_plain_old_match
@@ -117,8 +124,8 @@ class TC_Glark < GlarkTestCase
       "STU",
     ]
     
-    do_match_test contents, %w{K}, %r{K}, "K"
-    do_match_test contents, %w{A}, %r{A}, "A"
+    run_match_test contents, %w{K}, %r{K}, "K"
+    run_match_test contents, %w{A}, %r{A}, "A"
   end
 
   def test_match_regexp_or
@@ -132,10 +139,10 @@ class TC_Glark < GlarkTestCase
       "STU",
     ]
     
-    do_match_test contents, %w{K N}, %r{(K)|(N)}, '(K)|(N)'
+    run_match_test contents, %w{K N}, %r{(K)|(N)}, '(K)|(N)'
   end
 
-  def do_test_match_alteration
+  def run_test_match_alteration
     patternsets = [
       %w{ nul },
       %w{ oo ae z },
@@ -166,18 +173,18 @@ class TC_Glark < GlarkTestCase
       regexp   = Regexp.new patterns.collect { |x| "(#{x})" }.join('|')
       exprargs = yield patterns
 
-      do_match_test contents, patterns, regexp, exprargs
+      run_match_test contents, patterns, regexp, exprargs
     end
   end
 
   def test_match_multicolor_alt_regexp
-    do_test_match_alteration do |patterns|
+    run_test_match_alteration do |patterns|
       patterns.collect { |x| "(#{x})" }.join('|')
     end
   end
 
   def test_match_multicolor_or_expression
-    do_test_match_alteration do |patterns|
+    run_test_match_alteration do |patterns|
       exprargs = [ patterns[-1] ]
       patterns.reverse[1 .. -1].each do |pat|
         exprargs.insert 0, "--or", pat
@@ -186,7 +193,7 @@ class TC_Glark < GlarkTestCase
     end
   end
 
-  def do_test_match_and_expression contents, matches, patterns, exprargs
+  def run_test_match_and_expression contents, matches, patterns, exprargs
     regexp   = Regexp.new patterns.collect { |x| "(#{x})" }.join('|')
 
     defcolors = Text::ANSIHighlighter::DEFAULT_COLORS
@@ -214,11 +221,10 @@ class TC_Glark < GlarkTestCase
       end
     end
 
-    # Log.verbose = false
     opts = GlarkOptions.instance
     opts.verbose = Log.verbose = false
-
-    do_search_test exprargs, contents, expected
+    
+    run_search_test exprargs, contents, expected
   end
 
   def test_match_and_expression_2_lines_apart
@@ -258,7 +264,7 @@ class TC_Glark < GlarkTestCase
     
     exprargs = [ "--and", "2" ] | patterns
 
-    do_test_match_and_expression contents, matches, patterns, exprargs
+    run_test_match_and_expression contents, matches, patterns, exprargs
   end
 
   def test_match_and_expression_3_lines_apart
@@ -292,7 +298,7 @@ class TC_Glark < GlarkTestCase
     
     exprargs = [ "--and", "3" ] | patterns
 
-    do_test_match_and_expression contents, matches, patterns, exprargs
+    run_test_match_and_expression contents, matches, patterns, exprargs
   end
 
   def test_match_and_expression_entire_file
@@ -321,6 +327,37 @@ class TC_Glark < GlarkTestCase
     
     exprargs = [ "--and", "-1" ] | patterns
 
-    do_test_match_and_expression contents, matches, patterns, exprargs
+    run_test_match_and_expression contents, matches, patterns, exprargs
   end
+
+  def test_match_range
+    contents = [
+      "ABC",
+      "DEF",
+      "GHI",
+      "JKL",
+      "MNO",
+      "PQR",
+      "STU",
+    ]
+
+    exprstr = "M"
+
+    expected = contents.collect_with_index do |line, idx|
+      if line.index(exprstr)
+        sprintf "%5d %s", idx + 1, line
+      end
+    end.compact
+
+    Log.verbose = false
+    
+    opts = GlarkOptions.instance
+    opts.range_start = '4'
+    opts.range_end = '5'
+    opts.verbose = false
+    Log.verbose = true
+
+    run_match_test contents, %w{M}, %r{M}, 'M'
+  end
+
 end

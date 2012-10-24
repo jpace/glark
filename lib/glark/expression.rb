@@ -8,6 +8,7 @@ require 'rubygems'
 require 'riel'
 
 require 'glark/options'
+require 'glark/range'
 
 # A function object, which can be applied (processed) against a InputFile.
 class FuncObj
@@ -24,6 +25,7 @@ class FuncObj
     @display_matches   = !opts.file_names_only && opts.filter && !opts.count
     @range_start       = opts.range_start
     @range_end         = opts.range_end
+    @range             = Glark::Range.new opts.range_start, opts.range_end
     @file_names_only   = opts.file_names_only
     @match_limit       = opts.match_limit
     @write_null        = opts.write_null
@@ -49,10 +51,11 @@ class FuncObj
   end
 
   def range var, infile
+    info "var: #{var}".on_red
     if var
-      if var.index Regexp.new('([\.\d]+)%')
+      if md = Regexp.new('([\.\d]+)%').match(var) 
         count = infile.linecount
-        count * $1.to_f / 100
+        count * md[1].to_f / 100
       else
         var.to_f
       end
@@ -65,17 +68,21 @@ class FuncObj
     got_match = false
     reset_file infile.fname
     
-    rgstart  = range @range_start, infile
-    rgend    = range @range_end,   infile
-
+    rgstart  = range @range.from, infile
+    info "rgstart: #{rgstart}".yellow
+    rgend    = range @range.to,   infile
+    info "rgend: #{rgend}".yellow
+    
     lastmatch = 0
     nmatches = 0
     lnum = 0
     infile.each_line do |line|
+      info "line: #{line.chomp}".cyan
+      info "lnum: #{lnum}".cyan
       if ((!rgstart || lnum >= rgstart) && 
           (!rgend   || lnum <= rgend)   &&
           evaluate(line, lnum, infile))
-  
+        
         mark_as_match infile
         got_match = true
         nmatches += 1

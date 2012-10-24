@@ -33,7 +33,7 @@ class GlarkHelp
     puts "  -i, --ignore-case              Ignore case for matching regular expressions"
     puts "  -m, --match-limit=NUM          Find only the first NUM matches in each file"
     puts "  -o, --or EXPR1 EXPR2           Match either of the two expressions"
-    puts "  -R, --range NUM[%] NUM[%]      Restrict the search to the given range of lines"
+    puts "  -R, --range NUM[%],NUM[%]      Restrict the search to the given range of lines"
     puts "  -v, --invert-match             Show lines not matching the expression"
     puts "  -w, --word, --word-regexp      Put word boundaries around each pattern"
     puts "  -x, --line-regexp              Select entire line matching pattern"

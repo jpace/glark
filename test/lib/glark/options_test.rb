@@ -123,7 +123,7 @@ class TC_Options < GlarkTestCase
               { 
                 :expr => RegexpFuncObj.new(%r{foo}, 0)
               }) do |gopt|
-        assert_equals "\n\n", $/
+        assert_equal "\n\n", $/
       end
     end
   end
@@ -293,7 +293,7 @@ class TC_Options < GlarkTestCase
                   { 
                     :expr            => RegexpFuncObj.new(%r{foo}, 0),
                   }) do |opts|
-            assert_equals true, Log.verbose, "log verbosity"
+            assert_equal true, Log.verbose, "log verbosity"
           end
         end
       end

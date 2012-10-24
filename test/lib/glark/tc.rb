@@ -12,7 +12,7 @@ $:.unshift applib
 require 'rubygems'
 require 'riel'
 
-require 'rubyunit'
+require 'test/unit'
 require 'yaml'
 require 'tempfile'
 
@@ -24,7 +24,7 @@ require 'glark/runner'
 Log.verbose = true
 Log.set_widths(-15, 35, -35)
 
-class GlarkTestCase < RUNIT::TestCase
+class GlarkTestCase < Test::Unit::TestCase
   include Loggable
 
   # Returns a list of instance methods, in sorted order, so that they are run
@@ -38,7 +38,7 @@ class GlarkTestCase < RUNIT::TestCase
     end
   end
   
-  def do_file_test fname, expected
+  def run_file_test fname, expected
     info "fname: #{fname}".cyan
 
     lnum = 0
@@ -50,12 +50,12 @@ class GlarkTestCase < RUNIT::TestCase
         log "expected: #{expected[lnum]}"
         log "line    : #{line}"
 
-        assert_equals expected[lnum], line, "line #{lnum}"
+        assert_equal expected[lnum], line, "line #{lnum}"
         lnum += 1
       end
     end
     
-    assert_equals expected.length, lnum, "ending line number"
+    assert_equal expected.length, lnum, "ending line number"
     
     File.delete fname
   end
@@ -81,5 +81,8 @@ class GlarkTestCase < RUNIT::TestCase
       end
     end
     fname
+  end
+
+  def test_nothing
   end
 end
