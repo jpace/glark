@@ -60,23 +60,15 @@ class MatchTestCase < GlarkTestCase
     end
   end
 
-  def test_match_invert
-    contents = [
-      "ABC",
-      "DEF",
-      "GHI",
-      "JKL",
-      "MNO",
-      "PQR",
-      "STU",
-    ]
-
-    exprstr = "K"
-
-    expected = contents.collect_with_index do |line, idx|
-      next if idx == 3
-      sprintf "%5d %s", idx + 1, line
-    end.compact
+  def test_invert
+    expected = [
+                "    1 ABC",
+                "    2 DEF",
+                "    3 GHI",
+                "    5 MNO",
+                "    6 PQR",
+                "    7 STU",
+               ]
 
     Log.verbose = false
     
@@ -85,7 +77,7 @@ class MatchTestCase < GlarkTestCase
     opts.verbose = false
     Log.verbose = false
 
-    run_search_test expected, contents, exprstr
+    run_abc_test expected, 'K'
   end
 
   def get_colors patterns
@@ -99,19 +91,19 @@ class MatchTestCase < GlarkTestCase
 
   def run_abc_test expected, exprargs
     contents = [
-      "ABC",
-      "DEF",
-      "GHI",
-      "JKL",
-      "MNO",
-      "PQR",
-      "STU",
-    ]
+                "ABC",
+                "DEF",
+                "GHI",
+                "JKL",
+                "MNO",
+                "PQR",
+                "STU",
+               ]
 
     run_search_test expected, contents, exprargs
   end
 
-  def test_match_plain_old_match_first_line
+  def test_plain_old_match_first_line
     expected = [
                 "    1 [30m[43mA[0mBC"
                ]
@@ -119,7 +111,7 @@ class MatchTestCase < GlarkTestCase
     run_abc_test expected, 'A'
   end
 
-  def test_match_plain_old_match_middle_line
+  def test_plain_old_match_middle_line
     expected = [
                 "    4 J[30m[43mK[0mL"
                ]
@@ -127,7 +119,7 @@ class MatchTestCase < GlarkTestCase
     run_abc_test expected, 'K'
   end
 
-  def test_match_regexp_or
+  def test_regexp_or
     expected = [
                 "    4 J[30m[43mK[0mL",
                 "    5 M[30m[42mN[0mO"
@@ -138,28 +130,28 @@ class MatchTestCase < GlarkTestCase
 
   def run_z_test expected, exprargs
     contents = [
-      "zaffres",
-      "zoaea",
-      "zoaea's",
-      "zoea",
-      "zoeas",
-      "zonulae",
-      "zooea",
-      "zooeae",
-      "zooeal",
-      "zooeas",
-      "zooecia",
-      "zooecium",
-      "zoogloeae",
-      "zoogloeal",
-      "zoogloeas",
-      "zygaenid",
-    ]
+                "zaffres",
+                "zoaea",
+                "zoaea's",
+                "zoea",
+                "zoeas",
+                "zonulae",
+                "zooea",
+                "zooeae",
+                "zooeal",
+                "zooeas",
+                "zooecia",
+                "zooecium",
+                "zoogloeae",
+                "zoogloeal",
+                "zoogloeas",
+                "zygaenid",
+               ]
     
     run_search_test expected, contents, exprargs
   end
 
-  def test_match_multicolor_alt_regexp_one_match
+  def test_multicolor_alt_regexp_one_match
     patterns = %w{ nul }
 
     expected = [
@@ -171,7 +163,7 @@ class MatchTestCase < GlarkTestCase
     run_z_test expected, exprargs
   end
 
-  def test_match_multicolor_alt_regexp_3_patterns
+  def test_multicolor_alt_regexp_3_patterns
     patterns = %w{ oo ae z }
 
     expected = [
@@ -198,7 +190,7 @@ class MatchTestCase < GlarkTestCase
     run_z_test expected, exprargs
   end
 
-  def test_match_multicolor_or_expression_3_patterns
+  def test_multicolor_or_expression_3_patterns
     patterns = %w{ oo ae z }
 
     expected = [
@@ -226,7 +218,7 @@ class MatchTestCase < GlarkTestCase
     run_z_test expected, exprargs
   end
 
-  def test_match_and_expression_2_lines_apart
+  def test_and_expression_2_lines_apart
     Log.level = Log::DEBUG
     info "self: #{self}"
     
@@ -247,7 +239,7 @@ class MatchTestCase < GlarkTestCase
     run_z_test expected, exprargs
   end
 
-  def test_match_and_expression_3_lines_apart
+  def test_and_expression_3_lines_apart
     expected = [
                 "    3 zo[30m[43maea[0m's",
                 "    4 zoea",
@@ -262,7 +254,7 @@ class MatchTestCase < GlarkTestCase
     run_z_test expected, exprargs
   end
 
-  def test_match_and_expression_entire_file
+  def test_and_expression_entire_file
     expected = [
                 "    1 z[30m[43maff[0mres",
                 "    2 zoaea",
@@ -280,7 +272,7 @@ class MatchTestCase < GlarkTestCase
                 "   14 zoogloeal",
                 "   15 zoogloeas",
                 "   16 z[30m[42myga[0menid",
-              ]
+               ]
 
     patterns = %w{ aff yga }    
     exprargs = [ "--and", "-1" ] + patterns
@@ -288,7 +280,7 @@ class MatchTestCase < GlarkTestCase
     run_z_test expected, exprargs
   end
 
-  def test_match_range
+  def test_range
     expected = [
                 "    5 [30m[43mM[0mNO",
                ]
