@@ -11,7 +11,7 @@ Log.level = Log::DEBUG
 
 class MatchTestCase < GlarkTestCase
 
-  def run_search_test exprargs, contents, expected
+  def run_search_test expected, contents, exprargs
     info "exprargs: #{exprargs}".yellow
     opts = GlarkOptions.instance
     
@@ -44,6 +44,11 @@ class MatchTestCase < GlarkTestCase
       
       info "IO::readlines(outfname): #{IO::readlines(outfname)}"
 
+      results = IO::readlines outfname
+      puts "results"
+      puts results
+      puts "*******************************************************" 
+
       run_file_test outfname, expected
     ensure
       [ outfname, infname ].each do |fname|
@@ -69,9 +74,8 @@ class MatchTestCase < GlarkTestCase
     exprstr = "K"
 
     expected = contents.collect_with_index do |line, idx|
-      if !line.index exprstr
-        sprintf "%5d %s", idx + 1, line
-      end
+      next if idx == 3
+      sprintf "%5d %s", idx + 1, line
     end.compact
 
     Log.verbose = false
@@ -81,16 +85,20 @@ class MatchTestCase < GlarkTestCase
     opts.verbose = false
     Log.verbose = false
 
-    run_search_test exprstr, contents, expected
+    run_search_test expected, contents, exprstr
   end
 
-  def run_match_test contents, patterns, regexp, exprargs
+  def get_colors patterns
     defcolors = Text::ANSIHighlighter::DEFAULT_COLORS
 
-    patdata = patterns.collect_with_index do |pat, pidx|
+    patterns.collect_with_index do |pat, pidx|
       color = Text::ANSIHighlighter.make defcolors[pidx % defcolors.length]
       [ pat, color ]
     end
+  end
+
+  def run_match_test contents, patterns, regexp, exprargs
+    patdata = get_colors patterns
 
     expected = contents.collect_with_index do |line, li|
       if line.index regexp
@@ -109,7 +117,7 @@ class MatchTestCase < GlarkTestCase
     opts = GlarkOptions.instance
     opts.verbose = Log.verbose = false
 
-    run_search_test exprargs, contents, expected
+    run_search_test expected, contents, exprargs
   end
 
   def test_match_plain_old_match
@@ -123,9 +131,18 @@ class MatchTestCase < GlarkTestCase
       "PQR",
       "STU",
     ]
+
+    expected = [
+                "    1 [30m[43mA[0mBC"
+               ]
     
-    run_match_test contents, %w{K}, %r{K}, "K"
-    run_match_test contents, %w{A}, %r{A}, "A"
+    run_search_test expected, contents, 'A'
+
+    expected = [
+                "    4 J[30m[43mK[0mL"
+               ]
+
+    run_search_test expected, contents, 'K'
   end
 
   def test_match_regexp_or
@@ -138,8 +155,13 @@ class MatchTestCase < GlarkTestCase
       "PQR",
       "STU",
     ]
+
+    expected = [
+                "    4 J[30m[43mK[0mL",
+                "    5 M[30m[42mN[0mO"
+               ]
     
-    run_match_test contents, %w{K N}, %r{(K)|(N)}, '(K)|(N)'
+    run_search_test expected, contents, '(K)|(N)'
   end
 
   def run_test_match_alteration
@@ -194,14 +216,9 @@ class MatchTestCase < GlarkTestCase
   end
 
   def run_test_match_and_expression contents, matches, patterns, exprargs
-    regexp   = Regexp.new patterns.collect { |x| "(#{x})" }.join('|')
+    regexp = Regexp.new patterns.collect { |x| "(#{x})" }.join('|')
 
-    defcolors = Text::ANSIHighlighter::DEFAULT_COLORS
-
-    patdata = patterns.collect_with_index do |pat, pidx|
-      color = Text::ANSIHighlighter.make defcolors[pidx % defcolors.length]
-      [ pat, color ]
-    end
+    patdata = get_colors patterns
 
     expected = contents.collect_with_index do |line, li|
       if matches.include? line
@@ -224,7 +241,7 @@ class MatchTestCase < GlarkTestCase
     opts = GlarkOptions.instance
     opts.verbose = Log.verbose = false
     
-    run_search_test exprargs, contents, expected
+    run_search_test expected, contents, exprargs
   end
 
   def test_match_and_expression_2_lines_apart

@@ -18,12 +18,12 @@ end
 class Glark::App
   include Loggable
 
-  def self.main
+  def initialize
     begin
       Log.set_widths(-15, -40, -40)
       
       Log.log { "loading options" }
-      opts = self.create_options
+      opts = GlarkOptions.instance
       
       opts.run ARGV 
       Log.log { "done loading options" }
@@ -65,12 +65,8 @@ class Glark::App
       end
     end
   end
-
-  def self.create_options
-    GlarkOptions.instance
-  end
 end
 
 if __FILE__ == $0
-  Glark::App.main
+  Glark::App.new
 end
