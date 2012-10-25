@@ -34,8 +34,13 @@ class MatchTestCase < GlarkTestCase
 
       Log.verbose = true
 
-      info "contents: #{contents}".cyan
-      info "expected: #{expected}".red
+      puts "contents"
+      puts "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+      puts contents
+      puts "-------------------------------------------------------"
+      puts "expected"
+      puts expected
+      puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
       
       info "IO::readlines(outfname): #{IO::readlines(outfname)}"
 
@@ -339,7 +344,7 @@ class MatchTestCase < GlarkTestCase
     exprstr = "M"
 
     expected = contents.collect_with_index do |line, idx|
-      if line.index(exprstr)
+      if line.index exprstr
         sprintf "%5d %s", idx + 1, line
       end
     end.compact
@@ -354,5 +359,4 @@ class MatchTestCase < GlarkTestCase
 
     run_match_test contents, %w{M}, %r{M}, 'M'
   end
-
 end

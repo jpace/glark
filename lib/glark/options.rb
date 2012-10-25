@@ -303,15 +303,6 @@ class GlarkOptions
                  :arg  => [ :string ],
                  :set  => Proc.new { |val| @text_highlights = [ make_highlight "text-color", val ] }
                },
-               # no longer supported:
-               #       {
-               #         :res  => [ %r{ ^ --text-color- (\d+) (?:=(.+))? $ }x ],
-               #         :set  => Proc.new do |md, opt, args|
-               #           idx = md[1].to_i
-               #           thl = md[2] || args.shift
-               #           @text_highlights[idx] = make_highlight(opt, thl)
-               #         end
-               #       },
                {
                  :tags => %w{ -F --file-color },
                  :arg  => [ :string ],
@@ -441,8 +432,6 @@ class GlarkOptions
   def set_output_style output
     @output      = output
 
-    # log { sprintf("%s: %s\n", "text_highlights", @text_highlights.collect { |hl| hl.highlight("text") }.join(", ")) }
-
     @highlighter = case @output
                    when "ansi", "xterm"
                      Text::ANSIHighlighter
@@ -463,25 +452,10 @@ class GlarkOptions
   def run args
     @args = args
 
-    @exprfact = ExpressionFactory.new
-    
-    if hd = Env.home_directory
-      hd = Pathname.new hd
-      homerc = hd + ".glarkrc"
-      read_rcfile homerc
-    end
+    read_home_rcfiles
 
     if @local_config_files
-      dir = Pathname.new(".").expand_path
-      while !dir.root? && dir != hd
-        rcfile = dir + ".glarkrc"
-        if rcfile.exist?
-          read_rcfile rcfile
-          break
-        else
-          dir = dir.dirname
-        end
-      end
+      read_local_rcfiles
     end
 
     read_environment_variable
@@ -494,6 +468,27 @@ class GlarkOptions
     read_options
 
     validate
+  end
+
+  def read_home_rcfiles
+    if hd = Env.home_directory
+      hd = Pathname.new hd
+      homerc = hd + ".glarkrc"
+      read_rcfile homerc
+    end
+  end
+
+  def read_local_rcfiles
+    dir = Pathname.new(".").expand_path
+    while !dir.root? && dir != hd
+      rcfile = dir + ".glarkrc"
+      if rcfile.exist?
+        read_rcfile rcfile
+        return
+      else
+        dir = dir.dirname
+      end
+    end
   end
 
   def set_record_separator sep
@@ -514,67 +509,67 @@ class GlarkOptions
   end
 
   def read_rcfile rcfile
-    if rcfile.exist?
-      rcfile.readlines.each do |line|
-        line.sub! Regexp.new('\s*#.*'), ""
-        line.chomp!
-        name, value = line.split Regexp.new('\s*[=:]\s*')
-        next unless name && value
+    return unless rcfile.exist?
 
-        # rc association is somewhat supported:
-        @optset.options.each do |option|
-          if option.match_rc? name
-            val = option.convert_value value
-            option.set val
-            next
-          end
-        end
+    rcfile.readlines.each do |line|
+      line.sub! Regexp.new('\s*#.*'), ''
+      line.chomp!
+      name, value = line.split Regexp.new('\s*[=:]\s*')
+      next unless name && value
 
-        case name
-        when "expression"
-          # this should be more intelligent than just splitting on whitespace:
-          @expr = ExpressionFactory.new.make_expression value.split(/\s+/)
-        when "file-color"
-          @file_highlight = make_highlight name, value
-        when "filter"
-          @filter = to_boolean value
-        when "grep"
-          set_output_style("grep") if to_boolean value
-        when "highlight"
-          @highlight = value
-        when "ignore-case"
-          @nocase = to_boolean value
-        when "known-nontext-files"
-          value.split.each do |ext|
-            FileTester.set_nontext ext
-          end
-        when "known-text-files"
-          value.split.each do |ext|
-            FileTester.set_text ext
-          end
-        when "local-config-files"
-          @local_config_files = to_boolean value
-        when "line-number-color"
-          @line_number_highlight = make_highlight name, value
-        when "output"
-          set_output_style value
-        when "show-break"
-          @show_break = to_boolean value
-        when "quiet"
-          Log.quiet = @quiet = to_boolean(value)
-        when "text-color"
-          @text_highlights = [ make_highlight name, value ]
-        when %r{^text\-color\-(\d+)$}
-          @text_highlights[$1.to_i] = make_highlight name, value
-        when "verbose"
-          Log.verbose = @verbose = to_boolean(value) ? 1 : nil
-        when "verbosity"
-          Log.verbose = @verbose = value.to_i
-        when "split-as-path"
-          @split_as_path = to_boolean value
-        when "size-limit"
-          @size_limit = value.to_i
+      # rc association is somewhat supported:
+      @optset.options.each do |option|
+        if option.match_rc? name
+          val = option.convert_value value
+          option.set val
+          next
         end
+      end
+
+      case name
+      when "expression"
+        # this should be more intelligent than just splitting on whitespace:
+        @expr = ExpressionFactory.new.make_expression value.split(/\s+/)
+      when "file-color"
+        @file_highlight = make_highlight name, value
+      when "filter"
+        @filter = to_boolean value
+      when "grep"
+        set_output_style("grep") if to_boolean value
+      when "highlight"
+        @highlight = value
+      when "ignore-case"
+        @nocase = to_boolean value
+      when "known-nontext-files"
+        value.split.each do |ext|
+          FileTester.set_nontext ext
+        end
+      when "known-text-files"
+        value.split.each do |ext|
+          FileTester.set_text ext
+        end
+      when "local-config-files"
+        @local_config_files = to_boolean value
+      when "line-number-color"
+        @line_number_highlight = make_highlight name, value
+      when "output"
+        set_output_style value
+      when "show-break"
+        @show_break = to_boolean value
+      when "quiet"
+        Log.quiet = @quiet = to_boolean(value)
+      when "text-color"
+        @text_highlights = [ make_highlight name, value ]
+      when %r{^text\-color\-(\d+)$}
+        @text_highlights[$1.to_i] = make_highlight name, value
+      when "verbose"
+        Log.verbose = @verbose = to_boolean(value) ? 1 : nil
+      when "verbosity"
+        Log.verbose = @verbose = value.to_i
+      when "split-as-path"
+        @split_as_path = to_boolean value
+      when "size-limit"
+        @size_limit = value.to_i
       end
     end
   end
@@ -605,47 +600,40 @@ class GlarkOptions
     end
   end
 
-  def read_options
-    nargs = @args.size
-    
-    # solitary "-v" means "--version", not --invert-match
-    if nargs == 1 && @args[0] == "-v"
-      show_version
+  def read_expression
+    if @args.size > 0
+      known_end = false
+      if @args[0] == "--"
+        log { "end of options" }
+        @args.shift
+        known_end = true
+      end
+      
+      if @args && @args.size > 0
+        @expr = ExpressionFactory.new.make_expression @args, !known_end
+        return
+      end
     end
+    
+    if @args.size > 0
+      error "No expression provided."
+    end
+    
+    $stderr.puts "Usage: glark [options] expression file..."
+    $stderr.puts "Try `glark --help' for more information."
+    exit 1
+  end
+
+  def read_options
+    # solitary "-v" means "--version", not --invert-match
+    show_version if @args.size == 1 && @args[0] == "-v"
     
     @expr = nil
     
-    while @args.size > 0 && @optset.process_option(@args)
-      # nothing
-    end
+    nil while @args.size > 0 && @optset.process_option(@args)
 
-    if @expr
-      # we already have an expression
-    else
-      if @args.size > 0
-        known_end = false
-        if @args[0] == "--"
-          log { "end of options" }
-          @args.shift
-          known_end = true
-        else
-          # log { "not an option: #{@args[0]}" }
-        end
-        
-        if @args && @args.size > 0
-          @expr = ExpressionFactory.new.make_expression @args, !known_end
-        end
-      end
-      
-      unless @expr
-        if nargs > 0
-          error "No expression provided."
-        end
-        
-        $stderr.puts "Usage: glark [options] expression file..."
-        $stderr.puts "Try `glark --help' for more information."
-        exit 1
-      end
+    unless @expr
+      read_expression
     end
   end
 

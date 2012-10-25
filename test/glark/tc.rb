@@ -1,14 +1,6 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-testlib = File.expand_path(__FILE__).sub(Regexp.new('/test.*'), '/test')
-$:.unshift testlib
-
-applib = testlib.sub '/test', '/lib' 
-$:.unshift applib
-
-# puts "$:: #{$:.join(' ')}"
-
 require 'rubygems'
 require 'riel'
 
@@ -83,6 +75,7 @@ class GlarkTestCase < Test::Unit::TestCase
     fname
   end
 
-  def test_nothing
+  def test_truth
+    assert true
   end
 end
