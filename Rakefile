@@ -7,8 +7,10 @@ require 'rbconfig'
 
 task :default => :test
 
-Rake::TestTask.new("test") do |t|
+Rake::TestTask.new('test') do |t|
+  t.libs << 'lib'
   t.libs << 'test'
+  t.libs << 'test/glark'
   t.pattern = 'test/**/*_test.rb'
   t.warning = true
   t.verbose = true

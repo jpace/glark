@@ -4,17 +4,12 @@
 require 'rubygems'
 require 'riel'
 require 'glark/exprfactory'
-
-testdir = Pathname.new(__FILE__).expand_path.dirname.to_s
-$:.unshift testdir
-
 require 'tc'
 require 'stringio'
 
 Log.level = Log::DEBUG
-Log.info "glark_test"
 
-class TC_Glark < GlarkTestCase
+class MatchTestCase < GlarkTestCase
 
   def run_search_test exprargs, contents, expected
     info "exprargs: #{exprargs}".yellow
