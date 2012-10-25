@@ -199,6 +199,41 @@ class MatchTestCase < GlarkTestCase
     end
   end
 
+  def run_z_test expected, exprargs
+    contents = [
+      "zaffres",
+      "zoaea",
+      "zoaea's",
+      "zoea",
+      "zoeas",
+      "zonulae",
+      "zooea",
+      "zooeae",
+      "zooeal",
+      "zooeas",
+      "zooecia",
+      "zooecium",
+      "zoogloeae",
+      "zoogloeal",
+      "zoogloeas",
+      "zygaenid",
+    ]
+    
+    run_search_test expected, contents, exprargs
+  end
+
+  def test_match_multicolor_alt_regexp_one_match
+    patterns = %w{ nul }
+
+    expected = [
+                "    6 zo[30m[43mnul[0mae"
+               ]
+
+    exprargs = patterns.collect { |x| "(#{x})" }.join('|')
+    
+    run_z_test expected, exprargs
+  end
+
   def test_match_multicolor_alt_regexp
     run_test_match_alteration do |patterns|
       patterns.collect { |x| "(#{x})" }.join('|')
@@ -215,136 +250,66 @@ class MatchTestCase < GlarkTestCase
     end
   end
 
-  def run_test_match_and_expression contents, matches, patterns, exprargs
-    regexp = Regexp.new patterns.collect { |x| "(#{x})" }.join('|')
-
-    patdata = get_colors patterns
-
-    expected = contents.collect_with_index do |line, li|
-      if matches.include? line
-        ln = line.dup
-        patdata.each do |pat|
-          ln.gsub!(pat[0]) { pat[1].highlight pat[0] }
-        end
-        sprintf "%5d %s", li + 1, ln
-      else
-        nil
-      end
-    end.compact
-
-    if false
-      for line in expected
-        $stderr.puts line
-      end
-    end
-
-    opts = GlarkOptions.instance
-    opts.verbose = Log.verbose = false
-    
-    run_search_test expected, contents, exprargs
-  end
-
   def test_match_and_expression_2_lines_apart
     Log.level = Log::DEBUG
     info "self: #{self}"
     
-    contents = [
-      "zaffres",
-      "zoaea",
-      "zoaea's",
-      "zoea",
-      "zoeas",
-      "zonulae",
-      "zooea",
-      "zooeae",
-      "zooeal",
-      "zooeas",
-      "zooecia",
-      "zooecium",
-      "zoogloeae",
-      "zoogloeal",
-      "zoogloeas",
-      "zygaenid",
-    ]
-
     # 'ea', 'ec' within 2 lines of each other:
-    matches = [
-      "zooeal",
-      "zooeas",
-      "zooecia",
-      "zooecium",
-      "zoogloeae",
-      "zoogloeal",
-    ]
-
+    expected = [
+                "    9 zoo[30m[43mea[0ml",
+                "   10 zoo[30m[43mea[0ms",
+                "   11 zoo[30m[42mec[0mia",
+                "   12 zoo[30m[42mec[0mium",
+                "   13 zooglo[30m[43mea[0me",
+                "   14 zooglo[30m[43mea[0ml"
+               ]
+    
     patterns = %w{ ea ec }
     
     exprargs = [ "--and", "2" ] | patterns
 
-    run_test_match_and_expression contents, matches, patterns, exprargs
+    run_z_test expected, exprargs
   end
 
   def test_match_and_expression_3_lines_apart
-    contents = [
-      "zaffres",
-      "zoaea",
-      "zoaea's",
-      "zoea",
-      "zoeas",
-      "zonulae",
-      "zooea",
-      "zooeae",
-      "zooeal",
-      "zooeas",
-      "zooecia",
-      "zooecium",
-      "zoogloeae",
-      "zoogloeal",
-      "zoogloeas",
-      "zygaenid",
-    ]
-
-    matches = [
-      "zoaea's",
-      "zoea",
-      "zoeas",
-      "zonulae",
-    ]
+    expected = [
+                "    3 zo[30m[43maea[0m's",
+                "    4 zoea",
+                "    5 zoeas",
+                "    6 zon[30m[42mula[0me"
+               ]
 
     patterns = %w{ aea ula }
     
     exprargs = [ "--and", "3" ] | patterns
 
-    run_test_match_and_expression contents, matches, patterns, exprargs
+    run_z_test expected, exprargs
   end
 
   def test_match_and_expression_entire_file
-    contents = [
-      "zaffres",
-      "zoaea",
-      "zoaea's",
-      "zoea",
-      "zoeas",
-      "zonulae",
-      "zooea",
-      "zooeae",
-      "zooeal",
-      "zooeas",
-      "zooecia",
-      "zooecium",
-      "zoogloeae",
-      "zoogloeal",
-      "zoogloeas",
-      "zygaenid",
-    ]
+    expected = [
+                "    1 z[30m[43maff[0mres",
+                "    2 zoaea",
+                "    3 zoaea's",
+                "    4 zoea",
+                "    5 zoeas",
+                "    6 zonulae",
+                "    7 zooea",
+                "    8 zooeae",
+                "    9 zooeal",
+                "   10 zooeas",
+                "   11 zooecia",
+                "   12 zooecium",
+                "   13 zoogloeae",
+                "   14 zoogloeal",
+                "   15 zoogloeas",
+                "   16 z[30m[42myga[0menid",
+              ]
 
-    matches = contents
-
-    patterns = %w{ aff yga }
-    
+    patterns = %w{ aff yga }    
     exprargs = [ "--and", "-1" ] | patterns
 
-    run_test_match_and_expression contents, matches, patterns, exprargs
+    run_z_test expected, exprargs
   end
 
   def test_match_range
@@ -358,13 +323,9 @@ class MatchTestCase < GlarkTestCase
       "STU",
     ]
 
-    exprstr = "M"
-
-    expected = contents.collect_with_index do |line, idx|
-      if line.index exprstr
-        sprintf "%5d %s", idx + 1, line
-      end
-    end.compact
+    expected = [
+                "    5 [30m[43mM[0mNO",
+               ]
 
     Log.verbose = false
     
@@ -374,6 +335,6 @@ class MatchTestCase < GlarkTestCase
     opts.verbose = false
     Log.verbose = true
 
-    run_match_test contents, %w{M}, %r{M}, 'M'
+    run_search_test expected, contents, 'M'
   end
 end
