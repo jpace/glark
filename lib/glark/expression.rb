@@ -23,8 +23,6 @@ class FuncObj
     opts               = GlarkOptions.instance
     @invert_match      = opts.invert_match
     @display_matches   = !opts.file_names_only && opts.filter && !opts.count
-    @range_start       = opts.range_start
-    @range_end         = opts.range_end
     @range             = Glark::Range.new opts.range_start, opts.range_end
     @file_names_only   = opts.file_names_only
     @match_limit       = opts.match_limit
@@ -50,27 +48,13 @@ class FuncObj
     @matches           = Array.new
   end
 
-  def range var, infile
-    info "var: #{var}".on_red
-    if var
-      if md = Regexp.new('([\.\d]+)%').match(var) 
-        count = infile.linecount
-        count * md[1].to_f / 100
-      else
-        var.to_f
-      end
-    else
-      nil
-    end
-  end
-
   def process infile
     got_match = false
     reset_file infile.fname
     
-    rgstart  = range @range.from, infile
+    rgstart  = @range.to_line @range.from, infile.linecount
     info "rgstart: #{rgstart}".yellow
-    rgend    = range @range.to,   infile
+    rgend    = @range.to_line @range.to,   infile.linecount
     info "rgend: #{rgend}".yellow
     
     lastmatch = 0

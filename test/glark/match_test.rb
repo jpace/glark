@@ -5,9 +5,6 @@ require 'rubygems'
 require 'riel'
 require 'glark/exprfactory'
 require 'tc'
-require 'stringio'
-
-Log.level = Log::DEBUG
 
 class MatchTestCase < GlarkTestCase
 
@@ -280,7 +277,7 @@ class MatchTestCase < GlarkTestCase
     run_z_test expected, exprargs
   end
 
-  def test_range
+  def test_range_in_range
     expected = [
                 "    5 [30m[43mM[0mNO",
                ]
@@ -290,6 +287,21 @@ class MatchTestCase < GlarkTestCase
     opts = GlarkOptions.instance
     opts.range_start = '4'
     opts.range_end = '5'
+    opts.verbose = false
+    Log.verbose = true
+
+    run_abc_test expected, 'M'
+  end
+
+  def test_range_out_of_range
+    expected = [
+               ]
+
+    Log.verbose = false
+    
+    opts = GlarkOptions.instance
+    opts.range_start = '6'
+    opts.range_end = '8'
     opts.verbose = false
     Log.verbose = true
 

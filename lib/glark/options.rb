@@ -721,23 +721,12 @@ class GlarkOptions
 
   # check options for collisions/data validity
   def validate
-    if @range_start && @range_end
-      pctre = Regexp.new '([\.\d]+)%'
-      smd = pctre.match @range_start
-      emd = pctre.match @range_end
-
-      # both or neither are percentages:
-      if !smd == !emd
-        if smd
-          if smd[1].to_f > emd[1].to_f
-            error "range start (#{smd}) follows range end (#{emd})"
-            exit 2
-          end
-        elsif @range_start.to_i > @range_end.to_i
-          error "range start (#{@range_start}) follows range end (#{@range_end})"
-          exit 2
-        end
-      end
+    range = self.range
+    begin
+      range.valid?
+    rescue Glark::RangeError => e
+      $stderr.puts e
+      exit 2
     end
   end
 

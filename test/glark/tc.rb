@@ -15,6 +15,7 @@ require 'glark/runner'
 
 Log.verbose = true
 Log.set_widths(-15, 35, -35)
+Log.level = Log::DEBUG
 
 class GlarkTestCase < Test::Unit::TestCase
   include Loggable
