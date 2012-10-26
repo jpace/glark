@@ -10,7 +10,7 @@ class MatchTestCase < GlarkTestCase
 
   def run_search_test expected, contents, exprargs
     info "exprargs: #{exprargs}".yellow
-    opts = GlarkOptions.instance
+    opts = Glark::Options.instance
     
     # Egads, Ruby is fun. Converting a maybe-array into a definite one:
     args = [ exprargs ].flatten
@@ -53,7 +53,7 @@ class MatchTestCase < GlarkTestCase
           File.delete fname
         end
       end
-      GlarkOptions.instance.reset
+      Glark::Options.instance.reset
     end
   end
 
@@ -69,7 +69,7 @@ class MatchTestCase < GlarkTestCase
 
     Log.verbose = false
     
-    opts = GlarkOptions.instance
+    opts = Glark::Options.instance
     opts.invert_match = true
     opts.verbose = false
     Log.verbose = false
@@ -284,7 +284,7 @@ class MatchTestCase < GlarkTestCase
 
     Log.verbose = false
     
-    opts = GlarkOptions.instance
+    opts = Glark::Options.instance
     opts.range = Glark::Range.new '4', '5'
     opts.verbose = false
     Log.verbose = true
@@ -298,7 +298,7 @@ class MatchTestCase < GlarkTestCase
 
     Log.verbose = false
     
-    opts = GlarkOptions.instance
+    opts = Glark::Options.instance
     opts.range = Glark::Range.new '6', '8'
     opts.verbose = false
     Log.verbose = true

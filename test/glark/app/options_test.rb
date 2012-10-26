@@ -17,7 +17,7 @@ class OptionsTestCase < GlarkTestCase
   end
 
   def run_option_test args, exp, &blk
-    gopt = GlarkOptions.instance
+    gopt = Glark::Options.instance
     gopt.run args
 
     exp.each do |name, expval|

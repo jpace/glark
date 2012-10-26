@@ -15,11 +15,11 @@ class InputFile
   attr_accessor :count, :output, :invert_match
 
   # cross-platform end of line:   DOS  UNIX  MAC
-  ANY_END_OF_LINE = Regexp.new('(?:\r\n|\n|\r)')
+  ANY_END_OF_LINE = Regexp.new '(?:\r\n|\n|\r)'
 
   WRITTEN = "written"
   
-  def initialize fname, io, args = GlarkOptions.instance 
+  def initialize fname, io, args = Glark::Options.instance 
     @fname        = fname
     @io           = io
     @stati        = Array.new      # index = line number, value = context character
@@ -40,24 +40,22 @@ class InputFile
   end
   
   def linecount
-    @linecount ||= begin
-                     IO.readlines(@fname).size
-                   end
+    @linecount ||= IO.readlines(@fname).size
   end
 
   def matched?
     @matched
   end
 
-  def each_line
+  def each_line &blk
     if @readall
       @lines.each do |line|
-        yield line
+        blk.call line
       end
     else
       while (line = @io.gets) && line.length > 0
         @lines << line
-        yield line
+        blk.call line
       end
     end
   end

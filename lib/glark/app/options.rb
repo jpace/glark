@@ -14,7 +14,7 @@ end
 # Options
 # -------------------------------------------------------
 
-class GlarkOptions
+class Glark::Options
   include Loggable, Singleton
 
   attr_accessor :after
@@ -83,27 +83,33 @@ class GlarkOptions
                  end
       end
     }
+
+    context_option = {
+      :tags => %w{ -C --context },
+      :res  => %r{ ^ - ([1-9]\d*) $ }x,
+      :arg  => [ :optional, :integer ],
+      :set  => Proc.new { |val, opt, args| @after = @before = val || 2 },
+      :rc   => %w{ context },
+    }
+
+    context_after_option = {
+      :tags => %w{ --after-context -A },
+      :arg  => [ :integer ],
+      :set  => Proc.new { |val| @after = val },
+      :rc   => %w{ after-context },
+    }
+
+    context_before_option = {
+      :tags => %w{ --before-context -B },
+      :arg  => [ :integer ],
+      :set  => Proc.new { |val| @before = val },
+      :rc   => %w{ before-context },
+    }
     
     optdata = [ 
-               {
-                 :tags => %w{ -C --context },
-                 :res  => %r{ ^ - ([1-9]\d*) $ }x,
-                 :arg  => [ :optional, :integer ],
-                 :set  => Proc.new { |val, opt, args| @after = @before = val || 2 },
-                 :rc   => %w{ context },
-               },
-               {
-                 :tags => %w{ --after-context -A },
-                 :arg  => [ :integer ],
-                 :set  => Proc.new { |val| @after = val },
-                 :rc   => %w{ after-context },
-               },
-               {
-                 :tags => %w{ --before-context -B },
-                 :arg  => [ :integer ],
-                 :set  => Proc.new { |val| @before = val },
-                 :rc   => %w{ before-context },
-               },
+               context_option,
+               context_after_option,
+               context_before_option,
                {
                  :tags => %w{ -V --version },
                  :set  => Proc.new { show_version }
@@ -574,7 +580,7 @@ class GlarkOptions
   
   # creates a color for the given option, based on its value
   def make_highlight opt, value
-    if hl = GlarkOptions.instance.highlighter
+    if hl = self.class.instance.highlighter
       if value
         hl.make value
       else

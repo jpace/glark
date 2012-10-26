@@ -23,7 +23,7 @@ class Glark::App
       Log.set_widths(-15, -40, -40)
       
       Log.log { "loading options" }
-      opts = GlarkOptions.instance
+      opts = Glark::Options.instance
       
       opts.run ARGV 
       Log.log { "done loading options" }

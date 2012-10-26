@@ -25,7 +25,7 @@ class OutputFormat < Results
     @formatted         = []
     @has_context       = false
 
-    opts               = GlarkOptions.instance
+    opts               = Glark::Options.instance
 
     @label             = opts.label
     @out               = opts.out
@@ -124,7 +124,7 @@ class GlarkOutputFormat < OutputFormat
   def initialize infile, show_file_names 
     super
 
-    opts = GlarkOptions.instance
+    opts = Glark::Options.instance
 
     @has_context = opts.after != 0 || opts.before != 0
     @file_header_shown = false

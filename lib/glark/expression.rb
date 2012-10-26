@@ -19,7 +19,7 @@ class FuncObj
     @match_line_number = nil
     @matches           = Array.new
     
-    opts               = GlarkOptions.instance
+    opts               = Glark::Options.instance
     @invert_match      = opts.invert_match
     @display_matches   = !opts.file_names_only && opts.filter && !opts.count
     @range             = opts.range

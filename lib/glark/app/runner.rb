@@ -22,7 +22,7 @@ class Glark::Runner
   attr_reader :exit_status
   
   def initialize func, files
-    @opts  = GlarkOptions.instance
+    @opts  = Glark::Options.instance
     @func  = func
     @searched_files = Array.new          # files searched, so we don't cycle through links
     
