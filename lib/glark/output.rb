@@ -7,7 +7,7 @@
 require 'English'
 require 'rubygems'
 require 'riel'
-require 'glark/options'
+require 'glark/app/options'
 require 'glark/input'
 
 class Results

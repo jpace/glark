@@ -8,7 +8,7 @@ testdir = Pathname.new(__FILE__).expand_path.dirname.to_s
 $:.unshift testdir
 
 require 'tc'
-require 'glark/options'
+require 'glark/app/options'
 
 class OptionsTestCase < GlarkTestCase
   def setup
