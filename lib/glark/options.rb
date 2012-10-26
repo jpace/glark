@@ -60,6 +60,30 @@ class GlarkOptions
   attr_accessor :write_null
 
   def initialize
+    range_after_option = { 
+      :tags    => %w{ --after },
+      :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
+      :set     => Proc.new { |md| (@range ||= Glark::Range.new).from = md[1] }
+    }
+
+    range_before_option = { 
+      :tags    => %w{ --before },
+      :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
+      :set     => Proc.new { |md| (@range ||= Glark::Range.new).to = md[1] }
+    }
+
+    range_option = {
+      :tags     => %w{ -R --range },
+      :arg      => [ :required, :regexp, %r{ ^ (\d+%?),(\d+%?) $ }x ],
+      :set      => Proc.new do |md, opt, args|
+        @range = if md && md[1] && md[2]
+                   Glark::Range.new md[1], md[2]
+                 else
+                   Glark::Range.new args.shift, args.shift
+                 end
+      end
+    }
+    
     optdata = [ 
                {
                  :tags => %w{ -C --context },
@@ -259,27 +283,9 @@ class GlarkOptions
                  :arg  => [ :string ],
                  :set  => Proc.new { |pat| @without_fullname = Regexp.create pat }
                },
-               { 
-                 :tags    => %w{ --after },
-                 :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
-                 :set     => Proc.new { |md| (@range ||= Glark::Range.new).from = md[1] }
-               },
-               { 
-                 :tags    => %w{ --before },
-                 :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
-                 :set     => Proc.new { |md| (@range ||= Glark::Range.new).to = md[1] }
-               },
-               {
-                 :tags     => %w{ -R --range },
-                 :arg      => [ :required, :regexp, %r{ ^ (\d+%?),(\d+%?) $ }x ],
-                 :set      => Proc.new do |md, opt, args|
-                   @range = if md && md[1] && md[2]
-                              Glark::Range.new md[1], md[2]
-                            else
-                              Glark::Range.new args.shift, args.shift
-                            end
-                 end
-               },
+               range_after_option,
+               range_before_option,
+               range_option,
                {
                  :tags    => %w{ --binary-files },
                  :arg     => [ :required, :regexp, %r{ ^ [\'\"]? (text|without\-match|binary) [\'\"]? $ }x ],
