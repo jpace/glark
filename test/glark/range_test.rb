@@ -6,7 +6,7 @@ require 'riel'
 require 'tc'
 require 'glark/range'
 
-class RangeTestCase < GlarkTestCase
+class Glark::RangeTestCase < Glark::TestCase
   def test_ctor
     rg = Glark::Range.new '3', '17'
     assert_equal '3', rg.from

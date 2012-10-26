@@ -17,7 +17,9 @@ Log.verbose = true
 Log.set_widths(-15, 35, -35)
 Log.level = Log::DEBUG
 
-class GlarkTestCase < Test::Unit::TestCase
+module Glark; end
+
+class Glark::TestCase < Test::Unit::TestCase
   include Loggable
 
   # Returns a list of instance methods, in sorted order, so that they are run

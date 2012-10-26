@@ -10,7 +10,7 @@ $:.unshift testdir
 require 'tc'
 require 'glark/app/options'
 
-class OptionsTestCase < GlarkTestCase
+class Glark::OptionsTestCase < Glark::TestCase
   def setup
     # ignore what they have in ENV[HOME]    
     ENV['HOME'] = '/this/should/not/exist'

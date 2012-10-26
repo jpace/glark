@@ -6,8 +6,7 @@ require 'riel'
 require 'glark/exprfactory'
 require 'tc'
 
-class MatchTestCase < GlarkTestCase
-
+class Glark::MatchTestCase < Glark::TestCase
   def run_search_test expected, contents, exprargs
     info "exprargs: #{exprargs}".yellow
     opts = Glark::Options.instance
