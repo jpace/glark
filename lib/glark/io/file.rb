@@ -2,13 +2,13 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-# Glark input.
-
 require 'rubygems'
 require 'riel'
 
+module Glark; end
+
 # A thing that can be grepped (er, glarked).
-class InputFile
+class Glark::File
   include Loggable
 
   attr_reader :fname, :stati
@@ -161,21 +161,4 @@ class InputFile
       @regions[rnum]
     end
   end
-end
-
-
-# -------------------------------------------------------
-# Binary input file
-# -------------------------------------------------------
-
-class BinaryFile < InputFile
-
-  def write_matches matching, from, to
-    if count
-      write_count matching
-    else
-      puts "Binary file " + @fname + " matches"
-    end
-  end
-
 end

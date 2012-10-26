@@ -120,9 +120,8 @@ end
 # Regular expression function object
 # -------------------------------------------------------
 
-# Applies a regular expression against a InputFile.
+# Applies a regular expression against a File.
 class RegexpFuncObj < FuncObj
-
   attr_reader :re
 
   def initialize re, hlidx, args = Hash.new

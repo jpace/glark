@@ -6,8 +6,10 @@ require 'English'
 require 'rubygems'
 require 'riel'
 require 'glark/app/options'
-require 'glark/input'
-require 'glark/output'
+require 'glark/io/file'
+require 'glark/io/binary_file'
+require 'glark/output/grep_format'
+require 'glark/output/glark_format'
 require 'glark/expression'
 
 $stdout.sync = true             # unbuffer
@@ -120,7 +122,7 @@ class Glark::Runner
 
       io = fname == "-" ? $stdin : File.new(fname)
 
-      input = InputFile.new fname, io, ifile_args
+      input = Glark::File.new fname, io, ifile_args
       search_file input
     end
   end
