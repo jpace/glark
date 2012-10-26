@@ -138,11 +138,11 @@ class GlarkOptions
                },
                {
                  :tags => %w{ -? --help },
-                 :set  => Proc.new { require 'glark/help';  GlarkHelp.new.show_usage; exit 0 }
+                 :set  => Proc.new { require 'glark/app/help';  GlarkHelp.new.show_usage; exit 0 }
                },
                {
                  :tags => %w{ --man },
-                 :set  => Proc.new { require 'glark/help';  GlarkHelp.new.show_man; exit 0 }
+                 :set  => Proc.new { require 'glark/app/help';  GlarkHelp.new.show_man; exit 0 }
                },
                {
                  :tags => %w{ --explain },
