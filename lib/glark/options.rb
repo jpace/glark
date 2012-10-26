@@ -1,13 +1,7 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-require 'pathname'
-
 require 'rubygems'
-require 'riel/text'
-require 'riel/log'
-require 'riel/env'
-require 'riel/optproc'
 require 'riel'
 require 'glark/exprfactory'
 
@@ -48,8 +42,7 @@ class GlarkOptions
   attr_accessor :out
   attr_accessor :output
   attr_accessor :quiet
-  attr_accessor :range_end
-  attr_accessor :range_start
+  attr_accessor :range
   attr_accessor :show_break
   attr_accessor :show_file_names
   attr_accessor :show_line_numbers
@@ -269,22 +262,22 @@ class GlarkOptions
                { 
                  :tags    => %w{ --after },
                  :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
-                 :set     => Proc.new { |md| @range_start = md[1] }
+                 :set     => Proc.new { |md| (@range ||= Glark::Range.new).from = md[1] }
                },
                { 
                  :tags    => %w{ --before },
                  :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
-                 :set     => Proc.new { |md| @range_end = md[1] }
+                 :set     => Proc.new { |md| (@range ||= Glark::Range.new).to = md[1] }
                },
                {
                  :tags     => %w{ -R --range },
                  :arg      => [ :required, :regexp, %r{ ^ (\d+%?),(\d+%?) $ }x ],
                  :set      => Proc.new do |md, opt, args|
-                   @range_start, @range_end = if md && md[1] && md[2]
-                                                [ md[1], md[2] ]
-                                              else
-                                                [ args.shift, args.shift ]
-                                              end
+                   @range = if md && md[1] && md[2]
+                              Glark::Range.new md[1], md[2]
+                            else
+                              Glark::Range.new args.shift, args.shift
+                            end
                  end
                },
                {
@@ -325,9 +318,9 @@ class GlarkOptions
                  :set => Proc.new { |md| rs = md ? md[1] : 0; set_record_separator rs }
                }
               ]
-
+    
     @optset = OptProc::OptionSet.new optdata
-
+    
     reset
   end
 
@@ -354,8 +347,7 @@ class GlarkOptions
     @multiline             = false      # whether to use multiline regexps
     @local_config_files    = false      # use local .glarkrc files
     @quiet                 = false      # minimize warnings
-    @range_end             = nil        # range to stop searching; nil => the entire file
-    @range_start           = nil        # range to begin searching; nil => the entire file
+    @range                 = nil        # range to start and stop searching; nil => the entire file
     @show_line_numbers     = true       # display numbers of matching lines
     @show_file_names       = nil        # show the names of matching files; nil == > 1; true == >= 1; false means never
     @verbose               = nil        # display debugging output
@@ -690,15 +682,13 @@ class GlarkOptions
       "nocase" => @nocase,
       "output" => @output,
       "quiet" => @quiet,
-      "range_end" => @range_end,
-      "range_start" => @range_start,
       "ruby version" => RUBY_VERSION,
       "show_break" => @show_break,
       "show_file_names" => @show_file_names,
       "show_line_numbers" => @show_line_numbers,
       "text_highlights" => @text_highlights.compact.collect { |hl| hl.highlight("text") }.join(", "),
       "verbose" => @verbose,
-      "version" => $VERSION,
+      "version" => Glark::VERSION,
       "whole_lines" => @whole_lines,
       "whole_words" => @whole_words,
       "with-basename" => @with_basename,
@@ -715,15 +705,12 @@ class GlarkOptions
     end
   end
 
-  def range
-    Glark::Range.new @range_start, @range_end
-  end
-
   # check options for collisions/data validity
   def validate
     range = self.range
+    return true if @range.nil?
     begin
-      range.valid?
+      @range.valid?
     rescue Glark::RangeError => e
       $stderr.puts e
       exit 2

@@ -5,10 +5,8 @@
 # Glark output.
 
 require 'English'
-
 require 'rubygems'
 require 'riel'
-
 require 'glark/options'
 require 'glark/input'
 

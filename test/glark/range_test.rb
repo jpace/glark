@@ -61,4 +61,22 @@ class RangeTestCase < GlarkTestCase
       rg.valid?
     end
   end
+
+  def test_eq_from_to
+    x = Glark::Range.new '5', '17'
+    y = Glark::Range.new '5', '17'
+    assert_equal y, x
+  end
+
+  def test_eq_nil_to
+    x = Glark::Range.new nil, '5'
+    y = Glark::Range.new nil, '5'
+    assert_equal y, x
+  end
+
+  def test_eq_from_nil
+    x = Glark::Range.new '5', nil
+    y = Glark::Range.new '5', nil
+    assert_equal y, x
+  end
 end

@@ -8,7 +8,6 @@
 
 require 'rubygems'
 require 'riel'
-
 require 'glark/runner'
 
 module Glark

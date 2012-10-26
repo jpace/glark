@@ -285,8 +285,7 @@ class MatchTestCase < GlarkTestCase
     Log.verbose = false
     
     opts = GlarkOptions.instance
-    opts.range_start = '4'
-    opts.range_end = '5'
+    opts.range = Glark::Range.new '4', '5'
     opts.verbose = false
     Log.verbose = true
 
@@ -300,8 +299,7 @@ class MatchTestCase < GlarkTestCase
     Log.verbose = false
     
     opts = GlarkOptions.instance
-    opts.range_start = '6'
-    opts.range_end = '8'
+    opts.range = Glark::Range.new '6', '8'
     opts.verbose = false
     Log.verbose = true
 

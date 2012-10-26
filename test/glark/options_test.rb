@@ -628,7 +628,7 @@ class OptionsTestCase < GlarkTestCase
       ].each do |opt|
         run_option_test(opt | %w{ foo },
                         {
-                          :range_start      => rg,
+                          :range            => Glark::Range.new(rg, nil),
                           :expr             => RegexpFuncObj.new(%r{foo}, 0),
                         })
       end
@@ -643,7 +643,7 @@ class OptionsTestCase < GlarkTestCase
       ].each do |opt|
         run_option_test(opt | %w{ foo },
                         {
-                          :range_end        => rg,
+                          :range            => Glark::Range.new(nil, rg),
                           :expr             => RegexpFuncObj.new(%r{foo}, 0),
                         })
       end
@@ -663,8 +663,7 @@ class OptionsTestCase < GlarkTestCase
       ].each do |opt|
         run_option_test(opt | %w{ foo },
                         {
-                          :range_start      => from,
-                          :range_end        => to,
+                          :range            => Glark::Range.new(from, to),
                           :expr             => RegexpFuncObj.new(%r{foo}, 0),
                         })
       end

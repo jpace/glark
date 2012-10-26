@@ -7,7 +7,7 @@ class Glark::RangeError < RuntimeError
 end
 
 class Glark::Range
-  include Loggable
+  include Loggable, Comparable
 
   PCT_RE = Regexp.new '([\.\d]+)%'
   
@@ -53,5 +53,14 @@ class Glark::Range
     if from.to_f > to.to_f
       raise Glark::RangeError.new "error: range start (#{@from}) follows range end (#{@to})"
     end
+  end
+
+  # there is no nil <=> nil in Ruby
+  def compare x, y
+    x.nil? && y.nil? ? nil : (x <=> y).nonzero?
+  end
+
+  def <=> other
+    compare(from, other.from) || compare(to, other.to) || 0
   end
 end

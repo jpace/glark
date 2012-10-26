@@ -6,7 +6,6 @@
 
 require 'rubygems'
 require 'riel'
-
 require 'glark/options'
 require 'glark/range'
 
@@ -23,7 +22,7 @@ class FuncObj
     opts               = GlarkOptions.instance
     @invert_match      = opts.invert_match
     @display_matches   = !opts.file_names_only && opts.filter && !opts.count
-    @range             = Glark::Range.new opts.range_start, opts.range_end
+    @range             = opts.range
     @file_names_only   = opts.file_names_only
     @match_limit       = opts.match_limit
     @write_null        = opts.write_null
@@ -52,9 +51,9 @@ class FuncObj
     got_match = false
     reset_file infile.fname
     
-    rgstart  = @range.to_line @range.from, infile.linecount
+    rgstart  = @range && @range.to_line(@range.from, infile.linecount)
     info "rgstart: #{rgstart}".yellow
-    rgend    = @range.to_line @range.to,   infile.linecount
+    rgend    = @range && @range.to_line(@range.to,   infile.linecount)
     info "rgend: #{rgend}".yellow
     
     lastmatch = 0

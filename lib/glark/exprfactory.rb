@@ -5,10 +5,8 @@
 # Expression factory.
 
 require 'English'
-
 require 'rubygems'
 require 'riel'
-
 require 'glark/options'
 require 'glark/expression'
 

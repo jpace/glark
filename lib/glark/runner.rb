@@ -5,7 +5,6 @@
 require 'English'
 require 'rubygems'
 require 'riel'
-
 require 'glark/options'
 require 'glark/input'
 require 'glark/output'
@@ -14,8 +13,7 @@ require 'glark/expression'
 $stdout.sync = true             # unbuffer
 $stderr.sync = true             # unbuffer
 
-module Glark
-end
+module Glark; end
 
 # The main processor.
 class Glark::Runner
