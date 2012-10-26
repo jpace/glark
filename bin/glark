@@ -12,7 +12,7 @@ dir = File.dirname(File.dirname(File.expand_path(__FILE__)))
 libpath = dir + "/lib"
 $:.unshift libpath
 
-require 'glark/app'
+require 'glark/app/app'
 
 Glark::App.new
 

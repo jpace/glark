@@ -8,7 +8,7 @@
 
 require 'rubygems'
 require 'riel'
-require 'glark/runner'
+require 'glark/app/runner'
 
 module Glark
 end

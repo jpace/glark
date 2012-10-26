@@ -11,7 +11,7 @@ require 'tempfile'
 STDOUT.sync = true
 STDERR.sync = true
 
-require 'glark/runner'
+require 'glark/app/runner'
 
 Log.verbose = true
 Log.set_widths(-15, 35, -35)
