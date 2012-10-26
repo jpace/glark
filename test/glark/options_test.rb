@@ -10,78 +10,19 @@ $:.unshift testdir
 require 'tc'
 require 'glark/options'
 
-class TC_Options < GlarkTestCase
-
+class OptionsTestCase < GlarkTestCase
   def setup
     # ignore what they have in ENV[HOME]    
     ENV['HOME'] = '/this/should/not/exist'
   end
 
-  DEFAULTS = {
-    :after                 => 0,
-    :before                => 0,
-    :binary_files          => "binary",
-    :count                 => false,
-    :directory             => "read",
-    :exclude_matching      => false,
-    :explain               => false,
-    :expr                  => nil,
-    :extract_matches       => false,
-    # :file_highlight        => nil,
-    :file_names_only       => false,
-    :filter                => true,
-    :highlight             => "multi",
-    :invert_match          => false,
-    :label                 => nil,
-    :line_number_highlight => nil,
-    :local_config_files    => false,
-    :match_limit           => nil,
-    :nocase                => false,
-    :out                   => $stdout,
-    :quiet                 => false,
-    :range_end             => nil,
-    :range_start           => nil,
-    :show_break            => false,
-    :show_file_names       => nil,
-    :show_line_numbers     => true,
-    :size_limit            => nil,
-    :split_as_path         => true,
-    :text_highlights       => GlarkOptions.instance.multi_colors,
-    :verbose               => nil,
-    :whole_lines           => false,
-    :whole_words           => false,
-    :with_basename         => nil,
-    :with_fullname         => nil,
-    :without_basename      => nil,
-    :without_fullname      => nil,
-    :write_null            => false,
-  }
-  
   def run_option_test args, exp, &blk
-    Log.level = Log::DEBUG
-    # info "args: #{args}".red
-    expected = DEFAULTS.merge exp
-
-    # ignore what they have in ENV[HOME]    
-    ENV['HOME'] = '/this/should/not/exist'
-
-    origargs = args.dup
-    
     gopt = GlarkOptions.instance
     gopt.run args
 
-    expected.sort { |a, b| a[0].to_s <=> b[0].to_s }.each do |opt, expval|
-      expstr = "expclass: #{expval.class}; expval: #{expval.inspect}; origargs: #{origargs.inspect}"
-      [ gopt.method(opt).call, gopt[opt] ].each do |val|
-        if val.kind_of? Array
-          assert_equal expval.length, val.length, "option: #{opt}; exp length: #{expval.length}; act length: #{val.length}; " + expstr
-          (0 ... expval.length).each do |idx|
-            assert_equal expval[idx], val[idx], "option: #{opt}; index: #{idx}; exp: #{expval.inspect}; act: #{val.inspect}; " + expstr
-          end
-        else
-          assert_equal expval, val, "option: #{opt}; exp: #{expval.inspect}; act: #{val.inspect}; " + expstr
-        end
-      end
+    exp.each do |name, expval|
+      val = gopt.method(name).call
+      assert_equal expval, val
     end
     
     blk.call(gopt) if blk
@@ -119,7 +60,7 @@ class TC_Options < GlarkTestCase
   def test_record_separator
     %w{ -0 -00 -000 }.each do |arg|
       $/ = "\n"
-      run_option_test([ arg ] | %w{ foo file1 file2 } ,
+      run_option_test([ arg ] | %w{ foo file1 file2 },
                       { 
                         :expr => RegexpFuncObj.new(%r{foo}, 0)
                       }) do |gopt|
@@ -135,7 +76,7 @@ class TC_Options < GlarkTestCase
      %w{ -r    -li },
      %w{ -r  -l -i },
     ].each do |args|
-      run_option_test(args | %w{ foo },
+      run_option_test(args + %w{ foo },
                       { 
                         :directory       => "recurse",
                         :expr            => RegexpFuncObj.new(%r{foo}i, 0),
