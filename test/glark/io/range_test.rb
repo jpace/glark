@@ -1,10 +1,8 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-require 'rubygems'
-require 'riel'
 require 'tc'
-require 'glark/range'
+require 'glark/io/range'
 
 class Glark::RangeTestCase < Glark::TestCase
   def test_ctor

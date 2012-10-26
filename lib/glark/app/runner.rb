@@ -73,7 +73,13 @@ class Glark::Runner
   end
 
   def search_file input 
-    output       = @out_class.new input, @show_file_names 
+    output_opts  = OutputOptions.new
+    output_opts.show_file_names = @show_file_names
+    output_opts.label = @opts.label
+    output_opts.out = @opts.out
+    output_opts.show_line_numbers = @opts.show_line_numbers
+    
+    output       = @out_class.new input, output_opts
     input.output = output
 
     input.count        = 0    if @count

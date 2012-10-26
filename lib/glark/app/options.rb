@@ -4,6 +4,7 @@
 require 'rubygems'
 require 'riel'
 require 'glark/exprfactory'
+require 'glark/io/range'
 
 module Glark
   PACKAGE = 'glark'
@@ -370,7 +371,6 @@ class Glark::Options
     @without_basename      = nil        # match files without this basename
     @with_fullname         = nil        # match files with this fullname
     @without_fullname      = nil        # match files without this fullname
-    @show_break            = false      # whether to show the break between sections
     @split_as_path         = true       # whether to split arguments that include the path separator
 
     @highlight             = "multi"    # highlight matches (using ANSI codes)
@@ -558,8 +558,6 @@ class Glark::Options
         @line_number_highlight = make_highlight name, value
       when "output"
         set_output_style value
-      when "show-break"
-        @show_break = to_boolean value
       when "quiet"
         Log.quiet = @quiet = to_boolean(value)
       when "text-color"
@@ -656,7 +654,6 @@ class Glark::Options
       "local-config-files" => @local_config_files,
       "output" => @output,
       "quiet" => @quiet,
-      "show-break" => @show_break,
       "size-limit" => @size_limit,
       "split-as-path" => @split_as_path,
       "text-color" => @text_highlights.join(' '),
@@ -695,7 +692,6 @@ class Glark::Options
       "output" => @output,
       "quiet" => @quiet,
       "ruby version" => RUBY_VERSION,
-      "show_break" => @show_break,
       "show_file_names" => @show_file_names,
       "show_line_numbers" => @show_line_numbers,
       "text_highlights" => @text_highlights.compact.collect { |hl| hl.highlight("text") }.join(", "),

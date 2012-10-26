@@ -13,7 +13,7 @@ require 'glark/output/format'
 class GrepOutputFormat < OutputFormat
   def write_count matching = true 
     print_file_name
-    ct = matching ? @infile.count : @infile.get_lines.length - @infile.count
+    ct = matching ? @infile.count : @infile.get_lines.size - @infile.count
     puts ct
   end
 
@@ -35,7 +35,7 @@ class GrepOutputFormat < OutputFormat
   def print_file_name
     if show_file_name
       fname = @label || @infile.fname
-      print @infile.fname, ":"
+      print fname, ":"
     end
   end
 end

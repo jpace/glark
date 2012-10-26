@@ -9,23 +9,34 @@ require 'riel'
 require 'glark/app/options'
 require 'glark/io/file'
 
+class OutputOptions
+  attr_accessor :label
+  attr_accessor :out
+  attr_accessor :show_file_names
+  attr_accessor :show_line_numbers
+
+  def initialize 
+    @label = nil
+    @out = nil
+    @show_file_names = nil
+    @show_line_numbers = nil
+  end
+end
+
 class OutputFormat
   include Loggable
   
   attr_reader :formatted, :infile, :show_file_name, :has_context
 
-  def initialize infile, show_file_names 
+  def initialize infile, options
     @infile            = infile
-    @show_file_name    = show_file_names
     @formatted         = []
     @has_context       = false
 
-    opts               = Glark::Options.instance
-
-    @label             = opts.label
-    @out               = opts.out
-    @show_break        = opts.show_break
-    @show_line_numbers = opts.show_line_numbers
+    @label             = options.label
+    @out               = options.out
+    @show_file_name    = options.show_file_names
+    @show_line_numbers = options.show_line_numbers
   end
 
   # Prints the line, which is assumed to be 0-indexed, and is thus adjusted by
@@ -69,7 +80,8 @@ class OutputFormat
       (firstline .. lastline).each do |ln|
         if @infile.stati[ln]
           unless @infile.stati[ln] == Glark::File::WRITTEN
-            if firstline > 0 && !@infile.stati[ln - 1] && has_context && @show_break
+            # this used to be conditional on show_break, but no more
+            if firstline > 0 && !@infile.stati[ln - 1] && has_context
               @out.puts "  ---"
             end
             

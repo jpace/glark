@@ -7,7 +7,6 @@
 require 'rubygems'
 require 'riel'
 require 'glark/app/options'
-require 'glark/range'
 
 # A function object, which can be applied (processed) against a InputFile.
 class FuncObj
