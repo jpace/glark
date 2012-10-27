@@ -61,7 +61,7 @@ class Glark::Options
   attr_accessor :write_null
 
   def initialize
-    range_after_option = { 
+    range_after_option = {
       :tags    => %w{ --after },
       :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
       :set     => Proc.new { |md| (@range ||= Glark::Range.new).from = md[1] }
@@ -75,7 +75,7 @@ class Glark::Options
 
     range_option = {
       :tags     => %w{ -R --range },
-      :arg      => [ :required, :regexp, %r{ ^ (\d+%?),(\d+%?) $ }x ],
+      :arg      => [ :required, :regexp, Regexp.new('(\d+%?),(\d+%?)') ],
       :set      => Proc.new do |md, opt, args|
         @range = if md && md[1] && md[2]
                    Glark::Range.new md[1], md[2]

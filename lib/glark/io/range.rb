@@ -9,7 +9,8 @@ end
 class Glark::Range
   include Loggable, Comparable
 
-  PCT_RE = Regexp.new '([\.\d]+)%'
+  PCT_PAT = '([\.\d]+)%'
+  PCT_RE = Regexp.new PCT_PAT
   
   attr_accessor :from
   attr_accessor :to

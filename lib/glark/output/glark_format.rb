@@ -8,27 +8,17 @@ require 'glark/output/format'
 # Glark output format
 # -------------------------------------------------------
 
-class GlarkFormatOptions < FormatOptions
-  attr_accessor :line_number_highlight
-  
-  def initialize 
-    super
-    @line_number_highlight = nil
-  end
-end
-
 class GlarkOutputFormat < OutputFormat
   def initialize infile, options
     super
 
-    opts = Glark::Options.instance
-
-    @has_context = opts.after != 0 || opts.before != 0
     @file_header_shown = false
-    if @highlight = opts.highlight
-      @fname_highlighter = opts.file_highlight
-    end
-    @lnum_highlighter = opts.line_number_highlight
+
+    opts = Glark::Options.instance
+    @has_context = opts.after != 0 || opts.before != 0
+    
+    @fname_highlighter = options.highlight && options.file_highlight
+    @lnum_highlighter = options.line_number_highlight
   end
 
   # prints the line, and adjusts for the fact that in our world, lines are
@@ -53,7 +43,7 @@ class GlarkOutputFormat < OutputFormat
   def show_file_header
     if @show_file_name && !@file_header_shown
       fname = @label || @infile.fname
-      fname = @fname_highlighter.highlight(fname) if @highlight
+      fname = @fname_highlighter.highlight(fname) if @fname_highlighter
       
       @out.puts fname
     end
@@ -99,5 +89,4 @@ class GlarkOutputFormat < OutputFormat
     
     @out.puts line
   end
-
 end

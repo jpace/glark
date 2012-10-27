@@ -27,7 +27,7 @@ class GlarkHelp
 
     puts "Matching:"
     puts "  -a, --and=NUM EXPR1 EXPR2      Match both expressions, within NUM lines"
-    puts "  -b, --before NUM[%]            Restrict the search to the top % or lines"
+    puts "      --before NUM[%]            Restrict the search to the top % or lines"
     puts "      --after NUM[%]             Restrict the search to after the given location"
     puts "  -f, --file=FILE                Use the lines in the given file as expressions"
     puts "  -i, --ignore-case              Ignore case for matching regular expressions"

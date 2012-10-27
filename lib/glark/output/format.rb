@@ -10,13 +10,19 @@ require 'glark/app/options'
 require 'glark/io/file'
 
 class FormatOptions
+  attr_accessor :file_highlight
+  attr_accessor :highlight
   attr_accessor :label
+  attr_accessor :line_number_highlight
   attr_accessor :out
   attr_accessor :show_file_names
   attr_accessor :show_line_numbers
 
   def initialize 
+    @file_highlight = nil
+    @highlight = nil
     @label = nil
+    @line_number_highlight = nil
     @out = nil
     @show_file_names = nil
     @show_line_numbers = nil

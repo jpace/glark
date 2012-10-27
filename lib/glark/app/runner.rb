@@ -74,9 +74,12 @@ class Glark::Runner
 
   def search_file input 
     format_opts  = FormatOptions.new
-    format_opts.show_file_names = @show_file_names
+    format_opts.file_highlight = @opts.file_highlight
+    format_opts.highlight = @opts.highlight
     format_opts.label = @opts.label
+    format_opts.line_number_highlight = @opts.line_number_highlight
     format_opts.out = @opts.out
+    format_opts.show_file_names = @show_file_names
     format_opts.show_line_numbers = @opts.show_line_numbers
     
     output       = @out_class.new input, format_opts
