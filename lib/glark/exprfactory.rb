@@ -72,7 +72,7 @@ class ExpressionFactory
                           :wholelines => @wholelines,
                           :extended   => @extended,
                           :multiline  => @multiline)
-
+    
     regex_args = {
       :highlight       => @highlight,
       :text_highlights => @text_highlights,

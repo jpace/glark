@@ -68,23 +68,23 @@ class Glark::File
     end
   end
 
-  def mark_as_match start_line, end_line = start_line
+  def mark_as_match startline, endline = startline
     @matched = true
 
     # even with multi-line matches (--and expressions), we'll display
     # only the first matching line, not the range between the matches.
 
     if @output == "grep"
-      end_line = start_line
+      endline = startline
     end
 
     if @count
       @count += 1
     else
-      st = [0, start_line - @before].max
-      set_status st,           start_line - 1,    "-"
-      set_status start_line,   end_line,          ":",  true
-      set_status end_line + 1, end_line + @after, "+"
+      st = [0, startline - @before].max
+      set_status st,           startline - 1,    "-"
+      set_status startline,   endline,          ":",  true
+      set_status endline + 1, endline + @after, "+"
     end
   end
 
@@ -98,33 +98,31 @@ class Glark::File
 
   # Returns the lines for this file, separated by end of line sequences.
   def get_lines
-    if $/ == "\n"
-      @lines
-    else
-      @extracted ||= begin
-                       # This is much easier. Just resplit the whole thing at end of line
-                       # sequences.
-                       
-                       eoline    = "\n"             # should be OS-dependent
-                       srclines  = @lines
-                       reallines = @lines.join("").split ANY_END_OF_LINE
-                       
-                       # "\n" after all but the last line
-                       extracted = (0 ... (reallines.length - 1)).collect do |lnum|
-                         reallines[lnum] + eoline
-                       end
-                       extracted << reallines[-1]
+    return @lines if $/ == "\n"
+    
+    @extracted ||= begin
+                     # This is much easier. Just resplit the whole thing at end of line
+                     # sequences.
+                     
+                     eoline    = "\n"             # should be OS-dependent
+                     srclines  = @lines
+                     reallines = @lines.join("").split ANY_END_OF_LINE
+                     
+                     # "\n" after all but the last line
+                     extracted = (0 ... (reallines.length - 1)).collect do |lnum|
+        reallines[lnum] + eoline
+      end
+                     extracted << reallines[-1]
 
-                       if Log.verbose
-                         extracted.each_with_index do |line, idx|
-                           log "extracted[#{idx}]: #{@extracted[idx]}"
-                         end
-                       end
-                       extracted
+                     if Log.verbose
+                       extracted.each_with_index do |line, idx|
+          log "extracted[#{idx}]: #{@extracted[idx]}"
+        end
                      end
-    end
+                     extracted
+                   end
   end
-
+  
   # Returns the given line for this file. For this method, a line ends with a
   # CR, as opposed to the "lines" method, which ends with $/.
   def get_line lnum

@@ -54,24 +54,20 @@ class OutputFormat
   # 0-indexed, whereas they are displayed as if 1-indexed.
   def print_line lnum, ch = nil 
     log { "lnum #{lnum}, ch: '#{ch}'" }
-    begin
-      lnums = @infile.get_range lnum 
-      log { "lnums(#{lnum}): #{lnums}" }
-      if lnums
-        lnums.each do |ln|
-          if show_line_numbers
-            print_line_number ln 
-            if ch && has_context
-              @out.printf "%s ", ch
-            end
-          end
-          line = @formatted[ln] || @infile.get_line(ln)
-          @out.puts line
+    lnums = @infile.get_range lnum 
+    log { "lnums(#{lnum}): #{lnums}" }
+
+    return unless lnums
+
+    lnums.each do |ln|
+      if show_line_numbers
+        print_line_number ln 
+        if ch && @has_context
+          @out.printf "%s ", ch
         end
       end
-    rescue => e
-      # puts e
-      # puts e.backtrace
+      line = @formatted[ln] || @infile.get_line(ln)
+      @out.puts line
     end
   end
 
@@ -86,7 +82,7 @@ class OutputFormat
         if @infile.stati[ln]
           unless @infile.stati[ln] == Glark::File::WRITTEN
             # this used to be conditional on show_break, but no more
-            if firstline > 0 && !@infile.stati[ln - 1] && has_context
+            if firstline > 0 && !@infile.stati[ln - 1] && @has_context
               @out.puts "  ---"
             end
             
