@@ -3,10 +3,6 @@
 
 require 'pathname'
 require 'tempfile'
-
-testdir = Pathname.new(__FILE__).expand_path.dirname.to_s
-$:.unshift testdir
-
 require 'tc'
 require 'glark/app/options'
 

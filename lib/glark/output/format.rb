@@ -9,7 +9,7 @@ require 'riel'
 require 'glark/app/options'
 require 'glark/io/file'
 
-class OutputOptions
+class FormatOptions
   attr_accessor :label
   attr_accessor :out
   attr_accessor :show_file_names
@@ -32,7 +32,6 @@ class OutputFormat
     @infile            = infile
     @formatted         = []
     @has_context       = false
-
     @label             = options.label
     @out               = options.out
     @show_file_name    = options.show_file_names

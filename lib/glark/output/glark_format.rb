@@ -8,9 +8,17 @@ require 'glark/output/format'
 # Glark output format
 # -------------------------------------------------------
 
-class GlarkOutputFormat < OutputFormat
+class GlarkFormatOptions < FormatOptions
+  attr_accessor :line_number_highlight
+  
+  def initialize 
+    super
+    @line_number_highlight = nil
+  end
+end
 
-  def initialize infile, show_file_names 
+class GlarkOutputFormat < OutputFormat
+  def initialize infile, options
     super
 
     opts = Glark::Options.instance
@@ -43,7 +51,7 @@ class GlarkOutputFormat < OutputFormat
   end
 
   def show_file_header
-    if show_file_name && !@file_header_shown
+    if @show_file_name && !@file_header_shown
       fname = @label || @infile.fname
       fname = @fname_highlighter.highlight(fname) if @highlight
       
