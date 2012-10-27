@@ -62,7 +62,7 @@ class FuncObj
       info "line: #{line.chomp}".cyan
       info "lnum: #{lnum}".cyan
       if ((!rgstart || lnum >= rgstart) && 
-          (!rgend   || lnum <= rgend)   &&
+          (!rgend   || lnum < rgend)   &&
           evaluate(line, lnum, infile))
         
         mark_as_match infile
