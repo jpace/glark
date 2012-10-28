@@ -36,7 +36,7 @@ end
 class OutputFormat
   include Loggable
   
-  attr_reader :formatted, :infile, :show_file_name, :has_context
+  attr_reader :formatted, :infile, :has_context
 
   def initialize infile, options
     @infile            = infile
