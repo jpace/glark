@@ -77,7 +77,7 @@ class OutputFormat
 
   def write_matching from, to
     (from .. to).each do |ln|
-      next unless @file.stati[ln] && @file.stati[ln] != Glark::File::WRITTEN
+      next unless @file.stati[ln] && !@file.is_written?(ln)
 
       # this used to be conditional on show_break, but no more
       if from > 0 && !@file.stati[ln - 1] && @has_context
@@ -85,16 +85,16 @@ class OutputFormat
       end
       
       print_line ln, @file.stati[ln]  
-      @file.stati[ln] = Glark::File::WRITTEN
+      @file.set_as_written ln
     end
   end
 
   def write_nonmatching from, to
     (from .. to).each do |ln|
-      if @file.stati[ln] != Glark::File::WRITTEN && @file.stati[ln] != ":"
+      if !@file.is_written?(ln) && @file.stati[ln] != ":"
         log { "printing #{ln}" }
         print_line ln 
-        @file.stati[ln] = Glark::File::WRITTEN
+        @file.set_as_written ln
       end
     end
   end

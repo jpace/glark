@@ -38,7 +38,6 @@ class Glark::File
     @count        = nil
     @extracted    = nil
     @regions      = nil
-    @modlines     = nil
     @linecount    = nil
     @readall      = $/ != "\n"
     @lines        = @readall ? IO.readlines(@fname) : Array.new
@@ -71,10 +70,18 @@ class Glark::File
 
   def set_status from, to, ch, force = false
     from.upto(to) do |ln|
-      if (not @stati[ln]) || (@stati[ln] != WRITTEN && force)
+      if @stati[ln].nil? || (@stati[ln] != WRITTEN && force)
         @stati[ln] = ch
       end
     end
+  end
+
+  def is_written? lnum
+    @stati[lnum] == WRITTEN
+  end
+
+  def set_as_written lnum
+    @stati[lnum] = WRITTEN
   end
 
   def mark_as_match startline, endline = startline
@@ -141,15 +148,14 @@ class Glark::File
   def get_range rnum
     if $/ == "\n"
       # easy case: range is the range number, unless it is out of range.
-      rnum < @lines.length ? (rnum .. rnum) : nil
+      return rnum < @lines.length ? (rnum .. rnum) : nil
     else
+      ### $$$ todo: add tests for this (paragraph separator not \n)
       unless @regions
-        srclines = @modlines ? @modlines : @lines
-
         @regions = []           # keys = region number; values = range of lines
 
         lstart = 0
-        srclines.each do |line|
+        @lines.each do |line|
           lend = lstart
           line.scan(ANY_END_OF_LINE).each do |cr|
             lend += 1

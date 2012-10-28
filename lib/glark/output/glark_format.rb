@@ -26,7 +26,7 @@ class GlarkOutputFormat < OutputFormat
     log { "lnum #{lnum}, ch: '#{ch}'" }
     begin
       lnums = @file.get_range lnum 
-      log { "lnums(#{lnum}): #{lnums}" }
+      log { "lnums(#{lnum}): #{lnums}".on_blue }
       if lnums
         log { "printing" }
         lnums.each do |ln|
