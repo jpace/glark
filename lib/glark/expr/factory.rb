@@ -6,7 +6,6 @@
 
 require 'rubygems'
 require 'riel/regexp'
-require 'glark/app/options'
 require 'glark/expr/and'
 require 'glark/expr/and_distance'
 require 'glark/expr/ior'
