@@ -97,7 +97,7 @@ class Glark::File
     end
   end
 
-  def write_matches matching, from = nil, to = nil
+  def write_matches matching, from, to
     @formatter.write_matches matching, from, to
   end
 

@@ -61,7 +61,7 @@ class GlarkOutputFormat < OutputFormat
     @out.puts "    " + ct.to_s
   end
 
-  def write_matches matching, from = nil, to = nil 
+  def write_matches matching, from, to 
     show_file_header
     super matching, from, to 
   end

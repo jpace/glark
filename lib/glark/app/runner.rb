@@ -35,17 +35,17 @@ class Glark::Runner
                           @files.size > 1 ||
                           (@files[0] != "-" && FileType.type(@files[0]) == FileType::DIRECTORY))))
 
-    @out_class = case @opts.output
-                 when "grep"
-                   GrepOutputFormat
-                 when "ansi", "xterm", nil
-                   GlarkOutputFormat
-                 when "match"
-                   error "output to match list is not yet supported"
-                   GlarkMatchList
-                   # exit 2
-                 end
-
+    @formatter_cls = case @opts.output
+                     when "grep"
+                       GrepOutputFormat
+                     when "ansi", "xterm", nil
+                       GlarkOutputFormat
+                     when "match"
+                       error "output to match list is not yet supported"
+                       GlarkMatchList
+                       # exit 2
+                     end
+    
     @invert_match = @opts.invert_match
 
     @after  = @opts.after
@@ -71,22 +71,6 @@ class Glark::Runner
   end
 
   def search_file file 
-    format_opts = FormatOptions.new
-    format_opts.after = @opts.after
-    format_opts.before = @opts.before
-    format_opts.file_highlight = @opts.file_highlight
-    format_opts.highlight = @opts.highlight
-    format_opts.label = @opts.label
-    format_opts.line_number_highlight = @opts.line_number_highlight
-    format_opts.out = @opts.out
-    format_opts.show_file_names = @show_file_names
-    format_opts.show_line_numbers = @opts.show_line_numbers
-    
-    formatter = @out_class.new file, format_opts
-
-    file.formatter = formatter
-    file.count = 0 if @opts.count
-    
     @func.process file 
 
     if file.matched?
@@ -104,6 +88,29 @@ class Glark::Runner
     @skip_methods.detect { |meth| meth.call fname }
   end
 
+  def create_file filecls, name, io
+    fopts = Glark::FileOptions.new @after, @before, @output
+    file = filecls.new name, io, fopts
+
+    format_opts = FormatOptions.new
+    format_opts.after = @opts.after
+    format_opts.before = @opts.before
+    format_opts.file_highlight = @opts.file_highlight
+    format_opts.highlight = @opts.highlight
+    format_opts.label = @opts.label
+    format_opts.line_number_highlight = @opts.line_number_highlight
+    format_opts.out = @opts.out
+    format_opts.show_file_names = @show_file_names
+    format_opts.show_line_numbers = @opts.show_line_numbers
+    
+    formatter = @formatter_cls.new file, format_opts
+
+    file.formatter = formatter
+    file.count = 0 if @opts.count
+
+    file
+  end
+
   def search_text fname
     if skipped? fname
       log { "skipping file: #{fname}" }
@@ -113,7 +120,7 @@ class Glark::Runner
 
       io = fname == "-" ? $stdin : File.new(fname)
 
-      file = Glark::File.new fname, io, fopts
+      file = create_file Glark::File, fname, io
       search_file file
     end
   end
@@ -130,9 +137,9 @@ class Glark::Runner
         
       when "binary"
         log { "searching binary file #{fname} for #{@func}" }
-        f = File.new fname
-        f.binmode                # for MSDOS/WinWhatever
-        bf = BinaryFile.new fname, f
+        file = File.new fname
+        file.binmode            # for MSDOS/WinWhatever
+        bf = BinaryFile.new fname, file
         search_file bf
         
       when "text"
