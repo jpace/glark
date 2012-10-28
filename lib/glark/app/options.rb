@@ -331,13 +331,13 @@ class Glark::Options
                {
                  :tags => %w{ -f --file },
                  :arg  => [ :string ],
-                 :set  => Proc.new { |fname| @expr = ExpressionFactory.new.read_file fname }
+                 :set  => Proc.new { |fname| @expr = get_expression_factory.read_file fname }
                },
                {
                  :tags => %w{ -o -a },
                  :set  => Proc.new do |md, opt, args|
                    args.unshift opt
-                   @expr = ExpressionFactory.new.make_expression args
+                   @expr = get_expression_factory.make_expression args
                  end
                },
                {
@@ -554,7 +554,7 @@ class Glark::Options
       case name
       when "expression"
         # this should be more intelligent than just splitting on whitespace:
-        @expr = ExpressionFactory.new.make_expression value.split(/\s+/)
+        @expr = get_expression_factory.make_expression value.split(/\s+/)
       when "file-color"
         @file_highlight = make_highlight name, value
       when "filter"
@@ -633,7 +633,7 @@ class Glark::Options
       end
       
       if @args && @args.size > 0
-        @expr = ExpressionFactory.new.make_expression @args, !known_end
+        @expr = get_expression_factory.make_expression @args, !known_end
         return
       end
     end
@@ -744,6 +744,11 @@ class Glark::Options
       $stderr.puts e
       exit 2
     end
+  end
+
+  def get_expression_factory
+    # we'll be creating this each time, in case these options change
+    ExpressionFactory.new
   end
 
   def show_version
