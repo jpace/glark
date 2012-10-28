@@ -13,8 +13,7 @@ class CompoundExpression < Expression
   attr_reader :ops
 
   def initialize(*ops)
-    @ops  = ops
-    @file = nil
+    @ops = ops
     super()
   end
 

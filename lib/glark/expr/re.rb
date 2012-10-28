@@ -10,7 +10,6 @@ class RegexpExpression < Expression
 
   def initialize re, hlidx, args = Hash.new
     @re = re
-    @file = nil
     if @highlight = args[:highlight]
       @text_highlights = args[:text_highlights]
       @hlidx           = if @text_highlights.length > 0 && args[:highlight] == "multi"

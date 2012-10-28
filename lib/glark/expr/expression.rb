@@ -12,7 +12,7 @@ require 'glark/app/options'
 class Expression
   include Loggable
   
-  attr_accessor :file, :matches, :invert_match
+  attr_accessor :matches, :invert_match
 
   def initialize
     @match_line_number = nil
@@ -42,7 +42,6 @@ class Expression
 
   def reset_file file
     @match_line_number = nil
-    @file = file
     @matches = Array.new
   end
 
