@@ -4,14 +4,14 @@
 
 # Expression factory.
 
-require 'English'
 require 'rubygems'
-require 'riel'
+require 'riel/regexp'
 require 'glark/app/options'
-require 'glark/expr/re'
-require 'glark/expr/ior'
-require 'glark/expr/xor'
 require 'glark/expr/and'
+require 'glark/expr/and_distance'
+require 'glark/expr/ior'
+require 'glark/expr/re_factory'
+require 'glark/expr/xor'
 
 class FactoryOptions
   attr_accessor :extended
@@ -36,21 +36,10 @@ end
 class ExpressionFactory
   include Loggable
 
-  # signifies no limit to the distance between matches, i.e., anywhere within
-  # the entire file is valid.
-  INFINITE_DISTANCE = -1
-
   attr_reader :expr
 
-  def initialize options
-    @regexps         = 0
-    @ignorecase      = options.ignorecase
-    @wholewords      = options.whole_words
-    @wholelines      = options.whole_lines
-    @extended        = options.extended
-    @highlight       = options.highlight
-    @text_highlights = options.text_highlights
-    @extract_matches = options.extract_matches
+  def initialize expropts
+    @regexp_factory = RegexpExpressionFactory.new expropts
   end
 
   # reads a file containing one regular expression per line.
@@ -61,15 +50,15 @@ class ExpressionFactory
       file.each_line do |line|
         log { "line: #{line}" }
         line.strip!
-        unless line.empty?
-          # flatten the or expression instead of nesting it, to avoid
-          # stack overruns for very large files.
-          re = make_regular_expression line.chomp
-          if expr 
-            expr.ops << re
-          else
-            expr = InclusiveOrExpression.new re
-          end
+        next if line.empty?
+
+        # flatten the or expression instead of nesting it, to avoid
+        # stack overruns for very large files.
+        re = make_regular_expression line.chomp
+        if expr 
+          expr.ops << re
+        else
+          expr = InclusiveOrExpression.new re
         end
       end
     end
@@ -80,28 +69,7 @@ class ExpressionFactory
   end
 
   def make_regular_expression pattern, negated = false
-    # this check is because they may have omitted the pattern, e.g.:
-    #   % glark *.cpp
-    if File.exists? pattern
-      warn "pattern '#{pattern}' exists as a file.\n    Pattern may have been omitted."
-    end
-
-    regex = Regexp.create(pattern.dup, 
-                          :negated    => negated, 
-                          :ignorecase => @ignorecase,
-                          :wholewords => @wholewords,
-                          :wholelines => @wholelines,
-                          :extended   => @extended)
-    
-    regex_args = {
-      :highlight       => @highlight,
-      :text_highlights => @text_highlights,
-      :extract_matches => @extract_matches
-    }    
-
-    re = RegexpExpression.new regex, @regexps, regex_args
-    @regexps += 1
-    re
+    @regexp_factory.create_expression pattern, negated
   end
 
   # creates two expressions and returns them.
@@ -151,38 +119,9 @@ class ExpressionFactory
     ExclusiveOrExpression.new a1, a2
   end
 
-  def numeric? x
-    x && (x.kind_of?(Fixnum) || (x.to_i == INFINITE_DISTANCE || x.num))
-  end  
-
   def make_and_distance arg, args
-    dist = nil
-    if arg == "-a"
-      dist = args.shift
-    elsif arg == "--and"
-      if args.size > 0 && numeric?(args[0])
-        dist = args.shift
-      else
-        dist = "0"
-      end
-    elsif arg.index(/^--and=(\-?\d+)?$/)
-      dist = $1
-    end
-
-    # check to ensure that this is numeric
-    if !numeric? dist
-      error "invalid distance for 'and' expression: '#{dist}'\n" +
-        "    expecting an integer, or #{INFINITE_DISTANCE} for 'infinite'" 
-      exit 2
-    end
-    
-    if dist.to_i == INFINITE_DISTANCE
-      dist = 1.0 / 0.0            # infinity
-    else
-      dist = dist.to_i
-    end
-
-    dist
+    adist = AndDistance.new arg, args
+    adist.distance
   end
   
   def make_and_expression arg, args
@@ -262,5 +201,4 @@ class ExpressionFactory
       nil
     end
   end
-
 end
