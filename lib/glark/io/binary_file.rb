@@ -6,7 +6,7 @@ require 'glark/io/file'
 
 class Glark::BinaryFile < Glark::File
   def write_matches matching, from, to
-    if count
+    if @count
       @output.write_count matching
     else
       puts "Binary file " + @fname + " matches"

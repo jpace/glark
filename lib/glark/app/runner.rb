@@ -87,7 +87,6 @@ class Glark::Runner
     file.output = output
 
     file.count = 0 if @count
-    file.invert_match = true if @invert_match
     
     @func.process file 
 

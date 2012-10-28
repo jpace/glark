@@ -12,7 +12,7 @@ class Glark::File
   include Loggable
 
   attr_reader :fname, :stati
-  attr_accessor :count, :output, :invert_match
+  attr_accessor :count, :output
 
   # cross-platform end of line:   DOS  UNIX  MAC
   ANY_END_OF_LINE = Regexp.new '(?:\r\n|\n|\r)'
@@ -27,7 +27,6 @@ class Glark::File
     @extracted    = nil
     @regions      = nil
     @modlines     = nil
-    @invert_match = false
     @linecount    = nil
     @readall      = $/ != "\n"
     @lines        = @readall ? IO.readlines(@fname) : Array.new
@@ -74,7 +73,6 @@ class Glark::File
     # even with multi-line matches (--and expressions), we'll display
     # only the first matching line, not the range between the matches.
 
-    info "@output.inspect: #{@output.inspect}".on_blue
     if @output.kind_of? GrepOutputFormat
       endline = startline
     end
