@@ -10,7 +10,7 @@ require 'glark/io/file'
 require 'glark/io/binary_file'
 require 'glark/output/grep_format'
 require 'glark/output/glark_format'
-require 'glark/expression'
+require 'glark/expr/expression'
 
 $stdout.sync = true             # unbuffer
 $stderr.sync = true             # unbuffer

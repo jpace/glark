@@ -8,7 +8,10 @@ require 'English'
 require 'rubygems'
 require 'riel'
 require 'glark/app/options'
-require 'glark/expression'
+require 'glark/expr/re'
+require 'glark/expr/ior'
+require 'glark/expr/xor'
+require 'glark/expr/and'
 
 class ExpressionFactory
   include Loggable
@@ -79,7 +82,7 @@ class ExpressionFactory
       :extract_matches => @extract_matches
     }    
 
-    re = RegexpFuncObj.new regex, @regexps, regex_args
+    re = RegexpExpression.new regex, @regexps, regex_args
     @regexps += 1
     re
   end

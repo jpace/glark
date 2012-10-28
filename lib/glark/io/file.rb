@@ -82,7 +82,7 @@ class Glark::File
       @count += 1
     else
       st = [0, startline - @before].max
-      set_status st,           startline - 1,    "-"
+      set_status st,          startline - 1,    "-"
       set_status startline,   endline,          ":",  true
       set_status endline + 1, endline + @after, "+"
     end
@@ -109,15 +109,11 @@ class Glark::File
                      reallines = @lines.join("").split ANY_END_OF_LINE
                      
                      # "\n" after all but the last line
-                     extracted = (0 ... (reallines.length - 1)).collect do |lnum|
-        reallines[lnum] + eoline
-      end
+                     extracted = (0 ... (reallines.length - 1)).collect { |lnum| reallines[lnum] + eoline }
                      extracted << reallines[-1]
 
                      if Log.verbose
-                       extracted.each_with_index do |line, idx|
-          log "extracted[#{idx}]: #{@extracted[idx]}"
-        end
+                       extracted.each_with_index { |line, idx| "extracted[#{idx}]: #{@extracted[idx]}" }
                      end
                      extracted
                    end

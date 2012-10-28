@@ -3,7 +3,7 @@
 
 require 'rubygems'
 require 'riel'
-require 'glark/exprfactory'
+require 'glark/expr/exprfactory'
 require 'glark/io/range'
 
 module Glark
@@ -14,6 +14,43 @@ end
 # -------------------------------------------------------
 # Options
 # -------------------------------------------------------
+
+class Glark::RangeOption
+  attr_accessor :range
+  
+  def initialize 
+    @range = nil
+  end
+
+  def options
+    range_after_option = {
+      :tags    => %w{ --after },
+      :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
+      :set     => Proc.new { |md| (@range ||= Glark::Range.new).from = md[1] }
+    }
+
+    range_before_option = { 
+      :tags    => %w{ --before },
+      :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
+      :set     => Proc.new { |md| (@range ||= Glark::Range.new).to = md[1] }
+    }
+
+    range_option = {
+      :tags     => %w{ -R --range },
+      :arg      => [ :required, :regexp, Regexp.new('(\d+%?),(\d+%?)') ],
+      :set      => Proc.new do |md, opt, args|
+        @range = if md && md[1] && md[2]
+                   Glark::Range.new md[1], md[2]
+                 else
+                   Glark::Range.new args.shift, args.shift
+                 end
+      end
+    }
+
+    [ range_after_option, range_before_option, range_option ]
+  end
+end
+
 
 class Glark::Options
   include Loggable, Singleton
@@ -43,7 +80,6 @@ class Glark::Options
   attr_accessor :out
   attr_accessor :output
   attr_accessor :quiet
-  attr_accessor :range
   attr_accessor :show_break
   attr_accessor :show_file_names
   attr_accessor :show_line_numbers
@@ -61,30 +97,11 @@ class Glark::Options
   attr_accessor :write_null
 
   def initialize
-    range_after_option = {
-      :tags    => %w{ --after },
-      :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
-      :set     => Proc.new { |md| (@range ||= Glark::Range.new).from = md[1] }
-    }
+    @range_option = Glark::RangeOption.new
+    rg_options = @range_option.options
 
-    range_before_option = { 
-      :tags    => %w{ --before },
-      :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
-      :set     => Proc.new { |md| (@range ||= Glark::Range.new).to = md[1] }
-    }
-
-    range_option = {
-      :tags     => %w{ -R --range },
-      :arg      => [ :required, :regexp, Regexp.new('(\d+%?),(\d+%?)') ],
-      :set      => Proc.new do |md, opt, args|
-        @range = if md && md[1] && md[2]
-                   Glark::Range.new md[1], md[2]
-                 else
-                   Glark::Range.new args.shift, args.shift
-                 end
-      end
-    }
-
+    range_after_option, range_before_option, range_option = *rg_options
+    
     context_option = {
       :tags => %w{ -C --context },
       :res  => %r{ ^ - ([1-9]\d*) $ }x,
@@ -305,12 +322,12 @@ class Glark::Options
                  :set  => Proc.new { |val| @size_limit = val }
                },
                {
-                 :tags => %w{ -T --text-color },
+                 :tags => %w{ --text-color },
                  :arg  => [ :string ],
                  :set  => Proc.new { |val| @text_highlights = [ make_highlight "text-color", val ] }
                },
                {
-                 :tags => %w{ -F --file-color },
+                 :tags => %w{ --file-color },
                  :arg  => [ :string ],
                  :set  => Proc.new { |val| @file_highlight = make_highlight "file-color", val }
                },
@@ -337,6 +354,14 @@ class Glark::Options
     reset
   end
 
+  def range
+    @range_option.range
+  end
+
+  def range= rg
+    @range_option.range = rg
+  end
+
   def [] name
     instance_eval "@" + name.to_s
   end
@@ -360,7 +385,7 @@ class Glark::Options
     @multiline             = false      # whether to use multiline regexps
     @local_config_files    = false      # use local .glarkrc files
     @quiet                 = false      # minimize warnings
-    @range                 = nil        # range to start and stop searching; nil => the entire file
+    @range_option.range    = nil        # range to start and stop searching; nil => the entire file
     @show_line_numbers     = true       # display numbers of matching lines
     @show_file_names       = nil        # show the names of matching files; nil == > 1; true == >= 1; false means never
     @verbose               = nil        # display debugging output
@@ -716,9 +741,9 @@ class Glark::Options
   # check options for collisions/data validity
   def validate
     range = self.range
-    return true if @range.nil?
+    return true if range.nil?
     begin
-      @range.valid?
+      range.valid?
     rescue Glark::RangeError => e
       $stderr.puts e
       exit 2

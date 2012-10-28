@@ -45,7 +45,7 @@ class GlarkHelp
     puts "  -B, --before-context=NUM       Print NUM lines of leading context"
     puts "  -C, -NUM, --context[=NUM]      Output NUM lines of context"
     puts "  -c, --count                    Display only the match count per file"
-    puts "  -F, --file-color COLOR         Specify the highlight color for file names"
+    puts "      --file-color COLOR         Specify the highlight color for file names"
     puts "      --no-filter                Display the entire file"
     puts "  -g, --grep                     Produce output like the grep default"
     puts "  -h, --no-filename              Do not display the names of matching files"
@@ -57,8 +57,7 @@ class GlarkHelp
     puts "  -N, --no-line-number           Do not display line numbers"
     puts "      --line-number-color COLOR  Specify the highlight color for line numbers"
     # puts "      --output=FORMAT            Produce output in the format (ansi, grep)"
-    puts "  -T, --text-color COLOR         Specify the highlight color for text"
-    puts "      --text-color-NUM COLOR     Specify the highlight color for regexp capture NUM"
+    puts "      --text-color COLOR         Specify the highlight color for text"
     puts "  -u, --highlight[=FORMAT]       Enable highlighting. Format is single or multi"
     puts "  -U, --no-highlight             Disable highlighting"
     puts "  -y, --extract-matches          Display only the matching region, not the entire line"
@@ -78,7 +77,7 @@ class GlarkHelp
     puts ""
     puts "On Unix systems, run glark --man for more information."
   end
-
+  
   def show_man
     pn = Pathname.new __FILE__
 
