@@ -57,22 +57,7 @@ class OutputFormat
   # prints the line, and adjusts for the fact that in our world, lines are
   # 0-indexed, whereas they are displayed as if 1-indexed.
   def print_line lnum, ch = nil 
-    log { "lnum #{lnum}, ch: '#{ch}'" }
-    lnums = @file.get_range lnum 
-    log { "lnums(#{lnum}): #{lnums}" }
-
-    return unless lnums
-
-    lnums.each do |ln|
-      if show_line_numbers
-        print_line_number ln 
-        if ch && @has_context
-          @out.printf "%s ", ch
-        end
-      end
-      line = @formatted[ln] || @file.get_line(ln)
-      @out.puts line
-    end
+    raise "error: print_line must be implemented by a formatter subclass"
   end
 
   def write_matching from, to
@@ -91,11 +76,10 @@ class OutputFormat
 
   def write_nonmatching from, to
     (from .. to).each do |ln|
-      if !@file.is_written?(ln) && @file.stati[ln] != ":"
-        log { "printing #{ln}" }
-        print_line ln 
-        @file.set_as_written ln
-      end
+      next if @file.is_written?(ln) || @file.stati[ln] == ":"
+      log { "printing #{ln}" }
+      print_line ln 
+      @file.set_as_written ln
     end
   end
 
