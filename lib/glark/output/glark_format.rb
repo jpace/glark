@@ -13,7 +13,7 @@ class GlarkOutputFormat < OutputFormat
   def initialize file, options
     super
 
-    @file_header = nil
+    @file_header = nil          # not nil after file header written
     
     @has_context = options.after != 0 || options.before != 0    
     @fname_highlighter = options.highlight && options.file_highlight
@@ -24,18 +24,12 @@ class GlarkOutputFormat < OutputFormat
   # 0-indexed, whereas they are displayed as if 1-indexed.
   def print_line lnum, ch = nil 
     log { "lnum #{lnum}, ch: '#{ch}'" }
-    begin
-      lnums = @file.get_range lnum 
-      log { "lnums(#{lnum}): #{lnums}".on_blue }
-      if lnums
-        log { "printing" }
-        lnums.each do |ln|
-          println ln, ch 
-        end
-      end
-    rescue => e
-      # puts e
-      # puts e.backtrace
+    lnums = @file.get_range lnum 
+    log { "lnums(#{lnum}): #{lnums}".on_blue }
+    return unless lnums
+    log { "printing" }
+    lnums.each do |ln|
+      println ln, ch 
     end
   end
 

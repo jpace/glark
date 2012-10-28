@@ -19,6 +19,8 @@ class Glark::MatchTestCase < Glark::TestCase
     outfname = infname = nil
 
     begin
+      Log.verbose = true
+
       outfname = create_file do |outfile|
         opts.out = outfile
         infname = write_file contents
@@ -27,8 +29,6 @@ class Glark::MatchTestCase < Glark::TestCase
         glark = Glark::Runner.new expr, files
         glark.search infname
       end
-
-      Log.verbose = true
 
       puts "contents"
       puts "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"

@@ -38,14 +38,14 @@ class OutputFormat
   
   attr_reader :formatted
 
-  def initialize file, options
+  def initialize file, fmtopts
     @file              = file
     @formatted         = []
     @has_context       = false
-    @label             = options.label
-    @out               = options.out
-    @show_file_name    = options.show_file_names
-    @show_line_numbers = options.show_line_numbers
+    @label             = fmtopts.label
+    @out               = fmtopts.out
+    @show_file_name    = fmtopts.show_file_names
+    @show_line_numbers = fmtopts.show_line_numbers
   end
 
   # Prints the line, which is assumed to be 0-indexed, and is thus adjusted by
@@ -106,5 +106,4 @@ class OutputFormat
   def show_line_numbers
     @show_line_numbers
   end
-
 end
