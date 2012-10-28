@@ -74,7 +74,8 @@ class Glark::File
     # even with multi-line matches (--and expressions), we'll display
     # only the first matching line, not the range between the matches.
 
-    if @output == "grep"
+    info "@output.inspect: #{@output.inspect}".on_blue
+    if @output.kind_of? GrepOutputFormat
       endline = startline
     end
 

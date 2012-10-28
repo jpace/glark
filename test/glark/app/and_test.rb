@@ -58,4 +58,23 @@ class Glark::AndTestCase < Glark::AppTestCase
                ]
     run_app_test expected, [ '--and=-1', '\b529\d{2}\b', 'TheKni.*Tale' ], fname
   end
+
+  def test_multi_line_grep_one_file
+    fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+    expected = [
+                "  -rw-r--r--   1 jpace jpace   42282 2010-12-04 15:24 11-TheSquiresTale.txt",
+                "  -rw-r--r--   1 jpace jpace   30734 2010-12-04 15:24 21-TheSecondNunsTale.txt",
+                "  -rw-r--r--   1 jpace jpace   51996 2010-12-04 15:24 12-TheFranklinsTale.txt",
+               ]
+    run_app_test expected, [ '-g', '--and=3', '\b5\d{4}\b', 'TheS.*Tale' ], fname
+  end
+
+  def test_multi_line_grep_two_files
+    fnames = [ '/proj/org/incava/glark/test/resources/textfile.txt', '/proj/org/incava/glark/test/resources/filelist.txt' ]
+    expected = [
+                "/proj/org/incava/glark/test/resources/textfile.txt:  -rw-r--r--   1 jpace jpace   30734 2010-12-04 15:24 21-TheSecondNunsTale.txt",
+                "/proj/org/incava/glark/test/resources/filelist.txt:21-The_Second_Nuns_Tale.txt",
+               ]
+    run_app_test expected, [ '-g', '--and=3', '\b21\b', 'The.*Can.*Tale' ], *fnames
+  end
 end

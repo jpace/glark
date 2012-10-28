@@ -19,23 +19,25 @@ class GrepOutputFormat < OutputFormat
 
   # prints the line, and adjusts for the fact that in our world, lines are
   # 0-indexed, whereas they are displayed as if 1-indexed.
-  def print_line lnum, ch = nil 
-    ln = get_line_to_print lnum 
+  def print_line lnum, ch = nil
+    info "lnum: #{lnum}".on_red
+    ln = get_line_to_print lnum
+    info "ln: #{ln}".on_magenta
 
     if ln
       print_file_name
       if show_line_numbers
-        printf "%d: ", lnum + 1
+        @out.printf "%d: ".on_red, lnum + 1
       end
       
-      print ln
+      @out.print ln
     end
   end
 
   def print_file_name
     if @show_file_name
       fname = @label || @file.fname
-      print fname, ":"
+      @out.print fname, ":"
     end
   end
 end

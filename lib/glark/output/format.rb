@@ -75,38 +75,45 @@ class OutputFormat
     end
   end
 
+  def write_matching from, to
+    firstline = from ? from : 0
+    lastline  = to   ? to   : @file.get_lines.length - 1
+
+    (firstline .. lastline).each do |ln|
+      if @file.stati[ln]
+        unless @file.stati[ln] == Glark::File::WRITTEN
+          # this used to be conditional on show_break, but no more
+          if firstline > 0 && !@file.stati[ln - 1] && @has_context
+            @out.puts "  ---"
+          end
+          
+          print_line ln, @file.stati[ln]  
+
+          @file.stati[ln] = Glark::File::WRITTEN
+        end
+      end
+    end
+  end
+
+  def write_nonmatching from, to
+    firstline = from ? from : 0
+    lastline  = to ? to : @file.get_lines.length - 1
+    (firstline .. lastline).each do |ln|
+      if @file.stati[ln] != Glark::File::WRITTEN && @file.stati[ln] != ":"
+        log { "printing #{ln}" }
+        print_line ln 
+        @file.stati[ln] = Glark::File::WRITTEN
+      end
+    end
+  end
+
   def write_matches matching, from, to 
     if @file.count
       write_count matching 
     elsif matching
-      firstline = from ? from : 0
-      lastline  = to   ? to   : @file.get_lines.length - 1
-
-      (firstline .. lastline).each do |ln|
-        if @file.stati[ln]
-          unless @file.stati[ln] == Glark::File::WRITTEN
-            # this used to be conditional on show_break, but no more
-            if firstline > 0 && !@file.stati[ln - 1] && @has_context
-              @out.puts "  ---"
-            end
-            
-            print_line ln, @file.stati[ln]  
-
-            @file.stati[ln] = Glark::File::WRITTEN
-          end
-        end
-
-      end
+      write_matching from, to
     else
-      firstline = from ? from : 0
-      lastline  = to ? to : @file.get_lines.length - 1
-      (firstline .. lastline).each do |ln|
-        if @file.stati[ln] != Glark::File::WRITTEN && @file.stati[ln] != ":"
-          log { "printing #{ln}" }
-          print_line ln 
-          @file.stati[ln] = Glark::File::WRITTEN
-        end
-      end
+      write_nonmatching from, to
     end
   end
 

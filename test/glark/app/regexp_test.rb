@@ -32,4 +32,16 @@ class Glark::RegexpTestCase < Glark::AppTestCase
                ]
     run_app_test expected, [ 'The\w+Tale' ], fname
   end
+
+
+  def test_one_line_grep
+    fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+    expected = [
+                "  -rw-r--r--   1 jpace jpace   35994 2010-12-04 15:24 08-TheSompnoursTale.txt",
+                "  -rw-r--r--   1 jpace jpace   42282 2010-12-04 15:24 11-TheSquiresTale.txt",
+                "  -rw-r--r--   1 jpace jpace   25163 2010-12-04 15:24 15-TheShipmansTale.txt",
+                "  -rw-r--r--   1 jpace jpace   30734 2010-12-04 15:24 21-TheSecondNunsTale.txt",
+               ]
+    run_app_test expected, [ '-g', 'TheS.*Tale' ], fname
+  end
 end
