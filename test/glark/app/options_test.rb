@@ -77,7 +77,7 @@ class Glark::OptionsTestCase < Glark::TestCase
                         :directory       => "recurse",
                         :expr            => RegexpExpression.new(%r{foo}i, 0),
                         :file_names_only => true,
-                        :nocase          => true,
+                        :ignorecase      => true,
                       })
     end
   end
@@ -253,7 +253,7 @@ class Glark::OptionsTestCase < Glark::TestCase
     %w{ -i --ignore-case }.each do |opt|
       run_option_test([ opt, 'foo' ],
                       { 
-                        :nocase          => true,
+                        :ignorecase      => true,
                         :expr            => RegexpExpression.new(%r{foo}i, 0),
                       })
     end

@@ -70,12 +70,12 @@ class Glark::Options
   attr_accessor :filter
   attr_accessor :highlight
   attr_accessor :highlighter
+  attr_accessor :ignorecase
   attr_accessor :invert_match
   attr_accessor :label
   attr_accessor :line_number_highlight
   attr_accessor :local_config_files
   attr_accessor :match_limit
-  attr_accessor :nocase
   attr_accessor :out
   attr_accessor :output
   attr_accessor :quiet
@@ -146,7 +146,7 @@ class Glark::Options
                },
                {
                  :tags => %w{ -i --ignore-case },
-                 :set  => Proc.new { @nocase = true }
+                 :set  => Proc.new { @ignorecase = true }
                },
                {
                  :tags => %w{ --filter },
@@ -377,7 +377,7 @@ class Glark::Options
     @file_names_only       = false      # display only the file names
     @filter                = true       # display only matches
     @invert_match          = false      # display non-matching lines
-    @nocase                = false      # match case
+    @ignorecase            = false      # match case
     @match_limit           = nil        # the maximum number of matches to display per file
     @local_config_files    = false      # use local .glarkrc files
     @quiet                 = false      # minimize warnings
@@ -564,7 +564,7 @@ class Glark::Options
       when "highlight"
         @highlight = value
       when "ignore-case"
-        @nocase = to_boolean value
+        @ignorecase = to_boolean value
       when "known-nontext-files"
         value.split.each do |ext|
           FileTester.set_nontext ext
@@ -668,7 +668,7 @@ class Glark::Options
       "file-color" => @file_highlight,
       "filter" => @filter,
       "highlight" => @highlight,
-      "ignore-case" => @nocase,
+      "ignore-case" => @ignorecase,
       "known-nontext-files" => FileTester.nontext_extensions.sort.join(' '),
       "known-text-files" => FileTester.text_extensions.sort.join(' '),
       "line-number-color" => @line_number_highlight,
@@ -702,6 +702,7 @@ class Glark::Options
       "file_names_only" => @file_names_only,
       "filter" => @filter,
       "highlight" => @highlight,
+      "ignorecase" => @ignorecase,
       "invert_match" => @invert_match,
       "known_nontext_files" => FileTester.nontext_extensions.join(", "),
       "known_text_files" => FileTester.text_extensions.join(", "),
@@ -709,7 +710,6 @@ class Glark::Options
       "line_number_highlight" => @line_number_highlight ? @line_number_highlight.highlight("12345") : "12345",
       "local_config_files" => @local_config_files,
       "match_limit" => @match_limit,
-      "nocase" => @nocase,
       "output" => @output,
       "quiet" => @quiet,
       "ruby version" => RUBY_VERSION,
@@ -721,8 +721,8 @@ class Glark::Options
       "whole_lines" => @whole_lines,
       "whole_words" => @whole_words,
       "with-basename" => @with_basename,
-      "without-basename" => @without_basename,
       "with-fullname" => @with_fullname,
+      "without-basename" => @without_basename,
       "without-fullname" => @without_fullname,
       "write_null" => @write_null,
     }

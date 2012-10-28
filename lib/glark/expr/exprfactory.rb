@@ -25,7 +25,7 @@ class ExpressionFactory
   def initialize
     @regexps         = 0
     opts             = Glark::Options.instance
-    @ignorecase      = opts.nocase
+    @ignorecase      = opts.ignorecase
     @wholewords      = opts.whole_words
     @wholelines      = opts.whole_lines
     @extended        = opts.extended
