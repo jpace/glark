@@ -3,6 +3,7 @@
 # vim: set filetype=ruby : set sw=2
 
 require 'glark/output/format'
+require 'glark/output/file_header'
 
 # -------------------------------------------------------
 # Glark output format
@@ -12,7 +13,7 @@ class GlarkOutputFormat < OutputFormat
   def initialize infile, options
     super
 
-    @file_header_shown = false
+    @file_header = nil
     
     @has_context = options.after != 0 || options.before != 0    
     @fname_highlighter = options.highlight && options.file_highlight
@@ -39,13 +40,10 @@ class GlarkOutputFormat < OutputFormat
   end
 
   def show_file_header
-    if @show_file_name && !@file_header_shown
-      fname = @label || @infile.fname
-      fname = @fname_highlighter.highlight(fname) if @fname_highlighter
-      
-      @out.puts fname
+    if @show_file_name && @file_header.nil?
+      @file_header = FileHeader.new @label || @infile.fname, @fname_highlighter
+      @file_header.print @out
     end
-    @file_header_shown = true
   end
 
   def print_line_number lnum 
