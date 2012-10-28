@@ -8,7 +8,7 @@ require 'rubygems'
 require 'riel'
 require 'glark/app/options'
 
-# A function object, which can be applied (processed) against a InputFile.
+# A function object, which can be applied (processed) against a Glark::File.
 class FuncObj
   include Loggable
   
@@ -195,26 +195,25 @@ class RegexpFuncObj < FuncObj
     
     lnums = file.get_range lnum
     log { "lnums(#{lnum}): #{lnums}" }
-    if lnums
-      lnums.each do |ln|
-        str = file.output.formatted[ln] || file.get_line(ln)
-        if Log.verbose
-          log { "file.output.formatted[#{ln}]: #{file.output.formatted[ln]}" }
-          log { "file.get_line(#{ln}): #{file.get_line(ln)}" }
-          log { "highlighting: #{str}" }
-        end
+    return unless lnums
+
+    lnums.each do |ln|
+      str = file.output.formatted[ln] || file.get_line(ln)
+      if Log.verbose
+        log { "file.output.formatted[#{ln}]: #{file.output.formatted[ln]}" }
+        log { "file.get_line(#{ln}): #{file.get_line(ln)}" }
+        log { "highlighting: #{str}" }
+      end
+      
+      file.output.formatted[ln] = str.gsub(@re) do |m|
+        lastcapts = Regexp.last_match.captures
+        # find the index of the first non-nil capture:
+        miidx = (0 ... lastcapts.length).find { |mi| lastcapts[mi] } || @hlidx
         
-        file.output.formatted[ln] = str.gsub(@re) do |m|
-          lastcapts = Regexp.last_match.captures
-          # find the index of the first non-nil capture:
-          miidx = (0 ... lastcapts.length).find { |mi| lastcapts[mi] } || @hlidx
-          
-          @text_highlights[miidx].highlight m
-        end
+        @text_highlights[miidx].highlight m
       end
     end
   end
-  
 end
 
 
