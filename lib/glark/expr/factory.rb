@@ -42,17 +42,15 @@ class ExpressionFactory
 
   attr_reader :expr
 
-  def initialize
+  def initialize options
     @regexps         = 0
-    opts             = Glark::Options.instance
-    
-    @ignorecase      = opts.ignorecase
-    @wholewords      = opts.whole_words
-    @wholelines      = opts.whole_lines
-    @extended        = opts.extended
-    @highlight       = opts.highlight
-    @text_highlights = opts.text_highlights
-    @extract_matches = opts.extract_matches
+    @ignorecase      = options.ignorecase
+    @wholewords      = options.whole_words
+    @wholelines      = options.whole_lines
+    @extended        = options.extended
+    @highlight       = options.highlight
+    @text_highlights = options.text_highlights
+    @extract_matches = options.extract_matches
   end
 
   # reads a file containing one regular expression per line.

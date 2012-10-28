@@ -13,10 +13,8 @@ class GlarkOutputFormat < OutputFormat
     super
 
     @file_header_shown = false
-
-    opts = Glark::Options.instance
-    @has_context = opts.after != 0 || opts.before != 0
     
+    @has_context = options.after != 0 || options.before != 0    
     @fname_highlighter = options.highlight && options.file_highlight
     @lnum_highlighter = options.line_number_highlight
   end

@@ -14,7 +14,7 @@ class Glark::MatchTestCase < Glark::TestCase
     # Egads, Ruby is fun. Converting a maybe-array into a definite one:
     args = [ exprargs ].flatten
 
-    expr = ExpressionFactory.new.make_expression args
+    expr = opts.get_expression_factory.make_expression args
 
     outfname = infname = nil
 

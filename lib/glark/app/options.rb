@@ -51,12 +51,45 @@ class Glark::RangeOption
   end
 end
 
+class Glark::ContextOption
+  attr_accessor :after
+  attr_accessor :before
+
+  def initialize 
+    @after = nil
+    @before = nil
+  end
+
+  def options
+    context_option = {
+      :tags => %w{ -C --context },
+      :res  => %r{ ^ - ([1-9]\d*) $ }x,
+      :arg  => [ :optional, :integer ],
+      :set  => Proc.new { |val, opt, args| @after = @before = val || 2 },
+      :rc   => %w{ context },
+    }
+
+    context_after_option = {
+      :tags => %w{ --after-context -A },
+      :arg  => [ :integer ],
+      :set  => Proc.new { |val| @after = val },
+      :rc   => %w{ after-context },
+    }
+
+    context_before_option = {
+      :tags => %w{ --before-context -B },
+      :arg  => [ :integer ],
+      :set  => Proc.new { |val| @before = val },
+      :rc   => %w{ before-context },
+    }
+
+    [ context_option, context_after_option, context_before_option ]
+  end
+end
 
 class Glark::Options
   include Loggable, Singleton
 
-  attr_accessor :after
-  attr_accessor :before
   attr_accessor :binary_files
   attr_accessor :count
   attr_accessor :directory
@@ -100,28 +133,11 @@ class Glark::Options
     rg_options = @range_option.options
 
     range_after_option, range_before_option, range_option = *rg_options
+
+    @context_option = Glark::ContextOption.new
+    ctx_options = @context_option.options
     
-    context_option = {
-      :tags => %w{ -C --context },
-      :res  => %r{ ^ - ([1-9]\d*) $ }x,
-      :arg  => [ :optional, :integer ],
-      :set  => Proc.new { |val, opt, args| @after = @before = val || 2 },
-      :rc   => %w{ context },
-    }
-
-    context_after_option = {
-      :tags => %w{ --after-context -A },
-      :arg  => [ :integer ],
-      :set  => Proc.new { |val| @after = val },
-      :rc   => %w{ after-context },
-    }
-
-    context_before_option = {
-      :tags => %w{ --before-context -B },
-      :arg  => [ :integer ],
-      :set  => Proc.new { |val| @before = val },
-      :rc   => %w{ before-context },
-    }
+    context_option, context_after_option, context_before_option = *ctx_options
 
     whole_word_option = {
       :tags => %w{ -w --word },
@@ -359,13 +375,29 @@ class Glark::Options
     @range_option.range = rg
   end
 
+  def after
+    @context_option.after
+  end
+
+  def after= aft
+    @context_option.after = aft
+  end
+
+  def before
+    @context_option.before
+  end
+
+  def before= bef
+    @context_option.before = bef
+  end
+  
   def [] name
     instance_eval "@" + name.to_s
   end
-
+  
   def reset
-    @after                 = 0          # lines of context before the match
-    @before                = 0          # lines of context after the match
+    @context_option.after  = 0          # lines of context before the match
+    @context_option.before = 0          # lines of context after the match
     @binary_files          = "binary"   # 
     @count                 = false      # just count the lines
     @directory             = "read"     # read, skip, or recurse, a la grep
@@ -461,13 +493,13 @@ class Glark::Options
                    when "ansi", "xterm"
                      Text::ANSIHighlighter
                    when "grep"
-                     @highlight         = false
+                     @highlight = false
                      @show_line_numbers = false
-                     @after             = 0
-                     @before            = 0
+                     @context_option.after = 0
+                     @context_option.before = 0
                      nil
                    when "text", "match"
-                     @highlight         = nil
+                     @highlight = nil
                      nil
                    end
     
@@ -662,8 +694,8 @@ class Glark::Options
 
   def write_configuration
     fields = {
-      "after-context" => @after,
-      "before-context" => @before,
+      "after-context" => @context_option.after,
+      "before-context" => @context_option.before,
       "binary-files" => @binary_files,
       "file-color" => @file_highlight,
       "filter" => @filter,
@@ -689,8 +721,8 @@ class Glark::Options
 
   def dump_all_fields
     fields = {
-      "after" => @after,
-      "before" => @before,
+      "after" => @context_option.after,
+      "before" => @context_option.before,
       "binary_files" => @binary_files,
       "count" => @count,
       "directory" => @directory,
@@ -734,6 +766,18 @@ class Glark::Options
     end
   end
 
+  def get_expr_factory_options
+    fopts = FactoryOptions.new
+    fopts.extended = @extended
+    fopts.extract_matches = @extract_matches
+    fopts.highlight = @highlight
+    fopts.ignorecase = @ignorecase
+    fopts.text_highlights = @text_highlights
+    fopts.whole_lines = @whole_lines
+    fopts.whole_words = @whole_words
+    fopts
+  end
+
   # check options for collisions/data validity
   def validate
     range = self.range
@@ -748,7 +792,7 @@ class Glark::Options
 
   def get_expression_factory
     # we'll be creating this each time, in case these options change
-    ExpressionFactory.new
+    ExpressionFactory.new get_expr_factory_options
   end
 
   def show_version

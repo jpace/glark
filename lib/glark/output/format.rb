@@ -10,6 +10,8 @@ require 'glark/app/options'
 require 'glark/io/file'
 
 class FormatOptions
+  attr_accessor :after
+  attr_accessor :before
   attr_accessor :file_highlight
   attr_accessor :highlight
   attr_accessor :label
@@ -19,6 +21,8 @@ class FormatOptions
   attr_accessor :show_line_numbers
 
   def initialize 
+    @after = nil
+    @before = nil
     @file_highlight = nil
     @highlight = nil
     @label = nil
