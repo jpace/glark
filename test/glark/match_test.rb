@@ -3,7 +3,7 @@
 
 require 'rubygems'
 require 'riel'
-require 'glark/expr/exprfactory'
+require 'glark/expr/factory'
 require 'tc'
 
 class Glark::MatchTestCase < Glark::TestCase

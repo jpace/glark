@@ -5,7 +5,7 @@
 require 'glark/expr/or'
 
 # Evaluates the expressions, and is satisfied if only one returns true.
-class ExclusiveOrExpression < MultiOrExpression
+class ExclusiveOrExpression < OrExpression
   def is_match? matched_ops
     return matched_ops.size == 1
   end

@@ -19,14 +19,20 @@ class Glark::AppTestCase < Glark::TestCase
     gopt.run args
     gopt.out = sio
 
+    Log.verbose = true
+
     glark = Glark::Runner.new gopt.expr, files
     files.each do |file|
       info "file: #{file}".red
       glark.search file
+      info "file: #{file}".on_red
     end
     
     sio.close
+    puts ">>>>>".yellow
     puts sio.string
+    puts "<<<<<".yellow
+    
     assert_equal expected.collect { |line| "#{line}\n" }.join(''), sio.string
 
     gopt.reset

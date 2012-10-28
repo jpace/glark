@@ -17,7 +17,7 @@ class AndExpression < CompoundExpression
   end
 
   def match_within_distance op, lnum
-    stack "op: #{op}; lnum: #{lnum}"
+    info "op: #{op}; lnum: #{lnum}"
     op.matches.size > 0 and (op.matches[-1] - lnum <= @dist)
   end
 
@@ -56,7 +56,7 @@ class AndExpression < CompoundExpression
       end
     end
 
-    return false
+    false
   end
   
   def end_position

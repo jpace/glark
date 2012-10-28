@@ -4,8 +4,8 @@
 
 require 'glark/expr/or'
 
-# Evaluates the expressions, and is satisfied when one return true.
-class InclusiveOrExpression < MultiOrExpression
+# Evaluates the expressions, and is satisfied when any one returns true.
+class InclusiveOrExpression < OrExpression
   def is_match? matched_ops
     return matched_ops.size > 0
   end
