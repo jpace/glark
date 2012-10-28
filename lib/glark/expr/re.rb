@@ -9,8 +9,8 @@ class RegexpExpression < Expression
   attr_reader :re
 
   def initialize re, hlidx, args = Hash.new
-    @re              = re
-    @file            = nil
+    @re = re
+    @file = nil
     if @highlight = args[:highlight]
       @text_highlights = args[:text_highlights]
       @hlidx           = if @text_highlights.length > 0 && args[:highlight] == "multi"
@@ -23,10 +23,6 @@ class RegexpExpression < Expression
     @extract_matches = args[:extract_matches]
     
     super()
-  end
-
-  def <=> other
-    @re <=> other.re
   end
 
   def == other
@@ -46,29 +42,26 @@ class RegexpExpression < Expression
       log { "evaluating <<<#{line[0 .. -2]}>>>" }
     end
     
-    if md = match?(line)
-      log { "matched" }
-      if @extract_matches
-        if md.kind_of? MatchData
-          line.replace md[-1] + "\n"
-        else
-          warn "--not does not work with -v"
-        end
-      else
-        # log { "NOT replacing line" }
-      end
-      
-      @match_line_number = lnum
+    md = match? line
+    return false unless md
 
-      if @highlight
-        highlight_match lnum, file
+    log { "matched" }
+    if @extract_matches
+      if md.kind_of? MatchData
+        line.replace md[-1] + "\n"
+      else
+        warn "--not does not work with -v"
       end
-      
-      add_match lnum
-      true
-    else
-      false
     end
+    
+    @match_line_number = lnum
+
+    if @highlight
+      highlight_match lnum, file
+    end
+    
+    add_match lnum
+    true
   end
   
   def explain level = 0
