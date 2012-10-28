@@ -1,5 +1,5 @@
 Sun Oct 28 08:57:48 2012
 
   removed -F short option for --file-color, reducing the number of options.
-
-
+  removed --word-regexp as another tag for the -w, --word option.
+  removed undocumented and unused --multiline option.

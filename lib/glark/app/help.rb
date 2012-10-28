@@ -35,7 +35,7 @@ class GlarkHelp
     puts "  -o, --or EXPR1 EXPR2           Match either of the two expressions"
     puts "  -R, --range NUM[%],NUM[%]      Restrict the search to the given range of lines"
     puts "  -v, --invert-match             Show lines not matching the expression"
-    puts "  -w, --word, --word-regexp      Put word boundaries around each pattern"
+    puts "  -w, --word                     Match the pattern(s) with word boundaries added"
     puts "  -x, --line-regexp              Select entire line matching pattern"
     puts "      --xor EXPR1 EXPR2          Match either expression, but not both"
     puts ""

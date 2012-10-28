@@ -345,7 +345,7 @@ class Glark::OptionsTestCase < Glark::TestCase
   end
 
   def test_whole_words
-    %w{ -w --word --word-regexp }.each do |opt|
+    %w{ -w --word }.each do |opt|
       run_option_test([ opt, 'foo' ],
                       { 
                         :whole_words       => true,

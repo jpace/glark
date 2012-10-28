@@ -75,7 +75,6 @@ class Glark::Options
   attr_accessor :line_number_highlight
   attr_accessor :local_config_files
   attr_accessor :match_limit
-  attr_accessor :multiline
   attr_accessor :nocase
   attr_accessor :out
   attr_accessor :output
@@ -122,6 +121,11 @@ class Glark::Options
       :arg  => [ :integer ],
       :set  => Proc.new { |val| @before = val },
       :rc   => %w{ before-context },
+    }
+
+    whole_word_option = {
+      :tags => %w{ -w --word },
+      :set  => Proc.new { @whole_words = true }
     }
     
     optdata = [ 
@@ -193,10 +197,7 @@ class Glark::Options
                  :tags => %w{ -Q -S --no-quiet --no-messages },
                  :set  => Proc.new { Log.quiet = @quiet = false }
                },
-               {
-                 :tags => %w{ -w --word --word-regexp },
-                 :set  => Proc.new { @whole_words = true }
-               },
+               whole_word_option,
                {
                  :tags => %w{ -x --line-regexp },
                  :set  => Proc.new { @whole_lines = true }
@@ -212,10 +213,6 @@ class Glark::Options
                {
                  :tags => %w{ --extended },
                  :set  => Proc.new { @extended = true }
-               },
-               {
-                 :tags => %w{ --multiline },
-                 :set  => Proc.new { @multiline = true }
                },
                {
                  :tags => %w{ -c --count },
@@ -382,7 +379,6 @@ class Glark::Options
     @invert_match          = false      # display non-matching lines
     @nocase                = false      # match case
     @match_limit           = nil        # the maximum number of matches to display per file
-    @multiline             = false      # whether to use multiline regexps
     @local_config_files    = false      # use local .glarkrc files
     @quiet                 = false      # minimize warnings
     @range_option.range    = nil        # range to start and stop searching; nil => the entire file

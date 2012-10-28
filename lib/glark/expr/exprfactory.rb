@@ -29,7 +29,6 @@ class ExpressionFactory
     @wholewords      = opts.whole_words
     @wholelines      = opts.whole_lines
     @extended        = opts.extended
-    @multiline       = opts.multiline
     @highlight       = opts.highlight
     @text_highlights = opts.text_highlights
     @extract_matches = opts.extract_matches
@@ -73,8 +72,7 @@ class ExpressionFactory
                           :ignorecase => @ignorecase,
                           :wholewords => @wholewords,
                           :wholelines => @wholelines,
-                          :extended   => @extended,
-                          :multiline  => @multiline)
+                          :extended   => @extended)
     
     regex_args = {
       :highlight       => @highlight,
