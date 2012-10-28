@@ -12,8 +12,8 @@ class AndExpression < CompoundExpression
     super op1, op2
   end
 
-  def mark_as_match infile
-    infile.mark_as_match start_position, end_position
+  def mark_as_match file
+    file.mark_as_match start_position, end_position
   end
 
   def match_within_distance op, lnum

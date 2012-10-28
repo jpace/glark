@@ -45,31 +45,31 @@ class Expression
     @matches = Array.new
   end
 
-  def process infile
+  def process file
     got_match = false
-    reset_file infile.fname
+    reset_file file.fname
     
-    rgstart  = @range && @range.to_line(@range.from, infile.linecount)
+    rgstart  = @range && @range.to_line(@range.from, file.linecount)
     info "rgstart: #{rgstart}".yellow
-    rgend    = @range && @range.to_line(@range.to,   infile.linecount)
+    rgend    = @range && @range.to_line(@range.to,   file.linecount)
     info "rgend: #{rgend}".yellow
     
     lastmatch = 0
     nmatches = 0
     lnum = 0
-    infile.each_line do |line|
+    file.each_line do |line|
       info "line: #{line.chomp}".cyan
       info "lnum: #{lnum}".cyan
       if ((!rgstart || lnum >= rgstart) && 
           (!rgend   || lnum < rgend)   &&
-          evaluate(line, lnum, infile))
+          evaluate(line, lnum, file))
         
-        mark_as_match infile
+        mark_as_match file
         got_match = true
         nmatches += 1
         
         if @display_matches
-          infile.write_matches !@invert_match, lastmatch, lnum
+          file.write_matches !@invert_match, lastmatch, lnum
           lastmatch = lnum + 1
         elsif @file_names_only
           # we don't need to match more than once
@@ -87,24 +87,24 @@ class Expression
     if @file_names_only
       if got_match != @invert_match
         if @write_null
-          print infile.fname + "\0"
+          print file.fname + "\0"
         else
-          puts infile.fname
+          puts file.fname
         end
       end
     elsif @filter
       if @invert_match
-        infile.write_matches false, 0, lnum
+        file.write_matches false, 0, lnum
       elsif got_match
-        infile.write_matches true, 0, lnum
+        file.write_matches true, 0, lnum
       end
     else
-      infile.write_all
+      file.write_all
     end
   end
 
-  def mark_as_match infile
-    infile.mark_as_match start_position
+  def mark_as_match file
+    file.mark_as_match start_position
   end
 
   def to_s

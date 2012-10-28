@@ -10,7 +10,7 @@ require 'glark/output/file_header'
 # -------------------------------------------------------
 
 class GlarkOutputFormat < OutputFormat
-  def initialize infile, options
+  def initialize file, options
     super
 
     @file_header = nil
@@ -25,7 +25,7 @@ class GlarkOutputFormat < OutputFormat
   def print_line lnum, ch = nil 
     log { "lnum #{lnum}, ch: '#{ch}'" }
     begin
-      lnums = @infile.get_range lnum 
+      lnums = @file.get_range lnum 
       log { "lnums(#{lnum}): #{lnums}" }
       if lnums
         log { "printing" }
@@ -41,7 +41,7 @@ class GlarkOutputFormat < OutputFormat
 
   def show_file_header
     if @show_file_name && @file_header.nil?
-      @file_header = FileHeader.new @label || @infile.fname, @fname_highlighter
+      @file_header = FileHeader.new @label || @file.fname, @fname_highlighter
       @file_header.print @out
     end
   end
@@ -57,7 +57,7 @@ class GlarkOutputFormat < OutputFormat
   end
  
   def write_count matching = true 
-    ct = matching ? @infile.count : @infile.get_lines.size - @infile.count
+    ct = matching ? @file.count : @file.get_lines.size - @file.count
     @out.puts "    " + ct.to_s
   end
 
@@ -76,7 +76,7 @@ class GlarkOutputFormat < OutputFormat
       print_line_number ln 
     end
     
-    if ch && has_context
+    if ch && @has_context
       @out.printf "%s ", ch
     end
 

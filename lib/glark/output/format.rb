@@ -36,10 +36,10 @@ end
 class OutputFormat
   include Loggable
   
-  attr_reader :formatted, :infile, :has_context
+  attr_reader :formatted
 
-  def initialize infile, options
-    @infile            = infile
+  def initialize file, options
+    @file              = file
     @formatted         = []
     @has_context       = false
     @label             = options.label
@@ -58,7 +58,7 @@ class OutputFormat
   # 0-indexed, whereas they are displayed as if 1-indexed.
   def print_line lnum, ch = nil 
     log { "lnum #{lnum}, ch: '#{ch}'" }
-    lnums = @infile.get_range lnum 
+    lnums = @file.get_range lnum 
     log { "lnums(#{lnum}): #{lnums}" }
 
     return unless lnums
@@ -70,54 +70,54 @@ class OutputFormat
           @out.printf "%s ", ch
         end
       end
-      line = @formatted[ln] || @infile.get_line(ln)
+      line = @formatted[ln] || @file.get_line(ln)
       @out.puts line
     end
   end
 
   def write_matches matching, from, to 
-    if @infile.count
+    if @file.count
       write_count matching 
     elsif matching
       firstline = from ? from : 0
-      lastline  = to   ? to   : @infile.get_lines.length - 1
+      lastline  = to   ? to   : @file.get_lines.length - 1
 
       (firstline .. lastline).each do |ln|
-        if @infile.stati[ln]
-          unless @infile.stati[ln] == Glark::File::WRITTEN
+        if @file.stati[ln]
+          unless @file.stati[ln] == Glark::File::WRITTEN
             # this used to be conditional on show_break, but no more
-            if firstline > 0 && !@infile.stati[ln - 1] && @has_context
+            if firstline > 0 && !@file.stati[ln - 1] && @has_context
               @out.puts "  ---"
             end
             
-            print_line ln, @infile.stati[ln]  
+            print_line ln, @file.stati[ln]  
 
-            @infile.stati[ln] = Glark::File::WRITTEN
+            @file.stati[ln] = Glark::File::WRITTEN
           end
         end
 
       end
     else
       firstline = from ? from : 0
-      lastline  = to ? to : @infile.get_lines.length - 1
+      lastline  = to ? to : @file.get_lines.length - 1
       (firstline .. lastline).each do |ln|
-        if @infile.stati[ln] != Glark::File::WRITTEN && @infile.stati[ln] != ":"
+        if @file.stati[ln] != Glark::File::WRITTEN && @file.stati[ln] != ":"
           log { "printing #{ln}" }
           print_line ln 
-          @infile.stati[ln] = Glark::File::WRITTEN
+          @file.stati[ln] = Glark::File::WRITTEN
         end
       end
     end
   end
 
   def write_all
-    (0 ... @infile.get_lines.length).each do |ln|
+    (0 ... @file.get_lines.length).each do |ln|
       print_line ln  
     end
   end
 
   def get_line_to_print lnum 
-    formatted[lnum] || infile.get_line(lnum)
+    formatted[lnum] || @file.get_line(lnum)
   end
 
   def show_line_numbers
