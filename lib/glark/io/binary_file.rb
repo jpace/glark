@@ -9,7 +9,7 @@ class Glark::BinaryFile < Glark::File
     if @count
       @output.write_count matching
     else
-      puts "Binary file " + @fname + " matches"
+      @out.puts "Binary file " + @fname + " matches"
     end
   end
 end

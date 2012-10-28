@@ -7,6 +7,18 @@ require 'riel'
 
 module Glark; end
 
+class Glark::FileOptions
+  attr_accessor :after
+  attr_accessor :before
+  attr_accessor :output
+  
+  def initialize after, before, output
+    @after = after
+    @before = before
+    @output = output
+  end
+end
+
 # A thing that can be grepped (er, glarked).
 class Glark::File
   include Loggable
@@ -19,7 +31,7 @@ class Glark::File
 
   WRITTEN = "written"
   
-  def initialize fname, io, args = Glark::Options.instance 
+  def initialize fname, io, fopts
     @fname        = fname
     @io           = io
     @stati        = Array.new      # index = line number, value = context character
@@ -30,11 +42,9 @@ class Glark::File
     @linecount    = nil
     @readall      = $/ != "\n"
     @lines        = @readall ? IO.readlines(@fname) : Array.new
-
-    @after        = args[:after]
-    @before       = args[:before]
-    @output       = args[:output]
-
+    @after        = fopts.after
+    @before       = fopts.before
+    @output       = fopts.output
     @matched      = false
   end
   

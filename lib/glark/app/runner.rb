@@ -46,7 +46,6 @@ class Glark::Runner
                    # exit 2
                  end
 
-    @count        = @opts.count
     @invert_match = @opts.invert_match
 
     @after  = @opts.after
@@ -84,9 +83,9 @@ class Glark::Runner
     format_opts.show_line_numbers = @opts.show_line_numbers
     
     output = @out_class.new file, format_opts
-    file.output = output
 
-    file.count = 0 if @count
+    file.output = output
+    file.count = 0 if @opts.count
     
     @func.process file 
 
@@ -110,16 +109,11 @@ class Glark::Runner
       log { "skipping file: #{fname}" }
     else
       log { "searching text #{fname} for #{@func}" }
-
-      file_args = {
-        :after  => @after,
-        :before => @before,
-        :output => @output
-      }
+      fopts = Glark::FileOptions.new @after, @before, @output
 
       io = fname == "-" ? $stdin : File.new(fname)
 
-      file = Glark::File.new fname, io, file_args
+      file = Glark::File.new fname, io, fopts
       search_file file
     end
   end
