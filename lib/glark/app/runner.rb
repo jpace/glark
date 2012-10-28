@@ -6,11 +6,10 @@ require 'English'
 require 'rubygems'
 require 'riel'
 require 'glark/app/options'
-require 'glark/io/file'
 require 'glark/io/binary_file'
-require 'glark/output/grep_format'
+require 'glark/io/file'
 require 'glark/output/glark_format'
-require 'glark/expr/expression'
+require 'glark/output/grep_format'
 
 $stdout.sync = true             # unbuffer
 $stderr.sync = true             # unbuffer
@@ -68,12 +67,12 @@ class Glark::Runner
     end
     
     if @opts.size_limit
-      @skip_methods << Proc.new { |fn| File.size(fname) > @opts.size_limit }
+      @skip_methods << Proc.new { |fn| File.size(fn) > @opts.size_limit }
     end    
   end
 
-  def search_file input 
-    format_opts  = FormatOptions.new
+  def search_file file 
+    format_opts = FormatOptions.new
     format_opts.after = @opts.after
     format_opts.before = @opts.before
     format_opts.file_highlight = @opts.file_highlight
@@ -84,15 +83,15 @@ class Glark::Runner
     format_opts.show_file_names = @show_file_names
     format_opts.show_line_numbers = @opts.show_line_numbers
     
-    output       = @out_class.new input, format_opts
-    input.output = output
+    output = @out_class.new file, format_opts
+    file.output = output
 
-    input.count        = 0    if @count
-    input.invert_match = true if @invert_match
+    file.count = 0 if @count
+    file.invert_match = true if @invert_match
     
-    @func.process input 
+    @func.process file 
 
-    if input.matched?
+    if file.matched?
       @exit_status = @invert_match ? 1 : 0
     end
   end
@@ -111,21 +110,9 @@ class Glark::Runner
     if skipped? fname
       log { "skipping file: #{fname}" }
     else
-      log { "searching text" }
-      if false
-        # readlines doesn't work with $/ == nil, so we'll use gets instead.
-        # this has been fixed in the CVS version of Ruby (on 26 Dec 2003).
-        text = []
-        File.open(fname) do |f|
-          while ((line = f.gets) && line.length > 0)
-            text << line
-          end
-        end
-        log { "got text #{text.length}" }
-      end
-      log { "searching #{fname} for #{@func}" }
+      log { "searching text #{fname} for #{@func}" }
 
-      ifile_args = {
+      file_args = {
         :after  => @after,
         :before => @before,
         :output => @output
@@ -133,8 +120,8 @@ class Glark::Runner
 
       io = fname == "-" ? $stdin : File.new(fname)
 
-      input = Glark::File.new fname, io, ifile_args
-      search_file input
+      file = Glark::File.new fname, io, file_args
+      search_file file
     end
   end
 
