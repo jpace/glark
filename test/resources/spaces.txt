@@ -1,0 +1,26 @@
+00 The Prologue.txt
+01 The Knights Tale.txt
+02 The Millers Tale.txt
+03 The Reeves Tale.txt
+04 The Cooks Tale.txt
+05 The Man Of Laws Tale.txt
+06 The Wife Of Baths Tale.txt
+07 The Friars Tale.txt
+08 The Sompnours Tale.txt
+09 The Clerks Tale.txt
+10 The Merchants Tale.txt
+11 The Squires Tale.txt
+12 The Franklins Tale.txt
+13 The Doctors Tale.txt
+14 The Pardoners Tale.txt
+15 The Shipmans Tale.txt
+16 The Prioresss Tale.txt
+17 Chaucers Tale Of Sir Thopas.txt
+18 Chaucers Tale Of Meliboeus.txt
+19 The Monks Tale.txt
+20 The Nuns Priests Tale.txt
+21 The Second Nuns Tale.txt
+22 The Canons Yeomans Tale.txt
+23 The Manciples Tale.txt
+24 The Parsons Tale.txt
+25 Preces De Chauceres.txt
