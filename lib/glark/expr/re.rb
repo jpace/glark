@@ -75,14 +75,8 @@ class RegexpExpression < Expression
     return unless lnums
 
     lnums.each do |ln|
-      str = file.output.formatted[ln] || file.get_line(ln)
-      if Log.verbose
-        log { "file.output.formatted[#{ln}]: #{file.output.formatted[ln]}" }
-        log { "file.get_line(#{ln}): #{file.get_line(ln)}" }
-        log { "highlighting: #{str}" }
-      end
-      
-      file.output.formatted[ln] = str.gsub(@re) do |m|
+      str = file.formatter.formatted[ln] || file.get_line(ln)
+      file.formatter.formatted[ln] = str.gsub(@re) do |m|
         lastcapts = Regexp.last_match.captures
         # find the index of the first non-nil capture:
         miidx = (0 ... lastcapts.length).find { |mi| lastcapts[mi] } || @hlidx

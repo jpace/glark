@@ -10,12 +10,12 @@ module Glark; end
 class Glark::FileOptions
   attr_accessor :after
   attr_accessor :before
-  attr_accessor :output
+  attr_accessor :formatter
   
-  def initialize after, before, output
+  def initialize after, before, formatter
     @after = after
     @before = before
-    @output = output
+    @formatter = formatter
   end
 end
 
@@ -24,7 +24,7 @@ class Glark::File
   include Loggable
 
   attr_reader :fname, :stati
-  attr_accessor :count, :output
+  attr_accessor :count, :formatter
 
   # cross-platform end of line:   DOS  UNIX  MAC
   ANY_END_OF_LINE = Regexp.new '(?:\r\n|\n|\r)'
@@ -44,7 +44,7 @@ class Glark::File
     @lines        = @readall ? IO.readlines(@fname) : Array.new
     @after        = fopts.after
     @before       = fopts.before
-    @output       = fopts.output
+    @formatter    = fopts.formatter
     @matched      = false
   end
   
@@ -83,7 +83,7 @@ class Glark::File
     # even with multi-line matches (--and expressions), we'll display
     # only the first matching line, not the range between the matches.
 
-    if @output.kind_of? GrepOutputFormat
+    if @formatter.kind_of? GrepOutputFormat
       endline = startline
     end
 
@@ -98,11 +98,11 @@ class Glark::File
   end
 
   def write_matches matching, from = nil, to = nil
-    @output.write_matches matching, from, to
+    @formatter.write_matches matching, from, to
   end
 
   def write_all
-    @output.write_all
+    @formatter.write_all
   end
 
   # Returns the lines for this file, separated by end of line sequences.

@@ -82,9 +82,9 @@ class Glark::Runner
     format_opts.show_file_names = @show_file_names
     format_opts.show_line_numbers = @opts.show_line_numbers
     
-    output = @out_class.new file, format_opts
+    formatter = @out_class.new file, format_opts
 
-    file.output = output
+    file.formatter = formatter
     file.count = 0 if @opts.count
     
     @func.process file 
