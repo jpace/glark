@@ -48,8 +48,6 @@ class Expression
   def process file, formatter
     got_match = false
     reset_file file.fname
-
-    formatter = file.formatter
     
     rgstart  = @range && @range.to_line(@range.from, file.linecount)
     info "rgstart: #{rgstart}".yellow
@@ -75,6 +73,8 @@ class Expression
           lastmatch = lnum + 1
         elsif @file_names_only
           # we don't need to match more than once
+
+          ### $$$ this should be the same as a match limit
           break
         end
         
@@ -85,24 +85,8 @@ class Expression
       end
       lnum += 1
     end
-    
-    if @file_names_only
-      if got_match != @invert_match
-        if @write_null
-          print file.fname + "\0"
-        else
-          puts file.fname
-        end
-      end
-    elsif @filter
-      if @invert_match
-        formatter.write_matches false, 0, lnum
-      elsif got_match
-        formatter.write_matches true, 0, lnum
-      end
-    else
-      formatter.write_all
-    end
+
+    formatter.process_match got_match, @file_names_only, @write_null, @invert_match, @filter, lnum
   end
 
   def mark_as_match file

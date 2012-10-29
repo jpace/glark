@@ -12,7 +12,7 @@ class Glark::AppTestCase < Glark::TestCase
     ENV['HOME'] = '/this/should/not/exist'
   end
 
-  def run_app_test expected, args, *files
+  def run_glark args, *files
     info "files: #{files}"
     gopt = Glark::Options.instance
     sio = StringIO.new
@@ -32,9 +32,19 @@ class Glark::AppTestCase < Glark::TestCase
     puts ">>>>>".yellow
     puts sio.string
     puts "<<<<<".yellow
-    
-    assert_equal expected.collect { |line| "#{line}\n" }.join(''), sio.string
 
     gopt.reset
+    
+    sio.string
+  end
+
+  def run_app_test expected, args, *files
+    result = run_glark args, *files
+    assert_equal expected.collect { |line| "#{line}\n" }.join(''), result
+  end
+
+  def run_app_test_exact_output expected, args, *files
+    result = run_glark args, *files
+    assert_equal expected, result
   end
 end

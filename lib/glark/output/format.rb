@@ -110,4 +110,28 @@ class OutputFormat
   def show_line_numbers
     @show_line_numbers
   end
+
+  def print_only_file_name write_null
+    if write_null
+      @out.print @file.fname + "\0"
+    else
+      @out.puts @file.fname
+    end
+  end
+
+  def process_match matched, file_names_only, write_null, invert_match, filter, lnum
+    if file_names_only
+      if matched != invert_match
+        print_only_file_name write_null
+      end
+    elsif filter
+      if invert_match
+        write_matches false, 0, lnum
+      elsif matched
+        write_matches true, 0, lnum
+      end
+    else
+      write_all
+    end
+  end
 end

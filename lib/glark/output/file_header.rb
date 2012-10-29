@@ -3,6 +3,8 @@
 # vim: set filetype=ruby : set sw=2
 
 class FileHeader
+  include Loggable
+  
   def initialize name, highlighter
     @name = name
     @highlighter = highlighter
