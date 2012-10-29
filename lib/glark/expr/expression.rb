@@ -19,6 +19,7 @@ class Expression
     @matches           = Array.new
     
     opts               = Glark::Options.instance
+
     @invert_match      = opts.invert_match
     @display_matches   = !opts.file_names_only && opts.filter && !opts.count
     @range             = opts.range
@@ -64,7 +65,7 @@ class Expression
       info "lnum: #{lnum}".cyan
       if ((!rgstart || lnum >= rgstart) && 
           (!rgend   || lnum < rgend)   &&
-          evaluate(line, lnum, file))
+          evaluate(line, lnum, file, formatter))
         
         mark_as_match formatter
         got_match = true

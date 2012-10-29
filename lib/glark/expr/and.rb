@@ -30,9 +30,9 @@ class AndExpression < CompoundExpression
     str
   end
 
-  def match? line, lnum, file
+  def match? line, lnum, file, formatter
     matches = (0 ... @ops.length).select do |oi|
-      @ops[oi].evaluate line, lnum, file
+      @ops[oi].evaluate line, lnum, file, formatter
     end
 
     matches.each do |mi|
@@ -59,8 +59,8 @@ class AndExpression < CompoundExpression
     @ops.collect { |op| op.end_position }.max
   end
 
-  def evaluate line, lnum, file
-    if match? line, lnum, file
+  def evaluate line, lnum, file, formatter
+    if match? line, lnum, file, formatter
       @match_line_number = lnum
       true
     else

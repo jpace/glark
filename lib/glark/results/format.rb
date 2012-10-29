@@ -8,6 +8,7 @@ require 'rubygems'
 require 'riel'
 require 'glark/app/options'
 require 'glark/io/file'
+require 'glark/io/line_status'
 
 class FormatOptions
   attr_accessor :after
@@ -48,10 +49,11 @@ class OutputFormat
     @out               = fmtopts.out
     @show_file_name    = fmtopts.show_file_names
     @show_line_numbers = fmtopts.show_line_numbers
-    @matched           = false
+    @matched = false
     @count = fmtopts.count
     @after = fmtopts.after
     @before = fmtopts.before
+    @stati = Glark::LineStatus.new
   end
 
   def matched?
@@ -79,29 +81,25 @@ class OutputFormat
   end
 
   def write_matching from, to
-    stati = @file.stati
-    
     (from .. to).each do |ln|
-      next unless stati.char(ln) && !stati.is_written?(ln)
+      next unless @stati.char(ln) && !@stati.is_written?(ln)
 
       # this used to be conditional on show_break, but no more
-      if from > 0 && !stati.char(ln - 1) && @has_context
+      if from > 0 && !@stati.char(ln - 1) && @has_context
         @out.puts "  ---"
       end
       
-      print_line ln, stati.char(ln)
-      stati.set_as_written ln
+      print_line ln, @stati.char(ln)
+      @stati.set_as_written ln
     end
   end
 
   def write_nonmatching from, to
-    stati = @file.stati
-
     (from .. to).each do |ln|
-      next if stati.is_written?(ln) || stati.char(ln) == ":"
+      next if @stati.is_written?(ln) || @stati.char(ln) == ":"
       log { "printing #{ln}" }
       print_line ln 
-      stati.set_as_written ln
+      @stati.set_as_written ln
     end
   end
 
@@ -122,7 +120,7 @@ class OutputFormat
   end
 
   def get_line_to_print lnum 
-    formatted[lnum] || @file.get_line(lnum)
+    @formatted[lnum] || @file.get_line(lnum)
   end
 
   def show_line_numbers
@@ -166,9 +164,8 @@ class OutputFormat
     if @count
       add_match
     else
-      stati = @file.stati
       st = [0, startline - @before].max
-      stati.set_match startline - @before, startline, endline, endline + @after
+      @stati.set_match startline - @before, startline, endline, endline + @after
     end
   end
 end

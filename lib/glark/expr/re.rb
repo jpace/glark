@@ -36,7 +36,7 @@ class RegexpExpression < Expression
     @re.match line
   end
 
-  def evaluate line, lnum, file
+  def evaluate line, lnum, file, formatter
     if Log.verbose
       log { "evaluating <<<#{line[0 .. -2]}>>>" }
     end
@@ -56,7 +56,7 @@ class RegexpExpression < Expression
     @match_line_number = lnum
 
     if @highlight
-      highlight_match lnum, file
+      highlight_match lnum, file, formatter
     end
     
     add_match lnum
@@ -67,7 +67,7 @@ class RegexpExpression < Expression
     " " * level + to_s + "\n"
   end
 
-  def highlight_match lnum, file
+  def highlight_match lnum, file, formatter
     log { "lnum: #{lnum}; file: #{file}" }
     
     lnums = file.get_range lnum
@@ -75,8 +75,8 @@ class RegexpExpression < Expression
     return unless lnums
 
     lnums.each do |ln|
-      str = file.formatter.formatted[ln] || file.get_line(ln)
-      file.formatter.formatted[ln] = str.gsub(@re) do |m|
+      str = formatter.formatted[ln] || file.get_line(ln)
+      formatter.formatted[ln] = str.gsub(@re) do |m|
         lastcapts = Regexp.last_match.captures
         # find the index of the first non-nil capture:
         miidx = (0 ... lastcapts.length).find { |mi| lastcapts[mi] } || @hlidx

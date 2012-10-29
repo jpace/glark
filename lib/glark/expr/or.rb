@@ -7,9 +7,9 @@ require 'glark/expr/compound'
 # A collection of expressions, evaluated as 'or'.
 class OrExpression < CompoundExpression
 
-  def evaluate line, lnum, file
+  def evaluate line, lnum, file, formatter
     matched_ops = @ops.select do |op|
-      op.evaluate line, lnum, file
+      op.evaluate line, lnum, file, formatter
     end
 
     if is_match? matched_ops

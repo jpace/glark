@@ -4,7 +4,6 @@
 
 require 'rubygems'
 require 'riel'
-require 'glark/io/line_status'
 
 module Glark; end
 
@@ -24,26 +23,21 @@ end
 class Glark::File
   include Loggable
 
-  attr_reader :fname, :stati
-  attr_accessor :count, :formatter
+  attr_reader :fname
+  attr_accessor :count
 
   # cross-platform end of line:   DOS  UNIX  MAC
   ANY_END_OF_LINE = Regexp.new '(?:\r\n|\n|\r)'
-
-  WRITTEN = Glark::LineStatus::WRITTEN
   
-  def initialize fname, io, formatter = nil
+  def initialize fname, io
     @fname        = fname
     @io           = io
-    # index = line number, value = context character
-    @stati        = Glark::LineStatus.new
     @count        = nil
     @extracted    = nil
     @regions      = nil
     @linecount    = nil
     @readall      = $/ != "\n"
     @lines        = @readall ? IO.readlines(@fname) : Array.new
-    @formatter    = formatter
   end
   
   def linecount

@@ -71,10 +71,10 @@ class Glark::Runner
     end    
   end
 
-  def search_file file 
-    @func.process file, file.formatter
+  def search_file file, formatter
+    @func.process file, formatter
 
-    if file.formatter.matched?
+    if formatter.matched?
       @exit_status = @invert_match ? 1 : 0
     end
   end
@@ -111,10 +111,9 @@ class Glark::Runner
       formatter = @formatter_cls.new file, format_opts
     end
 
-    file.formatter = formatter
     file.count = 0 if @opts.count
 
-    file
+    [ file, formatter ]
   end
 
   def search_text fname
@@ -124,8 +123,8 @@ class Glark::Runner
       log { "searching text #{fname} for #{@func}" }
       io = fname == "-" ? $stdin : File.new(fname)
 
-      file = create_file Glark::File, fname, io
-      search_file file
+      file, formatter = create_file Glark::File, fname, io
+      search_file file, formatter
     end
   end
 
