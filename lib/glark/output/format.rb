@@ -64,14 +64,14 @@ class OutputFormat
     stati = @file.stati
     
     (from .. to).each do |ln|
-      next unless stati[ln] && !stati.is_written?(ln)
+      next unless stati.char(ln) && !stati.is_written?(ln)
 
       # this used to be conditional on show_break, but no more
-      if from > 0 && !stati[ln - 1] && @has_context
+      if from > 0 && !stati.char(ln - 1) && @has_context
         @out.puts "  ---"
       end
       
-      print_line ln, stati[ln]  
+      print_line ln, stati.char(ln)
       stati.set_as_written ln
     end
   end
@@ -80,7 +80,7 @@ class OutputFormat
     stati = @file.stati
 
     (from .. to).each do |ln|
-      next if stati.is_written?(ln) || stati[ln] == ":"
+      next if stati.is_written?(ln) || stati.char(ln) == ":"
       log { "printing #{ln}" }
       print_line ln 
       stati.set_as_written ln

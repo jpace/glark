@@ -70,14 +70,6 @@ class Glark::File
     end
   end
 
-  def set_status from, to, ch, force = false
-    from.upto(to) do |ln|
-      if @stati[ln].nil? || (@stati[ln] != WRITTEN && force)
-        @stati[ln] = ch
-      end
-    end
-  end
-
   def is_written? lnum
     @stati.is_written? lnum
   end
@@ -100,9 +92,7 @@ class Glark::File
       @count += 1
     else
       st = [0, startline - @before].max
-      set_status st,          startline - 1,    "-"
-      set_status startline,   endline,          ":",  true
-      set_status endline + 1, endline + @after, "+"
+      @stati.set_match startline - @before, startline, endline, endline + @after
     end
   end
 
