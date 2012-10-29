@@ -51,7 +51,7 @@ class GlarkOutputFormat < OutputFormat
   end
  
   def write_count matching = true 
-    ct = matching ? @file.count : @file.get_lines.size - @file.count
+    ct = matching ? @count : @file.get_lines.size - @count
     @out.puts "    " + ct.to_s
   end
 

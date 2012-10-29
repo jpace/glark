@@ -13,7 +13,7 @@ require 'glark/results/format'
 class GrepOutputFormat < OutputFormat
   def write_count matching = true 
     print_file_name
-    ct = matching ? @file.count : @file.get_lines.size - @file.count
+    ct = matching ? @count : @file.get_lines.size - @count
     @out.puts ct
   end
 

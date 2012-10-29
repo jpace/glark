@@ -91,11 +91,12 @@ class Glark::Runner
 
   def create_file filecls, name, io
     fopts = Glark::FileOptions.new @after, @before, @output
-    file = filecls.new name, io, fopts
+    file = filecls.new name, io
 
     format_opts = FormatOptions.new
     format_opts.after = @opts.after
     format_opts.before = @opts.before
+    format_opts.count = 0 if @opts.count
     format_opts.file_highlight = @opts.file_highlight
     format_opts.highlight = @opts.highlight
     format_opts.label = @opts.label
@@ -121,8 +122,6 @@ class Glark::Runner
       log { "skipping file: #{fname}" }
     else
       log { "searching text #{fname} for #{@func}" }
-      fopts = Glark::FileOptions.new @after, @before, @output
-
       io = fname == "-" ? $stdin : File.new(fname)
 
       file = create_file Glark::File, fname, io

@@ -32,7 +32,7 @@ class Glark::File
 
   WRITTEN = Glark::LineStatus::WRITTEN
   
-  def initialize fname, io, fopts
+  def initialize fname, io, formatter = nil
     @fname        = fname
     @io           = io
     # index = line number, value = context character
@@ -43,9 +43,7 @@ class Glark::File
     @linecount    = nil
     @readall      = $/ != "\n"
     @lines        = @readall ? IO.readlines(@fname) : Array.new
-    @after        = fopts.after
-    @before       = fopts.before
-    @formatter    = fopts.formatter
+    @formatter    = formatter
   end
   
   def linecount
@@ -62,24 +60,6 @@ class Glark::File
         @lines << line
         blk.call line
       end
-    end
-  end
-
-  def mark_as_match startline, endline
-    @formatter.matched = true
-
-    # even with multi-line matches (--and expressions), we'll display
-    # only the first matching line, not the range between the matches.
-
-    if @formatter.kind_of? GrepOutputFormat
-      endline = startline
-    end
-
-    if @count
-      @count += 1
-    else
-      st = [0, startline - @before].max
-      @stati.set_match startline - @before, startline, endline, endline + @after
     end
   end
 

@@ -19,10 +19,12 @@ class FormatOptions
   attr_accessor :out
   attr_accessor :show_file_names
   attr_accessor :show_line_numbers
+  attr_accessor :count
 
   def initialize 
     @after = nil
     @before = nil
+    @count = nil
     @file_highlight = nil
     @highlight = nil
     @label = nil
@@ -47,15 +49,17 @@ class OutputFormat
     @show_file_name    = fmtopts.show_file_names
     @show_line_numbers = fmtopts.show_line_numbers
     @matched           = false
-    @count = 0
+    @count = fmtopts.count
+    @after = fmtopts.after
+    @before = fmtopts.before
   end
 
   def matched?
     @matched
   end
 
-  def matched= m
-    @matched = m
+  def set_matched
+    @matched = true
   end
 
   def add_match
@@ -146,6 +150,25 @@ class OutputFormat
       end
     else
       write_all
+    end
+  end
+
+  def mark_as_match startline, endline
+    set_matched
+
+    # even with multi-line matches (--and expressions), we'll display
+    # only the first matching line, not the range between the matches.
+
+    if kind_of? GrepOutputFormat
+      endline = startline
+    end
+
+    if @count
+      add_match
+    else
+      stati = @file.stati
+      st = [0, startline - @before].max
+      stati.set_match startline - @before, startline, endline, endline + @after
     end
   end
 end
