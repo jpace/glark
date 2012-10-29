@@ -31,4 +31,29 @@ class Glark::CountTestCase < Glark::AppTestCase
                ]
     run_app_test expected, [ '--count', '6.*The' ], *fnames
   end
+
+  def test_grep_one_file
+    fnames = [ '/proj/org/incava/glark/test/resources/spaces.txt' ]
+    expected = [
+                "2",
+               ]
+    run_app_test expected, [ '-g', '--count', '6.*The' ], *fnames
+  end
+
+  def test_grep_two_files_one_matches
+    fnames = [ '/proj/org/incava/glark/test/resources/textfile.txt', '/proj/org/incava/glark/test/resources/filelist.txt' ]
+    expected = [
+                "/proj/org/incava/glark/test/resources/textfile.txt:2",
+               ]
+    run_app_test expected, [ '-g', '--count', '2 ' ], *fnames
+  end
+
+  def test_grep_two_files_both_match
+    fnames = [ '/proj/org/incava/glark/test/resources/textfile.txt', '/proj/org/incava/glark/test/resources/filelist.txt' ]
+    expected = [
+                "/proj/org/incava/glark/test/resources/textfile.txt:13",
+                "/proj/org/incava/glark/test/resources/filelist.txt:2"
+               ]
+    run_app_test expected, [ '-g', '--count', '6.*The' ], *fnames
+  end
 end

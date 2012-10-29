@@ -46,15 +46,10 @@ class Glark::File
     @after        = fopts.after
     @before       = fopts.before
     @formatter    = fopts.formatter
-    @matched      = false
   end
   
   def linecount
     @linecount ||= IO.readlines(@fname).size
-  end
-
-  def matched?
-    @matched
   end
 
   def each_line &blk
@@ -71,7 +66,7 @@ class Glark::File
   end
 
   def mark_as_match startline, endline
-    @matched = true
+    @formatter.matched = true
 
     # even with multi-line matches (--and expressions), we'll display
     # only the first matching line, not the range between the matches.

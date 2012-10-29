@@ -14,7 +14,7 @@ class GrepOutputFormat < OutputFormat
   def write_count matching = true 
     print_file_name
     ct = matching ? @file.count : @file.get_lines.size - @file.count
-    puts ct
+    @out.puts ct
   end
 
   # prints the line, and adjusts for the fact that in our world, lines are

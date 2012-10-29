@@ -9,6 +9,7 @@ require 'glark/app/options'
 require 'glark/io/binary_file'
 require 'glark/io/file'
 require 'glark/output/glark_format'
+require 'glark/output/grep_count_format'
 require 'glark/output/grep_format'
 
 $stdout.sync = true             # unbuffer
@@ -73,7 +74,7 @@ class Glark::Runner
   def search_file file 
     @func.process file, file.formatter
 
-    if file.matched?
+    if file.formatter.matched?
       @exit_status = @invert_match ? 1 : 0
     end
   end
@@ -102,8 +103,12 @@ class Glark::Runner
     format_opts.out = @opts.out
     format_opts.show_file_names = @show_file_names
     format_opts.show_line_numbers = @opts.show_line_numbers
-    
-    formatter = @formatter_cls.new file, format_opts
+
+    if false && @opts.output == "grep" && @opts.count
+      formatter = GrepCountFormat.new file, format_opts
+    else
+      formatter = @formatter_cls.new file, format_opts
+    end
 
     file.formatter = formatter
     file.count = 0 if @opts.count

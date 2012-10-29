@@ -46,6 +46,15 @@ class OutputFormat
     @out               = fmtopts.out
     @show_file_name    = fmtopts.show_file_names
     @show_line_numbers = fmtopts.show_line_numbers
+    @matched           = false
+  end
+
+  def matched?
+    @matched
+  end
+
+  def matched= m
+    @matched = m
   end
 
   # Prints the line, which is assumed to be 0-indexed, and is thus adjusted by

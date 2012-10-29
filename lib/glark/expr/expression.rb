@@ -53,6 +53,8 @@ class Expression
     info "rgstart: #{rgstart}".yellow
     rgend    = @range && @range.to_line(@range.to,   file.linecount)
     info "rgend: #{rgend}".yellow
+
+    info "formatter: #{formatter}".black.on_green
     
     lastmatch = 0
     nmatches = 0
