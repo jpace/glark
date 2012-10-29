@@ -36,7 +36,7 @@ end
 class OutputFormat
   include Loggable
   
-  attr_reader :formatted
+  attr_reader :formatted, :count
 
   def initialize file, fmtopts
     @file              = file
@@ -47,6 +47,7 @@ class OutputFormat
     @show_file_name    = fmtopts.show_file_names
     @show_line_numbers = fmtopts.show_line_numbers
     @matched           = false
+    @count = 0
   end
 
   def matched?
@@ -55,6 +56,10 @@ class OutputFormat
 
   def matched= m
     @matched = m
+  end
+
+  def add_match
+    @count += 1
   end
 
   # Prints the line, which is assumed to be 0-indexed, and is thus adjusted by
