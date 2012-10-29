@@ -4,6 +4,7 @@
 
 require 'rubygems'
 require 'riel'
+require 'glark/io/line_status'
 
 module Glark; end
 
@@ -29,12 +30,13 @@ class Glark::File
   # cross-platform end of line:   DOS  UNIX  MAC
   ANY_END_OF_LINE = Regexp.new '(?:\r\n|\n|\r)'
 
-  WRITTEN = "written"
+  WRITTEN = Glark::LineStatus::WRITTEN
   
   def initialize fname, io, fopts
     @fname        = fname
     @io           = io
-    @stati        = Array.new      # index = line number, value = context character
+    # index = line number, value = context character
+    @stati        = Glark::LineStatus.new
     @count        = nil
     @extracted    = nil
     @regions      = nil
@@ -77,11 +79,11 @@ class Glark::File
   end
 
   def is_written? lnum
-    @stati[lnum] == WRITTEN
+    @stati.is_written? lnum
   end
 
   def set_as_written lnum
-    @stati[lnum] = WRITTEN
+    @stati.set_as_written lnum
   end
 
   def mark_as_match startline, endline = startline

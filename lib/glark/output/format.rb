@@ -61,25 +61,29 @@ class OutputFormat
   end
 
   def write_matching from, to
+    stati = @file.stati
+    
     (from .. to).each do |ln|
-      next unless @file.stati[ln] && !@file.is_written?(ln)
+      next unless stati[ln] && !stati.is_written?(ln)
 
       # this used to be conditional on show_break, but no more
-      if from > 0 && !@file.stati[ln - 1] && @has_context
+      if from > 0 && !stati[ln - 1] && @has_context
         @out.puts "  ---"
       end
       
-      print_line ln, @file.stati[ln]  
-      @file.set_as_written ln
+      print_line ln, stati[ln]  
+      stati.set_as_written ln
     end
   end
 
   def write_nonmatching from, to
+    stati = @file.stati
+
     (from .. to).each do |ln|
-      next if @file.is_written?(ln) || @file.stati[ln] == ":"
+      next if stati.is_written?(ln) || stati[ln] == ":"
       log { "printing #{ln}" }
       print_line ln 
-      @file.set_as_written ln
+      stati.set_as_written ln
     end
   end
 
