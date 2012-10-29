@@ -70,14 +70,6 @@ class Glark::File
     end
   end
 
-  def is_written? lnum
-    @stati.is_written? lnum
-  end
-
-  def set_as_written lnum
-    @stati.set_as_written lnum
-  end
-
   def mark_as_match startline, endline = startline
     @matched = true
 
@@ -94,14 +86,6 @@ class Glark::File
       st = [0, startline - @before].max
       @stati.set_match startline - @before, startline, endline, endline + @after
     end
-  end
-
-  def write_matches matching, from, to
-    @formatter.write_matches matching, from, to
-  end
-
-  def write_all
-    @formatter.write_all
   end
 
   # Returns the lines for this file, separated by end of line sequences.

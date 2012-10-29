@@ -45,9 +45,11 @@ class Expression
     @matches = Array.new
   end
 
-  def process file
+  def process file, formatter
     got_match = false
     reset_file file.fname
+
+    formatter = file.formatter
     
     rgstart  = @range && @range.to_line(@range.from, file.linecount)
     info "rgstart: #{rgstart}".yellow
@@ -69,7 +71,7 @@ class Expression
         nmatches += 1
         
         if @display_matches
-          file.write_matches !@invert_match, lastmatch, lnum
+          formatter.write_matches !@invert_match, lastmatch, lnum
           lastmatch = lnum + 1
         elsif @file_names_only
           # we don't need to match more than once
@@ -94,12 +96,12 @@ class Expression
       end
     elsif @filter
       if @invert_match
-        file.write_matches false, 0, lnum
+        formatter.write_matches false, 0, lnum
       elsif got_match
-        file.write_matches true, 0, lnum
+        formatter.write_matches true, 0, lnum
       end
     else
-      file.write_all
+      formatter.write_all
     end
   end
 

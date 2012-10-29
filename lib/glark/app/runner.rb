@@ -71,7 +71,7 @@ class Glark::Runner
   end
 
   def search_file file 
-    @func.process file 
+    @func.process file, file.formatter
 
     if file.matched?
       @exit_status = @invert_match ? 1 : 0

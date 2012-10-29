@@ -6,28 +6,32 @@ require 'riel'
 
 module Glark; end
 
-class Glark::LineStatus < Array
+class Glark::LineStatus
   WRITTEN = Object.new
   PRE_MATCH = '-'
   MATCH = ':'
   POST_MATCH = '+'
 
+  def initialize 
+    @stati = Array.new
+  end
+
   def is_written? lnum
-    self[lnum] == WRITTEN
+    @stati[lnum] == WRITTEN
   end
 
   def set_as_written lnum
-    self[lnum] = WRITTEN
+    @stati[lnum] = WRITTEN
   end
 
   def char lnum
-    self[lnum]
+    @stati[lnum]
   end
 
   def set_status from, to, ch, force = false
     from.upto(to) do |ln|
-      if self[ln].nil? || (force && self[ln] != WRITTEN)
-        self[ln] = ch
+      if @stati[ln].nil? || (force && @stati[ln] != WRITTEN)
+        @stati[ln] = ch
       end
     end
   end

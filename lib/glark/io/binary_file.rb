@@ -4,6 +4,7 @@
 
 require 'glark/io/file'
 
+### $$$ binary files are broken with 1.9.2:
 class Glark::BinaryFile < Glark::File
   def write_matches matching, from, to
     if @count
