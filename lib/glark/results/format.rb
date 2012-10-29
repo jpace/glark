@@ -13,7 +13,6 @@ require 'glark/io/line_status'
 class FormatOptions
   attr_accessor :after
   attr_accessor :before
-  attr_accessor :count
   attr_accessor :file_highlight
   attr_accessor :highlight
   attr_accessor :label
@@ -26,7 +25,6 @@ class FormatOptions
   def initialize 
     @after = nil
     @before = nil
-    @count = nil
     @file_highlight = nil
     @highlight = nil
     @label = nil
@@ -62,8 +60,6 @@ class Results
 end
 
 class OutputFormat < Results
-  include Loggable
-  
   attr_reader :formatted
 
   def initialize file, fmtopts

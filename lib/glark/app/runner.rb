@@ -96,7 +96,6 @@ class Glark::Runner
     format_opts = FormatOptions.new
     format_opts.after = @opts.after
     format_opts.before = @opts.before
-    format_opts.count = 0 if @opts.count
     format_opts.show_count = @opts.count
     format_opts.file_highlight = @opts.file_highlight
     format_opts.highlight = @opts.highlight
@@ -111,8 +110,6 @@ class Glark::Runner
     else
       formatter = @formatter_cls.new file, format_opts
     end
-
-    file.count = 0 if @opts.count
 
     [ file, formatter ]
   end
