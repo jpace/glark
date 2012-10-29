@@ -90,7 +90,7 @@ class Expression
   end
 
   def mark_as_match file
-    file.mark_as_match start_position
+    file.mark_as_match start_position, end_position
   end
 
   def to_s

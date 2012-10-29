@@ -70,7 +70,7 @@ class Glark::File
     end
   end
 
-  def mark_as_match startline, endline = startline
+  def mark_as_match startline, endline
     @matched = true
 
     # even with multi-line matches (--and expressions), we'll display

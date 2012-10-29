@@ -12,10 +12,6 @@ class AndExpression < CompoundExpression
     super op1, op2
   end
 
-  def mark_as_match file
-    file.mark_as_match start_position, end_position
-  end
-
   def match_within_distance op, lnum
     info "op: #{op}; lnum: #{lnum}"
     op.matches.size > 0 and (op.matches[-1] - lnum <= @dist)
