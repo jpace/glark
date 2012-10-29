@@ -2,8 +2,8 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/output/format'
-require 'glark/output/file_header'
+require 'glark/results/format'
+require 'glark/results/file_header'
 
 # -------------------------------------------------------
 # Glark output format

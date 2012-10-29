@@ -2,7 +2,7 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/output/format'
+require 'glark/results/format'
 
 # -------------------------------------------------------
 # Grep output format

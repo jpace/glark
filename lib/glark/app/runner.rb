@@ -8,9 +8,9 @@ require 'riel'
 require 'glark/app/options'
 require 'glark/io/binary_file'
 require 'glark/io/file'
-require 'glark/output/glark_format'
-require 'glark/output/grep_count_format'
-require 'glark/output/grep_format'
+require 'glark/results/glark_format'
+require 'glark/results/grep_count_format'
+require 'glark/results/grep_format'
 
 $stdout.sync = true             # unbuffer
 $stderr.sync = true             # unbuffer

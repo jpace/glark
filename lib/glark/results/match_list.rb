@@ -2,7 +2,7 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/output/glark_format'
+require 'glark/results/glark_format'
 
 # not supported yet; will be matches stored instead of written to stdout.
 class GlarkMatchList < GlarkOutputFormat

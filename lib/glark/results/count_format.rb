@@ -2,7 +2,7 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/output/format'
+require 'glark/results/format'
 
 class CountFormat < OutputFormat
   def initialize file, fmtopts
