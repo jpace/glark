@@ -97,6 +97,7 @@ class Glark::Runner
     format_opts.after = @opts.after
     format_opts.before = @opts.before
     format_opts.count = 0 if @opts.count
+    format_opts.show_count = @opts.count
     format_opts.file_highlight = @opts.file_highlight
     format_opts.highlight = @opts.highlight
     format_opts.label = @opts.label

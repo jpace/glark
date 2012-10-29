@@ -13,14 +13,15 @@ require 'glark/io/line_status'
 class FormatOptions
   attr_accessor :after
   attr_accessor :before
+  attr_accessor :count
   attr_accessor :file_highlight
   attr_accessor :highlight
   attr_accessor :label
   attr_accessor :line_number_highlight
   attr_accessor :out
+  attr_accessor :show_count
   attr_accessor :show_file_names
   attr_accessor :show_line_numbers
-  attr_accessor :count
 
   def initialize 
     @after = nil
@@ -31,29 +32,20 @@ class FormatOptions
     @label = nil
     @line_number_highlight = nil
     @out = nil
+    @show_count = nil
     @show_file_names = nil
     @show_line_numbers = nil
   end
 end
 
-class OutputFormat
+class Results
   include Loggable
-  
-  attr_reader :formatted, :count
 
-  def initialize file, fmtopts
-    @file              = file
-    @formatted         = []
-    @has_context       = false
-    @label             = fmtopts.label
-    @out               = fmtopts.out
-    @show_file_name    = fmtopts.show_file_names
-    @show_line_numbers = fmtopts.show_line_numbers
+  attr_reader :count
+
+  def initialize
     @matched = false
-    @count = fmtopts.count
-    @after = fmtopts.after
-    @before = fmtopts.before
-    @stati = Glark::LineStatus.new
+    @count = 0
   end
 
   def matched?
@@ -66,6 +58,28 @@ class OutputFormat
 
   def add_match
     @count += 1
+  end
+end
+
+class OutputFormat < Results
+  include Loggable
+  
+  attr_reader :formatted
+
+  def initialize file, fmtopts
+    super()
+
+    @file              = file
+    @formatted         = []
+    @has_context       = false
+    @label             = fmtopts.label
+    @out               = fmtopts.out
+    @show_file_name    = fmtopts.show_file_names
+    @show_line_numbers = fmtopts.show_line_numbers
+    @after = fmtopts.after
+    @before = fmtopts.before
+    @show_count = fmtopts.show_count
+    @stati = Glark::LineStatus.new
   end
 
   # Prints the line, which is assumed to be 0-indexed, and is thus adjusted by
@@ -104,7 +118,7 @@ class OutputFormat
   end
 
   def write_matches matching, from, to 
-    if @file.count
+    if @show_count
       write_count matching 
     elsif matching
       write_matching from, to
@@ -161,7 +175,7 @@ class OutputFormat
       endline = startline
     end
 
-    if @count
+    if @show_count
       add_match
     else
       st = [0, startline - @before].max
