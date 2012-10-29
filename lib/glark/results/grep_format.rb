@@ -36,8 +36,7 @@ class GrepOutputFormat < OutputFormat
 
   def print_file_name
     if @show_file_name
-      fname = @label || @file.fname
-      @out.print fname, ":"
+      @out.print displayed_name, ":"
     end
   end
 end

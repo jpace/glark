@@ -35,7 +35,7 @@ class GlarkOutputFormat < OutputFormat
 
   def show_file_header
     if @show_file_name && @file_header.nil?
-      @file_header = FileHeader.new @label || @file.fname, @fname_highlighter
+      @file_header = FileHeader.new displayed_name, @fname_highlighter
       @file_header.print @out
     end
   end

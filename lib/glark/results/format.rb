@@ -78,6 +78,10 @@ class OutputFormat < Results
     @stati = Glark::LineStatus.new
   end
 
+  def displayed_name
+    @label || @file.fname
+  end
+
   # Prints the line, which is assumed to be 0-indexed, and is thus adjusted by
   # one.
   def print_line_number lnum 
