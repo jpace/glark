@@ -138,7 +138,7 @@ class OutputFormat < FormattedOutputFormat
     end
   end
 
-  def write_matches matching, from, to 
+  def write_matches from, to 
     if @invert_match
       write_nonmatching from, to
     else
@@ -154,7 +154,16 @@ class OutputFormat < FormattedOutputFormat
     end
   end
 
-  def mark_as_match startline, endline
-    add_match
+  def add_match startline, endline
+    super()
+  end
+
+  def process_match startline, endline, fromline, toline
+    add_match startline, endline
+    
+    if display_matches?
+      write_matches fromline, toline
+    end    
+    return at_match_limit?
   end
 end

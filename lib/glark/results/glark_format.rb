@@ -76,7 +76,7 @@ class GlarkOutputFormat < OutputFormat
     @out.puts line
   end
 
-  def mark_as_match startline, endline
+  def add_match startline, endline
     super
     
     st = [0, startline - @before].max

@@ -33,7 +33,7 @@ class GrepOutputFormat < OutputFormat
     end
   end
 
-  def mark_as_match startline, endline
+  def add_match startline, endline
     super 
 
     # even with multi-line matches (--and expressions), we'll display

@@ -17,10 +17,7 @@ class Expression
   def initialize
     @match_line_number = nil
     @matches = Array.new
-    
     opts = Glark::Options.instance
-
-    @invert_match = opts.invert_match
     @range = opts.range
   end
 
@@ -60,19 +57,9 @@ class Expression
       if ((!rgstart || lnum >= rgstart) && 
           (!rgend   || lnum < rgend)   &&
           evaluate(line, lnum, file, formatter))
-        
-        formatter.mark_as_match start_position, end_position
-        
-        if formatter.display_matches?
-          formatter.write_matches !@invert_match, lastmatch, lnum
-          lastmatch = lnum + 1
-        end
-        
-        if formatter.at_match_limit?
-          info "formatter.at_match_limit?: #{formatter.at_match_limit?}".bold.yellow.on_green
-          # we've found the match limit
-          break
-        end
+
+        break if formatter.process_match start_position, end_position, lastmatch, lnum
+        lastmatch = lnum + 1
       end
       lnum += 1
     end
