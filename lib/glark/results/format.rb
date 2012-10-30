@@ -139,10 +139,10 @@ class OutputFormat < FormattedOutputFormat
   end
 
   def write_matches matching, from, to 
-    if matching
-      write_matching from, to
-    else
+    if @invert_match
       write_nonmatching from, to
+    else
+      write_matching from, to
     end
   end
 
