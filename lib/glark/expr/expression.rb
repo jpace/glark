@@ -12,7 +12,7 @@ require 'glark/app/options'
 class Expression
   include Loggable
   
-  attr_accessor :matches, :invert_match
+  attr_accessor :matches
 
   def initialize
     @match_line_number = nil
@@ -25,8 +25,6 @@ class Expression
     @range             = opts.range
     @file_names_only   = opts.file_names_only
     @match_limit       = opts.match_limit
-    @write_null        = opts.write_null
-    @filter            = opts.filter
   end
 
   def add_match lnum
@@ -76,7 +74,6 @@ class Expression
           lastmatch = lnum + 1
         elsif @file_names_only
           # we don't need to match more than once
-
           ### $$$ this should be the same as a match limit
           break
         end
@@ -89,7 +86,7 @@ class Expression
       lnum += 1
     end
 
-    formatter.process_match got_match, @file_names_only, @write_null, @invert_match, @filter, lnum
+    formatter.process_match got_match, @file_names_only, @invert_match, lnum
   end
 
   def mark_as_match formatter

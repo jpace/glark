@@ -10,32 +10,6 @@ require 'glark/app/options'
 require 'glark/io/file'
 require 'glark/io/line_status'
 
-class FormatOptions
-  attr_accessor :after
-  attr_accessor :before
-  attr_accessor :file_highlight
-  attr_accessor :highlight
-  attr_accessor :label
-  attr_accessor :line_number_highlight
-  attr_accessor :out
-  attr_accessor :show_count
-  attr_accessor :show_file_names
-  attr_accessor :show_line_numbers
-
-  def initialize 
-    @after = nil
-    @before = nil
-    @file_highlight = nil
-    @highlight = nil
-    @label = nil
-    @line_number_highlight = nil
-    @out = nil
-    @show_count = nil
-    @show_file_names = nil
-    @show_line_numbers = nil
-  end
-end
-
 class Results
   include Loggable
 
@@ -59,6 +33,36 @@ class Results
   end
 end
 
+class FormatOptions
+  attr_accessor :after
+  attr_accessor :before
+  attr_accessor :filter
+  attr_accessor :file_highlight
+  attr_accessor :highlight
+  attr_accessor :label
+  attr_accessor :line_number_highlight
+  attr_accessor :out
+  attr_accessor :show_count
+  attr_accessor :show_file_names
+  attr_accessor :show_line_numbers
+  attr_accessor :write_null
+
+  def initialize 
+    @after = nil
+    @before = nil
+    @file_highlight = nil
+    @filter = filter
+    @highlight = nil
+    @label = nil
+    @line_number_highlight = nil
+    @out = nil
+    @show_count = nil
+    @show_file_names = nil
+    @show_line_numbers = nil
+    @write_null = nil
+  end
+end
+
 class OutputFormat < Results
   attr_reader :formatted
 
@@ -76,6 +80,8 @@ class OutputFormat < Results
     @before = fmtopts.before
     @show_count = fmtopts.show_count
     @stati = Glark::LineStatus.new
+    @filter = fmtopts.filter
+    @write_null = fmtopts.write_null
   end
 
   def displayed_name
@@ -149,12 +155,12 @@ class OutputFormat < Results
     end
   end
 
-  def process_match matched, file_names_only, write_null, invert_match, filter, lnum
+  def process_match matched, file_names_only, invert_match, lnum
     if file_names_only
       if matched != invert_match
-        print_only_file_name write_null
+        print_only_file_name @write_null
       end
-    elsif filter
+    elsif @filter
       if invert_match
         write_matches false, 0, lnum
       elsif matched

@@ -30,7 +30,7 @@ class Glark::File
   end
 
   def each_line &blk
-    @lines.each_line &blk
+    @lines.each_line(&blk)
   end
 
   # Returns the lines for this file, separated by end of line sequences.
