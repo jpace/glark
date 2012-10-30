@@ -67,7 +67,7 @@ class NonFilterFormat < OutputFormat
   # 0-indexed, whereas they are displayed as if 1-indexed.
   def print_line lnum, ch = nil 
     log { "lnum #{lnum}, ch: '#{ch}'" }
-    lnums = @file.get_range lnum 
+    lnums = @file.get_region lnum 
     log { "lnums(#{lnum}): #{lnums}".on_blue }
     return unless lnums
     log { "printing" }

@@ -50,7 +50,7 @@ class Glark::LinesCR < Glark::Lines
     end
   end
 
-  def get_range rnum
+  def get_region rnum
     # easy case: range is the range number, unless it is out of range.
     return rnum < @lines.length ? (rnum .. rnum) : nil
   end
@@ -99,8 +99,8 @@ class Glark::LinesNonCR < Glark::Lines
     @extracted
   end
   
-  # returns the range that is represented by the region number
-  def get_range rnum
+  # returns the region/range that is represented by the region number
+  def get_region rnum
     unless @regions
       @regions = []           # keys = region number; values = range of lines
 

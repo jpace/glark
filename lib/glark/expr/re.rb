@@ -70,7 +70,7 @@ class RegexpExpression < Expression
   def highlight_match lnum, file, formatter
     log { "lnum: #{lnum}; file: #{file}" }
     
-    lnums = file.get_range lnum
+    lnums = file.get_region lnum
     log { "lnums(#{lnum}): #{lnums}" }
     return unless lnums
 

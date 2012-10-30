@@ -44,8 +44,8 @@ class Glark::File
     @lines.get_line lnum
   end
 
-  # returns the range that is represented by the region number
-  def get_range rnum
-    @lines.get_range rnum
+  # returns the region/range that is represented by the region number
+  def get_region rnum
+    @lines.get_region rnum
   end
 end
