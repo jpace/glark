@@ -3,9 +3,10 @@
 # vim: set filetype=ruby : set sw=2
 
 require 'glark/results/format'
+require 'glark/results/matching_format'
 require 'glark/results/file_header'
 
-class NonFilterFormat < OutputFormat
+class NonFilterFormat < MatchingOutputFormat
   def initialize fname, fmtopts
     super
     @file_header = nil          # not nil after file header written    

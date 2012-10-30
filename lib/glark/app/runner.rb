@@ -14,6 +14,7 @@ require 'glark/results/glark_count_format'
 require 'glark/results/grep_count_format'
 require 'glark/results/grep_format'
 require 'glark/results/nonfilter_format'
+require 'glark/results/options'
 
 $stdout.sync = true             # unbuffer
 $stderr.sync = true             # unbuffer
@@ -121,8 +122,10 @@ class Glark::Runner
       formatter = FileNameFormat.new file, format_opts
     elsif !@opts.filter
       formatter = NonFilterFormat.new file, format_opts
+    elsif @opts.output == "grep"
+      formatter = GrepOutputFormat.new file, format_opts
     else
-      formatter = @formatter_cls.new file, format_opts
+      formatter = GlarkOutputFormat.new file, format_opts
     end
 
     [ file, formatter ]

@@ -4,12 +4,13 @@
 
 require 'glark/results/format'
 require 'glark/results/file_header'
+require 'glark/results/matching_format'
 
 # -------------------------------------------------------
 # Glark output format
 # -------------------------------------------------------
 
-class GlarkOutputFormat < OutputFormat
+class GlarkOutputFormat < MatchingOutputFormat
   def initialize file, options
     super
 
