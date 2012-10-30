@@ -219,7 +219,7 @@ class Glark::OptionsTestCase < Glark::TestCase
   def test_verbose
     if origverb = Log.verbose
 
-      %w{ --verbose --verbosity }.each do |vtag|
+      %w{ --verbose }.each do |vtag|
         [ nil, 1, 2, 3, 4 ].each do |num|
           vopt = vtag
           if num

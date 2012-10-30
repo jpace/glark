@@ -153,7 +153,7 @@ class Glark::Options
                  :set  => Proc.new { show_version }
                },
                {
-                 :tags => %w{ --verbose --verbosity },
+                 :tags => %w{ --verbose },
                  :set  => Proc.new { |val| Log.verbose = true }
                },
                {
