@@ -70,7 +70,6 @@ class OutputFormat < Results
 
     @after = fmtopts.after
     @before = fmtopts.before
-    @filter = fmtopts.filter
     @invert_match = fmtopts.invert_match
     @label = fmtopts.label
     @out = fmtopts.out
@@ -137,14 +136,10 @@ class OutputFormat < Results
 
   def process_end matched, lnum
     info "matched: #{matched}".on_blue
-    if @filter
-      if @invert_match
-        write_matches false, 0, lnum
-      elsif matched
-        write_matches true, 0, lnum
-      end
-    else
-      write_all
+    if @invert_match
+      write_matches false, 0, lnum
+    elsif matched
+      write_matches true, 0, lnum
     end
   end
 
