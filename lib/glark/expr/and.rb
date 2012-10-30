@@ -83,5 +83,4 @@ class AndExpression < CompoundExpression
     str += @ops[1].explain(level + 4)
     str
   end
-  
 end

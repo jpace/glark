@@ -97,8 +97,10 @@ class Glark::Runner
     format_opts.after = @opts.after
     format_opts.before = @opts.before
     format_opts.file_highlight = @opts.file_highlight
+    format_opts.file_names_only = @opts.file_names_only
     format_opts.filter = @opts.filter
     format_opts.highlight = @opts.highlight
+    format_opts.invert_match = @opts.invert_match
     format_opts.label = @opts.label
     format_opts.line_number_highlight = @opts.line_number_highlight
     format_opts.out = @opts.out

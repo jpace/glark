@@ -65,7 +65,8 @@ class Expression
           (!rgend   || lnum < rgend)   &&
           evaluate(line, lnum, file, formatter))
         
-        mark_as_match formatter
+        formatter.mark_as_match start_position, end_position
+        
         got_match = true
         nmatches += 1
         
@@ -86,11 +87,7 @@ class Expression
       lnum += 1
     end
 
-    formatter.process_match got_match, @file_names_only, @invert_match, lnum
-  end
-
-  def mark_as_match formatter
-    formatter.mark_as_match start_position, end_position
+    formatter.process_end got_match, lnum
   end
 
   def to_s
