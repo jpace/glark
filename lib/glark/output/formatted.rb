@@ -5,8 +5,8 @@
 # Output that has (possibly) been reformatted, i.e., highlighting of regular
 # expressions.
 
-require 'glark/io/file'
-require 'glark/results/results'
+require 'glark/input/file'
+require 'glark/output/results'
 
 class FormattedOutputFormat < Results
   attr_reader :formatted

@@ -2,7 +2,7 @@
 # -*- ruby -*-
 
 require 'tc'
-require 'glark/io/range'
+require 'glark/input/range'
 
 class Glark::RangeTestCase < Glark::TestCase
   def test_ctor

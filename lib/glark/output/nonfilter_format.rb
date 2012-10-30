@@ -2,9 +2,9 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/results/format'
-require 'glark/results/matching_format'
-require 'glark/results/file_header'
+require 'glark/output/format'
+require 'glark/output/matching_format'
+require 'glark/output/file_header'
 
 class NonFilterFormat < MatchingOutputFormat
   def initialize fname, fmtopts

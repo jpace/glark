@@ -2,7 +2,7 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/expr/or'
+require 'glark/match/or'
 
 # Evaluates the expressions, and is satisfied if only one returns true.
 class ExclusiveOrExpression < OrExpression

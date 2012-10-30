@@ -2,7 +2,7 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/expr/compound'
+require 'glark/match/compound'
 
 # Evaluates both expressions, and is satisfied when both return true.
 class AndExpression < CompoundExpression

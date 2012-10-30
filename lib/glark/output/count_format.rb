@@ -2,7 +2,7 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/results/format'
+require 'glark/output/format'
 
 class CountFormat < OutputFormat
   def display_matches?

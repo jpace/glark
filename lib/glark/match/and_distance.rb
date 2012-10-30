@@ -7,10 +7,10 @@
 require 'rubygems'
 require 'riel/regexp'
 require 'glark/app/options'
-require 'glark/expr/re'
-require 'glark/expr/ior'
-require 'glark/expr/xor'
-require 'glark/expr/and'
+require 'glark/match/re'
+require 'glark/match/ior'
+require 'glark/match/xor'
+require 'glark/match/and'
 
 class AndDistance
   include Loggable

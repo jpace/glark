@@ -4,9 +4,9 @@
 
 # Output for displayed lines.
 
-require 'glark/io/file'
-require 'glark/io/line_status'
-require 'glark/results/format'
+require 'glark/input/file'
+require 'glark/input/line_status'
+require 'glark/output/format'
 
 class MatchingOutputFormat < OutputFormat
   def initialize file, fmtopts

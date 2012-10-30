@@ -3,8 +3,8 @@
 
 require 'rubygems'
 require 'riel'
-require 'glark/expr/factory'
-require 'glark/io/range'
+require 'glark/match/factory'
+require 'glark/input/range'
 
 module Glark
   PACKAGE = 'glark'

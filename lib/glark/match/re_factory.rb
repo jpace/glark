@@ -6,7 +6,7 @@
 
 require 'rubygems'
 require 'riel/regexp'
-require 'glark/expr/re'
+require 'glark/match/re'
 
 class RegexpExpressionFactory
   include Loggable

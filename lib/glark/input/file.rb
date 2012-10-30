@@ -4,7 +4,7 @@
 
 require 'rubygems'
 require 'riel'
-require 'glark/io/lines'
+require 'glark/input/lines'
 
 module Glark; end
 

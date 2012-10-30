@@ -2,7 +2,7 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/io/file'
+require 'glark/input/file'
 
 ### $$$ binary files are broken with 1.9.2:
 class Glark::BinaryFile < Glark::File

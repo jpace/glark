@@ -2,7 +2,7 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/expr/expression'
+require 'glark/match/expression'
 
 # -------------------------------------------------------
 # Compound expression function object

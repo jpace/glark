@@ -2,7 +2,7 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/expr/compound'
+require 'glark/match/compound'
 
 # A collection of expressions, evaluated as 'or'.
 class OrExpression < CompoundExpression

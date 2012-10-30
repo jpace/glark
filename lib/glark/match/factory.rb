@@ -6,11 +6,11 @@
 
 require 'rubygems'
 require 'riel/regexp'
-require 'glark/expr/and'
-require 'glark/expr/and_distance'
-require 'glark/expr/ior'
-require 'glark/expr/re_factory'
-require 'glark/expr/xor'
+require 'glark/match/and'
+require 'glark/match/and_distance'
+require 'glark/match/ior'
+require 'glark/match/re_factory'
+require 'glark/match/xor'
 
 class FactoryOptions
   attr_accessor :extended

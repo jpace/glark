@@ -6,9 +6,9 @@
 
 require 'rubygems'
 require 'riel'
-require 'glark/io/file'
-require 'glark/results/formatted'
-require 'glark/results/options'
+require 'glark/input/file'
+require 'glark/output/formatted'
+require 'glark/output/options'
 
 class OutputFormat < FormattedOutputFormat
   def initialize file, fmtopts

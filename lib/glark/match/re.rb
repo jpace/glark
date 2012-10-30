@@ -2,7 +2,7 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/expr/expression'
+require 'glark/match/expression'
 
 # Applies a regular expression against a File.
 class RegexpExpression < Expression
