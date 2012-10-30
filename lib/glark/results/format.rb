@@ -37,6 +37,7 @@ class FormatOptions
   attr_accessor :invert_match
   attr_accessor :label
   attr_accessor :line_number_highlight
+  attr_accessor :match_limit
   attr_accessor :out
   attr_accessor :show_file_names
   attr_accessor :show_line_numbers
@@ -51,6 +52,7 @@ class FormatOptions
     @invert_match = nil
     @label = nil
     @line_number_highlight = nil
+    @match_limit = nil
     @out = nil
     @show_file_names = nil
     @show_line_numbers = nil
@@ -82,6 +84,7 @@ class OutputFormat < FormattedOutputFormat
     @before = fmtopts.before
     @invert_match = fmtopts.invert_match
     @label = fmtopts.label
+    @match_limit = fmtopts.match_limit
     @out = fmtopts.out
     @show_file_name = fmtopts.show_file_names
     @show_line_numbers = fmtopts.show_line_numbers
@@ -90,6 +93,10 @@ class OutputFormat < FormattedOutputFormat
 
   def display_matches?
     true
+  end
+
+  def at_match_limit?
+    @match_limit && @count >= @match_limit
   end
 
   def displayed_name

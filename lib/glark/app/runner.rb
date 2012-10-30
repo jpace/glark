@@ -105,9 +105,9 @@ class Glark::Runner
     format_opts.invert_match = @opts.invert_match
     format_opts.label = @opts.label
     format_opts.line_number_highlight = @opts.line_number_highlight
+    format_opts.match_limit = @opts.match_limit
     format_opts.out = @opts.out
     format_opts.show_file_names = @show_file_names
-    info "@opts.show_line_numbers: #{@opts.show_line_numbers}".bold
     format_opts.show_line_numbers = @opts.show_line_numbers
     format_opts.write_null = @opts.write_null
 

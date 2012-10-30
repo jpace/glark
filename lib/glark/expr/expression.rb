@@ -23,7 +23,6 @@ class Expression
     @invert_match      = opts.invert_match
     @range             = opts.range
     @file_names_only   = opts.file_names_only
-    @match_limit       = opts.match_limit
   end
 
   def add_match lnum
@@ -74,7 +73,8 @@ class Expression
           break
         end
         
-        if @match_limit && formatter.count >= @match_limit
+        if formatter.at_match_limit?
+          info "formatter.at_match_limit?: #{formatter.at_match_limit?}".bold.yellow.on_green
           # we've found the match limit
           break
         end
