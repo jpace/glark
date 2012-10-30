@@ -13,6 +13,10 @@ class NonFilterFormat < OutputFormat
     @lnum_highlighter = fmtopts.line_number_highlight
   end
 
+  def display_matches?
+    false
+  end
+
   def process_end matched, lnum
     info "matched: #{matched}".on_red
     show_file_header

@@ -72,8 +72,6 @@ class FormattedOutputFormat < Results
 end
 
 class OutputFormat < FormattedOutputFormat
-  attr_reader :formatted
-
   def initialize file, fmtopts
     super()
 
@@ -88,6 +86,10 @@ class OutputFormat < FormattedOutputFormat
     @show_file_name = fmtopts.show_file_names
     @show_line_numbers = fmtopts.show_line_numbers
     @stati = Glark::LineStatus.new
+  end
+
+  def display_matches?
+    true
   end
 
   def displayed_name

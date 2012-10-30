@@ -21,7 +21,6 @@ class Expression
     opts               = Glark::Options.instance
 
     @invert_match      = opts.invert_match
-    @display_matches   = !opts.file_names_only && opts.filter && !opts.count
     @range             = opts.range
     @file_names_only   = opts.file_names_only
     @match_limit       = opts.match_limit
@@ -70,7 +69,7 @@ class Expression
         got_match = true
         nmatches += 1
         
-        if @display_matches
+        if formatter.display_matches?
           formatter.write_matches !@invert_match, lastmatch, lnum
           lastmatch = lnum + 1
         elsif @file_names_only

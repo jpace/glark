@@ -5,6 +5,10 @@
 require 'glark/results/format'
 
 class CountFormat < OutputFormat
+  def display_matches?
+    false
+  end
+
   def write_count matching = true 
     if @show_file_name
       print_file_name

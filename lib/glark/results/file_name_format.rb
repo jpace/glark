@@ -10,6 +10,10 @@ class FileNameFormat < OutputFormat
     @write_null = fmtopts.write_null
   end
 
+  def display_matches?
+    false
+  end
+
   def print_only_file_name
     if @write_null
       @out.print @file.fname + "\0"
