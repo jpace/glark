@@ -139,11 +139,10 @@ class OutputFormat < FormattedOutputFormat
     end
   end
 
-  def process_end matched, lnum
-    info "matched: #{matched}".on_blue
+  def process_end lnum
     if @invert_match
       write_matches false, 0, lnum
-    elsif matched
+    elsif matched?
       write_matches true, 0, lnum
     end
   end

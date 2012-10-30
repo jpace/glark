@@ -61,10 +61,10 @@ class Glark::TestCase < Test::Unit::TestCase
         yield file
       end
     else
-      Tempfile.open "glark" do |file|
-        fname = file.path
-        yield file
-      end
+      tf = Tempfile.new "glark"
+      fname = tf.path
+      yield tf
+      tf.close
     end
     fname
   end

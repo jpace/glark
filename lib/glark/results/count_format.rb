@@ -23,11 +23,10 @@ class CountFormat < OutputFormat
   def print_count ct
   end    
 
-  def process_end matched, lnum
-    info "matched: #{matched}".on_red
+  def process_end lnum
     if @invert_match
       write_count false
-    elsif matched
+    elsif matched?
       write_count true
     end
   end

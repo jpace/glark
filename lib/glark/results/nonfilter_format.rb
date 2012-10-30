@@ -17,8 +17,7 @@ class NonFilterFormat < OutputFormat
     false
   end
 
-  def process_end matched, lnum
-    info "matched: #{matched}".on_red
+  def process_end lnum
     show_file_header
     write_all
   end

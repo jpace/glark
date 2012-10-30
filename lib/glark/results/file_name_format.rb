@@ -22,15 +22,9 @@ class FileNameFormat < OutputFormat
     end
   end
 
-  def process_end matched, lnum
-    info "matched: #{matched}".on_red
-    if matched != @invert_match
+  def process_end lnum
+    if matched? != @invert_match
       print_only_file_name
     end
-  end
-
-  def mark_as_match startline, endline
-    add_match
-    # the superclass is storing the status; we don't need that.
   end
 end

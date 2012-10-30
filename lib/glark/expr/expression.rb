@@ -55,7 +55,6 @@ class Expression
     info "formatter: #{formatter}".black.on_green
     
     lastmatch = 0
-    nmatches = 0
     lnum = 0
     file.each_line do |line|
       info "line: #{line.chomp}".cyan
@@ -66,9 +65,6 @@ class Expression
         
         formatter.mark_as_match start_position, end_position
         
-        got_match = true
-        nmatches += 1
-        
         if formatter.display_matches?
           formatter.write_matches !@invert_match, lastmatch, lnum
           lastmatch = lnum + 1
@@ -78,7 +74,7 @@ class Expression
           break
         end
         
-        if @match_limit && nmatches >= @match_limit
+        if @match_limit && formatter.count >= @match_limit
           # we've found the match limit
           break
         end
@@ -86,7 +82,7 @@ class Expression
       lnum += 1
     end
 
-    formatter.process_end got_match, lnum
+    formatter.process_end lnum
   end
 
   def to_s
