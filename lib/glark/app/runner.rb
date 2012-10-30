@@ -9,6 +9,7 @@ require 'glark/app/options'
 require 'glark/io/binary_file'
 require 'glark/io/file'
 require 'glark/results/glark_format'
+require 'glark/results/glark_count_format'
 require 'glark/results/grep_count_format'
 require 'glark/results/grep_format'
 
@@ -109,8 +110,10 @@ class Glark::Runner
     format_opts.show_line_numbers = @opts.show_line_numbers
     format_opts.write_null = @opts.write_null
 
-    if false && @opts.output == "grep" && @opts.count
+    if true && @opts.output == "grep" && @opts.count
       formatter = GrepCountFormat.new file, format_opts
+    elsif @opts.count
+      formatter = GlarkCountFormat.new file, format_opts
     else
       formatter = @formatter_cls.new file, format_opts
     end

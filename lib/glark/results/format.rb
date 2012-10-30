@@ -158,6 +158,7 @@ class OutputFormat < Results
   end
 
   def process_end matched, lnum
+    info "matched: #{matched}".on_blue
     if @file_names_only
       if matched != @invert_match
         print_only_file_name @write_null

@@ -5,17 +5,10 @@
 require 'glark/results/format'
 
 class CountFormat < OutputFormat
-  def initialize file, fmtopts
-    super
-    @count = 0
-  end
-
-  def add_match
-    @count += 1
-  end
-
   def write_count matching = true 
-    print_file_name
+    if @show_file_name
+      print_file_name
+    end
     ct = matching ? @count : @file.get_lines.size - @count
     print_count ct
   end
@@ -25,4 +18,13 @@ class CountFormat < OutputFormat
 
   def print_count ct
   end    
+
+  def process_end matched, lnum
+    info "matched: #{matched}".on_red
+    if @invert_match
+      write_count false
+    elsif matched
+      write_count true
+    end
+  end
 end
