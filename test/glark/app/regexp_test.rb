@@ -33,7 +33,6 @@ class Glark::RegexpTestCase < Glark::AppTestCase
     run_app_test expected, [ 'The\w+Tale' ], fname
   end
 
-
   def test_one_line_grep
     fname = '/proj/org/incava/glark/test/resources/textfile.txt'
     expected = [
