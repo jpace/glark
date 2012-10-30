@@ -49,20 +49,10 @@ class GlarkOutputFormat < OutputFormat
       super
     end
   end
- 
-  def write_count matching = true 
-    ct = matching ? @count : @file.get_lines.size - @count
-    @out.puts "    " + ct.to_s
-  end
 
   def write_matches matching, from, to 
     show_file_header
     super matching, from, to 
-  end
-
-  def write_all
-    show_file_header
-    super
   end
 
   def println ln, ch 
@@ -78,5 +68,12 @@ class GlarkOutputFormat < OutputFormat
     log { "line: #{line}" }
     
     @out.puts line
+  end
+
+  def mark_as_match startline, endline
+    super
+    
+    st = [0, startline - @before].max
+    @stati.set_match startline - @before, startline, endline, endline + @after
   end
 end

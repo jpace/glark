@@ -27,9 +27,4 @@ class CountFormat < OutputFormat
       write_count true
     end
   end
-
-  def mark_as_match startline, endline
-    add_match
-    # the superclass is storing the status; we don't need that.
-  end
 end

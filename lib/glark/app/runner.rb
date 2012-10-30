@@ -8,10 +8,12 @@ require 'riel'
 require 'glark/app/options'
 require 'glark/io/binary_file'
 require 'glark/io/file'
+require 'glark/results/file_name_format'
 require 'glark/results/glark_format'
 require 'glark/results/glark_count_format'
 require 'glark/results/grep_count_format'
 require 'glark/results/grep_format'
+require 'glark/results/nonfilter_format'
 
 $stdout.sync = true             # unbuffer
 $stderr.sync = true             # unbuffer
@@ -98,7 +100,6 @@ class Glark::Runner
     format_opts.after = @opts.after
     format_opts.before = @opts.before
     format_opts.file_highlight = @opts.file_highlight
-    format_opts.file_names_only = @opts.file_names_only
     format_opts.filter = @opts.filter
     format_opts.highlight = @opts.highlight
     format_opts.invert_match = @opts.invert_match
@@ -115,6 +116,10 @@ class Glark::Runner
       else
         formatter = GlarkCountFormat.new file, format_opts
       end
+    elsif @opts.file_names_only
+      formatter = FileNameFormat.new file, format_opts
+    elsif !@opts.filter
+      formatter = NonFilterFormat.new file, format_opts
     else
       formatter = @formatter_cls.new file, format_opts
     end

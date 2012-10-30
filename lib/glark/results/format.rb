@@ -32,7 +32,6 @@ class FormatOptions
   attr_accessor :after
   attr_accessor :before
   attr_accessor :file_highlight
-  attr_accessor :file_names_only
   attr_accessor :filter
   attr_accessor :highlight
   attr_accessor :invert_match
@@ -47,7 +46,6 @@ class FormatOptions
     @after = nil
     @before = nil
     @file_highlight = nil
-    @file_names_only = nil
     @filter = filter
     @highlight = nil
     @invert_match = nil
@@ -73,7 +71,6 @@ class OutputFormat < Results
     @after = fmtopts.after
     @before = fmtopts.before
     @filter = fmtopts.filter
-    @file_names_only = fmtopts.file_names_only
     @invert_match = fmtopts.invert_match
     @label = fmtopts.label
     @out = fmtopts.out
@@ -130,12 +127,6 @@ class OutputFormat < Results
     end
   end
 
-  def write_all
-    (0 ... @file.get_lines.length).each do |ln|
-      print_line ln  
-    end
-  end
-
   def get_line_to_print lnum 
     @formatted[lnum] || @file.get_line(lnum)
   end
@@ -144,21 +135,9 @@ class OutputFormat < Results
     @show_line_numbers
   end
 
-  def print_only_file_name write_null
-    if write_null
-      @out.print @file.fname + "\0"
-    else
-      @out.puts @file.fname
-    end
-  end
-
   def process_end matched, lnum
     info "matched: #{matched}".on_blue
-    if @file_names_only
-      if matched != @invert_match
-        print_only_file_name @write_null
-      end
-    elsif @filter
+    if @filter
       if @invert_match
         write_matches false, 0, lnum
       elsif matched
@@ -171,15 +150,5 @@ class OutputFormat < Results
 
   def mark_as_match startline, endline
     add_match
-
-    # even with multi-line matches (--and expressions), we'll display
-    # only the first matching line, not the range between the matches.
-
-    if kind_of? GrepOutputFormat
-      endline = startline
-    end
-
-    st = [0, startline - @before].max
-    @stati.set_match startline - @before, startline, endline, endline + @after
   end
 end
