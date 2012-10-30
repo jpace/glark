@@ -50,9 +50,14 @@ class GlarkOutputFormat < OutputFormat
     end
   end
 
-  def write_matches matching, from, to 
+  def write_matching from, to
     show_file_header
-    super matching, from, to 
+    super
+  end
+
+  def write_nonmatching from, to
+    show_file_header
+    super
   end
 
   def println ln, ch 

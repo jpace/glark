@@ -148,9 +148,9 @@ class OutputFormat < FormattedOutputFormat
 
   def process_end lnum
     if @invert_match
-      write_matches false, 0, lnum
+      write_nonmatching 0, lnum
     elsif matched?
-      write_matches true, 0, lnum
+      write_matching 0, lnum
     end
   end
 
