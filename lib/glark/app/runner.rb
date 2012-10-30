@@ -90,7 +90,6 @@ class Glark::Runner
   end
 
   def create_file filecls, name, io
-    fopts = Glark::FileOptions.new @after, @before, @output
     file = filecls.new name, io
 
     format_opts = FormatOptions.new
