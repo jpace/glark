@@ -107,6 +107,7 @@ class Glark::Runner
     format_opts.line_number_highlight = @opts.line_number_highlight
     format_opts.out = @opts.out
     format_opts.show_file_names = @show_file_names
+    info "@opts.show_line_numbers: #{@opts.show_line_numbers}".bold
     format_opts.show_line_numbers = @opts.show_line_numbers
     format_opts.write_null = @opts.write_null
 

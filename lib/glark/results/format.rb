@@ -58,14 +58,26 @@ class FormatOptions
   end
 end
 
-class OutputFormat < Results
+class FormattedOutputFormat < Results
+  attr_reader :formatted
+
+  def initialize
+    super
+    @formatted = []
+  end
+
+  def get_line_to_print lnum 
+    @formatted[lnum] || @file.get_line(lnum)
+  end
+end
+
+class OutputFormat < FormattedOutputFormat
   attr_reader :formatted
 
   def initialize file, fmtopts
     super()
 
     @file = file
-    @formatted = []
     @has_context = false
 
     @after = fmtopts.after
@@ -76,7 +88,6 @@ class OutputFormat < Results
     @show_file_name = fmtopts.show_file_names
     @show_line_numbers = fmtopts.show_line_numbers
     @stati = Glark::LineStatus.new
-    @write_null = fmtopts.write_null
   end
 
   def displayed_name
@@ -124,14 +135,6 @@ class OutputFormat < Results
     else
       write_nonmatching from, to
     end
-  end
-
-  def get_line_to_print lnum 
-    @formatted[lnum] || @file.get_line(lnum)
-  end
-
-  def show_line_numbers
-    @show_line_numbers
   end
 
   def process_end matched, lnum

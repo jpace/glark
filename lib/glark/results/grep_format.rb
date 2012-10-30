@@ -20,7 +20,7 @@ class GrepOutputFormat < OutputFormat
     next unless ln
 
     print_file_name
-    if show_line_numbers
+    if @show_line_numbers
       @out.printf "%d: ".on_red, lnum + 1
     end
     

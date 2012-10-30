@@ -8,7 +8,6 @@ require 'glark/results/file_header'
 class NonFilterFormat < OutputFormat
   def initialize fname, fmtopts
     super
-    @write_null = fmtopts.write_null
     @file_header = nil          # not nil after file header written    
     @fname_highlighter = fmtopts.highlight && fmtopts.file_highlight
     @lnum_highlighter = fmtopts.line_number_highlight
@@ -47,7 +46,7 @@ class NonFilterFormat < OutputFormat
   end
 
   def println ln, ch 
-    if show_line_numbers
+    if @show_line_numbers
       print_line_number ln 
     end
     

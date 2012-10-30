@@ -56,7 +56,8 @@ class GlarkOutputFormat < OutputFormat
   end
 
   def println ln, ch 
-    if show_line_numbers
+    info "@show_line_numbers: #{@show_line_numbers}".on_yellow
+    if @show_line_numbers
       print_line_number ln 
     end
     
