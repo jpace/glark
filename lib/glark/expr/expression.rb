@@ -6,7 +6,6 @@
 
 require 'rubygems'
 require 'riel'
-require 'glark/app/options'
 
 # An expression, which can be applied (processed) against a Glark::File.
 class Expression
@@ -17,8 +16,6 @@ class Expression
   def initialize
     @match_line_number = nil
     @matches = Array.new
-    opts = Glark::Options.instance
-    @range = opts.range
   end
 
   def add_match lnum
@@ -39,21 +36,16 @@ class Expression
   end
 
   def process file, formatter
-    got_match = false
     reset_file file.fname
-    
-    rgstart  = @range && @range.to_line(@range.from, file.linecount)
-    info "rgstart: #{rgstart}".yellow
-    rgend    = @range && @range.to_line(@range.to,   file.linecount)
-    info "rgend: #{rgend}".yellow
 
-    info "formatter: #{formatter}".black.on_green
+    rgstart = file.get_range_start
+    rgend = file.get_range_end
     
     lastmatch = 0
     lnum = 0
     file.each_line do |line|
-      info "line: #{line.chomp}".cyan
-      info "lnum: #{lnum}".cyan
+      info "line: #{line.chomp}"
+      info "lnum: #{lnum}"
       if ((!rgstart || lnum >= rgstart) && 
           (!rgend   || lnum < rgend)   &&
           evaluate(line, lnum, file, formatter))

@@ -93,7 +93,7 @@ class Glark::Runner
   end
 
   def create_file filecls, name, io
-    file = filecls.new name, io
+    file = filecls.new name, io, @opts.range
 
     format_opts = FormatOptions.new
 

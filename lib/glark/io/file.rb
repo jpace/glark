@@ -14,8 +14,9 @@ class Glark::File
 
   attr_reader :fname
   
-  def initialize fname, io
+  def initialize fname, io, range
     @fname = fname
+    @range = range
     
     if $/ == "\n"
       @lines = Glark::LinesCR.new fname, io
@@ -47,5 +48,13 @@ class Glark::File
   # returns the region/range that is represented by the region number
   def get_region rnum
     @lines.get_region rnum
+  end
+
+  def get_range_start
+    @range && @range.to_line(@range.from, linecount)
+  end
+
+  def get_range_end
+    @range && @range.to_line(@range.to, linecount)
   end
 end
