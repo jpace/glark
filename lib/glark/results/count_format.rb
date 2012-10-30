@@ -9,25 +9,18 @@ class CountFormat < OutputFormat
     false
   end
 
-  def write_count matching = true 
+  def write_count ct
     if @show_file_name
       print_file_name
     end
-    ct = matching ? @count : @file.get_lines.size - @count
     print_count ct
   end
 
-  def print_file_name
-  end
-
-  def print_count ct
-  end    
-
   def process_end lnum
     if @invert_match
-      write_count false
+      write_count @file.get_lines.size - @count
     elsif matched?
-      write_count true
+      write_count @count
     end
   end
 end
