@@ -16,13 +16,12 @@ class Expression
 
   def initialize
     @match_line_number = nil
-    @matches           = Array.new
+    @matches = Array.new
     
-    opts               = Glark::Options.instance
+    opts = Glark::Options.instance
 
-    @invert_match      = opts.invert_match
-    @range             = opts.range
-    @file_names_only   = opts.file_names_only
+    @invert_match = opts.invert_match
+    @range = opts.range
   end
 
   def add_match lnum
@@ -67,10 +66,6 @@ class Expression
         if formatter.display_matches?
           formatter.write_matches !@invert_match, lastmatch, lnum
           lastmatch = lnum + 1
-        elsif @file_names_only
-          # we don't need to match more than once
-          ### $$$ this should be the same as a match limit
-          break
         end
         
         if formatter.at_match_limit?

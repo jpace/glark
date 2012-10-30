@@ -10,6 +10,10 @@ class FileNameFormat < OutputFormat
     @write_null = fmtopts.write_null
   end
 
+  def at_match_limit?
+    @count > 0
+  end
+
   def display_matches?
     false
   end
