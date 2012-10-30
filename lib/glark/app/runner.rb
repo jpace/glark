@@ -105,15 +105,16 @@ class Glark::Runner
     format_opts.label = @opts.label
     format_opts.line_number_highlight = @opts.line_number_highlight
     format_opts.out = @opts.out
-    format_opts.show_count = @opts.count
     format_opts.show_file_names = @show_file_names
     format_opts.show_line_numbers = @opts.show_line_numbers
     format_opts.write_null = @opts.write_null
 
-    if true && @opts.output == "grep" && @opts.count
-      formatter = GrepCountFormat.new file, format_opts
-    elsif @opts.count
-      formatter = GlarkCountFormat.new file, format_opts
+    if @opts.count
+      if @opts.output == "grep" 
+        formatter = GrepCountFormat.new file, format_opts
+      else
+        formatter = GlarkCountFormat.new file, format_opts
+      end
     else
       formatter = @formatter_cls.new file, format_opts
     end

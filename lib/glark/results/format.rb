@@ -39,7 +39,6 @@ class FormatOptions
   attr_accessor :label
   attr_accessor :line_number_highlight
   attr_accessor :out
-  attr_accessor :show_count
   attr_accessor :show_file_names
   attr_accessor :show_line_numbers
   attr_accessor :write_null
@@ -55,7 +54,6 @@ class FormatOptions
     @label = nil
     @line_number_highlight = nil
     @out = nil
-    @show_count = nil
     @show_file_names = nil
     @show_line_numbers = nil
     @write_null = nil
@@ -79,7 +77,6 @@ class OutputFormat < Results
     @invert_match = fmtopts.invert_match
     @label = fmtopts.label
     @out = fmtopts.out
-    @show_count = fmtopts.show_count
     @show_file_name = fmtopts.show_file_names
     @show_line_numbers = fmtopts.show_line_numbers
     @stati = Glark::LineStatus.new
@@ -126,9 +123,7 @@ class OutputFormat < Results
   end
 
   def write_matches matching, from, to 
-    if @show_count
-      write_count matching 
-    elsif matching
+    if matching
       write_matching from, to
     else
       write_nonmatching from, to
@@ -184,9 +179,7 @@ class OutputFormat < Results
       endline = startline
     end
 
-    unless @show_count
-      st = [0, startline - @before].max
-      @stati.set_match startline - @before, startline, endline, endline + @after
-    end
+    st = [0, startline - @before].max
+    @stati.set_match startline - @before, startline, endline, endline + @after
   end
 end
