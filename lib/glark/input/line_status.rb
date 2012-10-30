@@ -28,18 +28,22 @@ class Glark::LineStatus
     @stati[lnum]
   end
 
-  def set_status from, to, ch, force = false
-    from.upto(to) do |ln|
-      if @stati[ln].nil? || (force && @stati[ln] != WRITTEN)
-        @stati[ln] = ch
-      end
+  def set_status from, to, status
+    from.upto(to) do |lnum|
+      update_status lnum, status
+    end
+  end
+
+  def update_status lnum, status
+    if @stati[lnum].nil? || (status == MATCH && @stati[lnum] != WRITTEN)
+      @stati[lnum] = status
     end
   end
 
   def set_match pre_match_start, match_start, match_end, post_match_end
     start = [0, pre_match_start].max
-    set_status start,         match_start - 1,    '-'
-    set_status match_start,   match_end,          ':',  true
-    set_status match_end + 1, post_match_end,     '+'
+    set_status start,         match_start - 1,    PRE_MATCH
+    set_status match_start,   match_end,          MATCH
+    set_status match_end + 1, post_match_end,     POST_MATCH
   end
 end

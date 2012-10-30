@@ -12,17 +12,9 @@ class MatchingOutputFormat < OutputFormat
   def initialize file, fmtopts
     super
 
-    @file = file
     @has_context = false
-
     @after = fmtopts.after
     @before = fmtopts.before
-    @invert_match = fmtopts.invert_match
-    @label = fmtopts.label
-    @match_limit = fmtopts.match_limit
-    @out = fmtopts.out
-    @show_file_name = fmtopts.show_file_names
-    @show_line_numbers = fmtopts.show_line_numbers
     @stati = Glark::LineStatus.new
   end
 
@@ -100,5 +92,10 @@ class MatchingOutputFormat < OutputFormat
       write_matches fromline, toline
     end
     return at_match_limit?
+  end
+
+  def set_status startline, endline
+    st = [0, startline - @before].max
+    @stati.set_match startline - @before, startline, endline, endline + @after
   end
 end

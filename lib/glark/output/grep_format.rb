@@ -36,11 +36,8 @@ class GrepOutputFormat < MatchingOutputFormat
 
   def add_match startline, endline
     super 
-
     # even with multi-line matches (--and expressions), we'll display
     # only the first matching line, not the range between the matches.
-    endline = startline
-    st = [0, startline - @before].max
-    @stati.set_match startline - @before, startline, endline, endline + @after
+    set_status startline, startline
   end
 end

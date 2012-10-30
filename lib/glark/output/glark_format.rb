@@ -79,8 +79,6 @@ class GlarkOutputFormat < MatchingOutputFormat
 
   def add_match startline, endline
     super
-    
-    st = [0, startline - @before].max
-    @stati.set_match startline - @before, startline, endline, endline + @after
+    set_status startline, endline
   end
 end
