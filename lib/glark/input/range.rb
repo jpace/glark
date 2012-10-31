@@ -20,6 +20,10 @@ class Glark::Range
     @to = to
   end
 
+  def bound?
+    @from.nil? && @to.nil?
+  end
+
   def to_line var, linecount
     info "var: #{var}".on_red
     if var
@@ -63,5 +67,33 @@ class Glark::Range
 
   def <=> other
     compare(from, other.from) || compare(to, other.to) || 0
+  end
+
+  def add_as_option optdata
+    optdata << range_after_option = {
+      :tags    => %w{ --after },
+      :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
+      :set     => Proc.new { |md| @from = md[1] }
+    }
+
+    optdata << range_before_option = { 
+      :tags    => %w{ --before },
+      :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
+      :set     => Proc.new { |md| @to = md[1] }
+    }
+
+    optdata << range_option = {
+      :tags     => %w{ -R --range },
+      :arg      => [ :required, :regexp, Regexp.new('(\d+%?),(\d+%?)') ],
+      :set      => Proc.new do |md, opt, args|
+        if md && md[1] && md[2]
+          from = md[1]
+          to = md[2]
+        else
+          from = args.shift
+          to = args.shift
+        end
+      end
+    }
   end
 end

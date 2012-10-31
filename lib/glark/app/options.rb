@@ -382,7 +382,8 @@ class Glark::Options
   end
 
   def range
-    @range_option.range
+    rg = @range_option.range
+    Glark::Range.new rg && rg.from, rg && rg.to
   end
 
   def after
