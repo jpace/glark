@@ -59,7 +59,7 @@ class Lines < Common
   def write_nonmatching from, to
     (from .. to).each do |ln|
       next if @stati.is_written?(ln) || @stati.char(ln) == ":"
-      log { "printing #{ln}" }
+      # log { "printing #{ln}" }
       print_line ln 
       @stati.set_as_written ln
     end
@@ -91,9 +91,6 @@ class Lines < Common
   end
 
   def set_status startline, endline
-    info "@before: #{@before}".yellow
-    info "@after: #{@after}".yellow
-
     st = [0, startline - @before].max
     @stati.set_match startline - @before, startline, endline, endline + @after
   end

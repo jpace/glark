@@ -51,7 +51,8 @@ class Glark::File
   end
 
   def get_range_start
-    @range && @range.to_line(@range.from, linecount)
+    st = @range && @range.to_line(@range.from, linecount)
+    st
   end
 
   def get_range_end

@@ -53,11 +53,10 @@ module Glark
     # prints the line, and adjusts for the fact that in our world, lines are
     # 0-indexed, whereas they are displayed as if 1-indexed.
     def print_line lnum, ch = nil 
-      log { "lnum #{lnum}, ch: '#{ch}'" }
+      # log { "lnum #{lnum}, ch: '#{ch}'" }
       lnums = @file.get_region lnum 
-      log { "lnums(#{lnum}): #{lnums}".on_blue }
+      # log { "lnums(#{lnum}): #{lnums}" }
       return unless lnums
-      log { "printing" }
       lnums.each do |ln|
         println ln, ch 
       end

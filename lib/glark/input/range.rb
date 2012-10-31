@@ -87,11 +87,11 @@ class Glark::Range
       :arg      => [ :required, :regexp, Regexp.new('(\d+%?),(\d+%?)') ],
       :set      => Proc.new do |md, opt, args|
         if md && md[1] && md[2]
-          from = md[1]
-          to = md[2]
+          @from = md[1]
+          @to = md[2]
         else
-          from = args.shift
-          to = args.shift
+          @from = args.shift
+          @to = args.shift
         end
       end
     }
