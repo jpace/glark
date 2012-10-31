@@ -2,7 +2,7 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-class FormatOptions
+class OutputOptions
   attr_accessor :after
   attr_accessor :before
   attr_accessor :file_highlight

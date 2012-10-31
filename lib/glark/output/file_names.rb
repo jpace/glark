@@ -5,9 +5,9 @@
 require 'glark/output/format'
 
 class FileNames < OutputFormat
-  def initialize fname, fmtopts
+  def initialize fname, opts
     super
-    @write_null = fmtopts.write_null
+    @write_null = opts.write_null
   end
 
   def at_match_limit?

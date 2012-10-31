@@ -60,10 +60,10 @@ class Glark::Runner
     end    
   end
 
-  def search_file file, formatter
-    @func.process file, formatter
+  def search_file file, output_type
+    @func.process file, output_type
 
-    if formatter.matched?
+    if output_type.matched?
       @exit_status = @invert_match ? 1 : 0
     end
   end
@@ -81,39 +81,41 @@ class Glark::Runner
   def create_file filecls, name, io
     file = filecls.new name, io, @opts.range
 
-    format_opts = FormatOptions.new
+    output_opts = OutputOptions.new
 
-    format_opts.after = @opts.after
-    format_opts.before = @opts.before
-    format_opts.file_highlight = @opts.file_highlight
-    format_opts.filter = @opts.filter
-    format_opts.highlight = @opts.highlight
-    format_opts.invert_match = @opts.invert_match
-    format_opts.label = @opts.label
-    format_opts.line_number_highlight = @opts.line_number_highlight
-    format_opts.match_limit = @opts.match_limit
-    format_opts.out = @opts.out
-    format_opts.show_file_names = @show_file_names
-    format_opts.show_line_numbers = @opts.show_line_numbers
-    format_opts.write_null = @opts.write_null
+    output_opts.after = @opts.after
+    output_opts.before = @opts.before
+    output_opts.file_highlight = @opts.file_highlight
+    output_opts.filter = @opts.filter
+    output_opts.highlight = @opts.highlight
+    output_opts.invert_match = @opts.invert_match
+    output_opts.label = @opts.label
+    output_opts.line_number_highlight = @opts.line_number_highlight
+    output_opts.match_limit = @opts.match_limit
+    output_opts.out = @opts.out
+    output_opts.show_file_names = @show_file_names
+    output_opts.show_line_numbers = @opts.show_line_numbers
+    output_opts.write_null = @opts.write_null
 
+    output_type = nil
+    
     if @opts.count
       if @opts.output == "grep" 
-        formatter = GrepCount.new file, format_opts
+        output_type = GrepCount.new file, output_opts
       else
-        formatter = GlarkCount.new file, format_opts
+        output_type = GlarkCount.new file, output_opts
       end
     elsif @opts.file_names_only
-      formatter = FileNames.new file, format_opts
+      output_type = FileNames.new file, output_opts
     elsif !@opts.filter
-      formatter = UnfilteredLines.new file, format_opts
+      output_type = UnfilteredLines.new file, output_opts
     elsif @opts.output == "grep"
-      formatter = GrepLines.new file, format_opts
+      output_type = GrepLines.new file, output_opts
     else
-      formatter = GlarkLines.new file, format_opts
+      output_type = GlarkLines.new file, output_opts
     end
 
-    [ file, formatter ]
+    [ file, output_type ]
   end
 
   def search_text fname
@@ -123,8 +125,8 @@ class Glark::Runner
       log { "searching text #{fname} for #{@func}" }
       io = fname == "-" ? $stdin : File.new(fname)
 
-      file, formatter = create_file Glark::File, fname, io
-      search_file file, formatter
+      file, output_type = create_file Glark::File, fname, io
+      search_file file, output_type
     end
   end
 

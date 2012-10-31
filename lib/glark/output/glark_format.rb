@@ -10,13 +10,10 @@ module Glark
   module Format
     include Loggable
     
-    def initialize file, fmtopts
-      info "file: #{file}".black.on_blue
-      info "fmtopts: #{fmtopts}".black.on_blue
-
+    def initialize file, opts
       @file_header = nil        # not nil after file header written
-      @fname_highlighter = fmtopts.highlight && fmtopts.file_highlight
-      @lnum_highlighter = fmtopts.line_number_highlight
+      @fname_highlighter = opts.highlight && opts.file_highlight
+      @lnum_highlighter = opts.line_number_highlight
 
       super
     end

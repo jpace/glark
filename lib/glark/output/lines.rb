@@ -9,12 +9,12 @@ require 'glark/input/line_status'
 require 'glark/output/format'
 
 class Lines < OutputFormat
-  def initialize file, fmtopts
+  def initialize file, opts
     super
 
     @has_context = false
-    @after = fmtopts.after
-    @before = fmtopts.before
+    @after = opts.after
+    @before = opts.before
     @stati = Glark::LineStatus.new
   end
 
@@ -39,7 +39,7 @@ class Lines < OutputFormat
   # prints the line, and adjusts for the fact that in our world, lines are
   # 0-indexed, whereas they are displayed as if 1-indexed.
   def print_line lnum, ch = nil 
-    raise "error: print_line must be implemented by a formatter subclass"
+    raise "error: print_line must be implemented by an output subclass"
   end
 
   def write_matching from, to

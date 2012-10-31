@@ -11,16 +11,16 @@ require 'glark/output/formatted'
 require 'glark/output/options'
 
 class OutputFormat < FormattedOutputFormat
-  def initialize file, fmtopts
+  def initialize file, opts
     super()
 
     @file = file
-    @invert_match = fmtopts.invert_match
-    @label = fmtopts.label
-    @match_limit = fmtopts.match_limit
-    @out = fmtopts.out
-    @show_file_name = fmtopts.show_file_names
-    @show_line_numbers = fmtopts.show_line_numbers
+    @invert_match = opts.invert_match
+    @label = opts.label
+    @match_limit = opts.match_limit
+    @out = opts.out
+    @show_file_name = opts.show_file_names
+    @show_line_numbers = opts.show_line_numbers
   end
 
   def display_matches?
