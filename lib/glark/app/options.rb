@@ -462,6 +462,7 @@ class Glark::Options
     @split_as_path         = true       # whether to split arguments that include the path separator
 
     @highlight             = "multi"    # highlight matches (using ANSI codes)
+    @matchopts.highlight   = @highlight
 
     @matchopts.text_highlights = []
     @file_highlight        = nil
@@ -526,6 +527,7 @@ class Glark::Options
 
   def set_glark_output_style
     @output = "glark"
+    @matchopts.highlight = @highlight
     @highlighter = Text::ANSIHighlighter
     set_colors
   end
@@ -533,6 +535,7 @@ class Glark::Options
   def set_grep_output_style
     @output = "grep"
     @highlight = false
+    @matchopts.highlight = nil
     @highlighter = nil
     @show_line_numbers = false
     @context_option.after = 0
@@ -543,6 +546,7 @@ class Glark::Options
   def set_text_output_style
     @output = "text"
     @highlight = false
+    @matchopts.highlight = nil
     @highlighter = nil
     clear_colors
   end
@@ -650,6 +654,7 @@ class Glark::Options
         set_grep_output_style if to_boolean value
       when "highlight"
         @highlight = value
+        @matchopts.highlight = value
       when "ignore-case"
         @matchopts.ignorecase = to_boolean value
       when "known-nontext-files"
@@ -822,8 +827,6 @@ class Glark::Options
   end
 
   def get_match_options
-    # this is used by both match options and output options.
-    @matchopts.highlight = @highlight
     @matchopts
   end
 
