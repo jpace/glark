@@ -2,9 +2,9 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/output/count_format'
+require 'glark/output/count'
 
-class GrepCountFormat < CountFormat
+class GrepCount < Count
   def print_file_name
     fname = displayed_name
     @out.print fname, ":"

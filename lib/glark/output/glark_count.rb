@@ -2,9 +2,9 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/output/count_format'
+require 'glark/output/count'
 
-class GlarkCountFormat < CountFormat
+class GlarkCount < Count
   def initialize fname, fmtopts
     super
     @fname_highlighter = fmtopts.highlight && fmtopts.file_highlight

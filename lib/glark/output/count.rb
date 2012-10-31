@@ -4,7 +4,7 @@
 
 require 'glark/output/format'
 
-class CountFormat < OutputFormat
+class Count < OutputFormat
   def display_matches?
     false
   end

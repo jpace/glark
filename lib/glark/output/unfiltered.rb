@@ -6,7 +6,7 @@ require 'glark/output/format'
 require 'glark/output/matching_format'
 require 'glark/output/file_header'
 
-class NonFilterFormat < MatchingOutputFormat
+class Unfiltered < MatchingOutputFormat
   def initialize fname, fmtopts
     super
     @file_header = nil          # not nil after file header written    

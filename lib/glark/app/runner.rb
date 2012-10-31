@@ -10,10 +10,10 @@ require 'glark/input/binary_file'
 require 'glark/input/file'
 require 'glark/output/file_name_format'
 require 'glark/output/glark_format'
-require 'glark/output/glark_count_format'
-require 'glark/output/grep_count_format'
+require 'glark/output/glark_count'
+require 'glark/output/grep_count'
 require 'glark/output/grep_format'
-require 'glark/output/nonfilter_format'
+require 'glark/output/unfiltered'
 require 'glark/output/options'
 
 $stdout.sync = true             # unbuffer
@@ -114,14 +114,14 @@ class Glark::Runner
 
     if @opts.count
       if @opts.output == "grep" 
-        formatter = GrepCountFormat.new file, format_opts
+        formatter = GrepCount.new file, format_opts
       else
-        formatter = GlarkCountFormat.new file, format_opts
+        formatter = GlarkCount.new file, format_opts
       end
     elsif @opts.file_names_only
       formatter = FileNameFormat.new file, format_opts
     elsif !@opts.filter
-      formatter = NonFilterFormat.new file, format_opts
+      formatter = Unfiltered.new file, format_opts
     elsif @opts.output == "grep"
       formatter = GrepOutputFormat.new file, format_opts
     else
