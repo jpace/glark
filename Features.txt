@@ -8,3 +8,6 @@ Tue Oct 30 08:55:25 2012
 
   removed --verbosity; redundant with --verbose.
 
+Wed Oct 31 07:50:46 2012
+
+  documented --extended option.
