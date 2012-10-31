@@ -138,90 +138,94 @@ class Glark::Options
     add_output_options optdata
     add_info_options optdata
     
-    optdata.concat [ 
-                    {
-                      :tags => %w{ -M --exclude-matching },
-                      :set  => Proc.new { @exclude_matching = true }
-                    },
-                    {
-                      :tags => %w{ -d },
-                      :arg  => [ :string ],
-                      :set  => Proc.new { |val| @directory = val }
-                    },
-                    {
-                      :tags => %w{ -r --recurse },
-                      :set  => Proc.new { @directory = "recurse" }
-                    },
-                    {
-                      :tags => %w{ -y --extract-matches },
-                      :set  => Proc.new { @extract_matches = true }
-                    },
-                    {
-                      :tags => %w{ --no-split-as-path },
-                      :set  => Proc.new { @split_as_path = false }
-                    },
-                    {
-                      :tags => %w{ --split-as-path },
-                      :arg  => [ :boolean, :optional ],
-                      :set  => Proc.new { |val| @split_as_path = val }
-                    },
-                    {
-                      :tags => %w{ --directories },
-                      :arg  => [ :string ],
-                      :set  => Proc.new { |val| @directory = val }
-                    },
-                    { 
-                      :tags => %w{ --basename --name --with-basename --with-name },
-                      :arg  => [ :string ],
-                      :set  => Proc.new { |pat| @with_basename = Regexp.create pat }
-                    },
-                    { 
-                      :tags => %w{ --without-basename --without-name },
-                      :arg  => [ :string ],
-                      :set  => Proc.new { |pat| @without_basename = Regexp.create pat }
-                    },
-                    { 
-                      :tags => %w{ --fullname --path --with-fullname --with-path },
-                      :arg  => [ :string ],
-                      :set  => Proc.new { |pat| @with_fullname = Regexp.create pat }
-                    },
-                    { 
-                      :tags => %w{ --without-fullname --without-path },
-                      :arg  => [ :string ],
-                      :set  => Proc.new { |pat| @without_fullname = Regexp.create pat }
-                    },
-                    {
-                      :tags    => %w{ --binary-files },
-                      :arg     => [ :required, :regexp, %r{ ^ [\'\"]? (text|without\-match|binary) [\'\"]? $ }x ],
-                      :set     => Proc.new { |md| @binary_files = md[1] },
-                      :rc   => %w{ binary-files },
-                    },
-                    {
-                      :tags => %w{ --size-limit },
-                      :arg  => [ :integer ],
-                      :set  => Proc.new { |val| @size_limit = val }
-                    },
-                    {
-                      :tags => %w{ -o -a },
-                      :set  => Proc.new do |md, opt, args|
-                        args.unshift opt
-                        @expr = get_expression_factory.make_expression args
-                      end
-                    },
-                    {
-                      :res => [ Regexp.new '^ -0 (\d{1,3})? $ ', Regexp::EXTENDED ],
-                      :set => Proc.new { |md| rs = md ? md[1] : 0; set_record_separator rs }
-                    }
-                   ]
-    
     @optset = OptProc::OptionSet.new optdata
     
     reset
   end
 
   def add_input_options optdata
+    optdata << record_separator_option = {
+      :res => [ Regexp.new '^ -0 (\d{1,3})? $ ', Regexp::EXTENDED ],
+      :set => Proc.new { |md| rs = md ? md[1] : 0; set_record_separator rs }
+    }
+
     @range_option = Glark::RangeOption.new
     optdata.concat @range_option.options
+
+    optdata << exclude_matching_option = {
+      :tags => %w{ -M --exclude-matching },
+      :set  => Proc.new { @exclude_matching = true }
+    }
+
+    optdata << exclude_matching_option = {
+      :tags => %w{ -d },
+      :arg  => [ :string ],
+      :set  => Proc.new { |val| @directory = val }
+    }
+
+    optdata << exclude_matching_option = {
+      :tags => %w{ -r --recurse },
+      :set  => Proc.new { @directory = "recurse" }
+    }
+
+    optdata << extract_matches_option = {
+      :tags => %w{ -y --extract-matches },
+      :set  => Proc.new { @extract_matches = true }
+    }
+
+    optdata << no_split_as_path_option = {
+      :tags => %w{ --no-split-as-path },
+      :set  => Proc.new { @split_as_path = false }
+    }
+
+    optdata << split_as_path_option = {
+      :tags => %w{ --split-as-path },
+      :arg  => [ :boolean, :optional ],
+      :set  => Proc.new { |val| @split_as_path = val }
+    }
+
+    optdata << dir_option = {
+      :tags => %w{ --directories },
+      :arg  => [ :string ],
+      :set  => Proc.new { |val| @directory = val }
+    }
+
+    optdata << basename_option = {
+      :tags => %w{ --basename --name --with-basename --with-name },
+      :arg  => [ :string ],
+      :set  => Proc.new { |pat| @with_basename = Regexp.create pat }
+    }
+
+    optdata << without_basename_option = {
+      :tags => %w{ --without-basename --without-name },
+      :arg  => [ :string ],
+      :set  => Proc.new { |pat| @without_basename = Regexp.create pat }
+    }
+
+    optdata << fullname_option = {
+      :tags => %w{ --fullname --path --with-fullname --with-path },
+      :arg  => [ :string ],
+      :set  => Proc.new { |pat| @with_fullname = Regexp.create pat }
+    }
+
+    optdata << without_fullname_option = {
+      :tags => %w{ --without-fullname --without-path },
+      :arg  => [ :string ],
+      :set  => Proc.new { |pat| @without_fullname = Regexp.create pat }
+    }
+
+    optdata << binary_files_option = {
+      :tags    => %w{ --binary-files },
+      :arg     => [ :required, :regexp, %r{ ^ [\'\"]? (text|without\-match|binary) [\'\"]? $ }x ],
+      :set     => Proc.new { |md| @binary_files = md[1] },
+      :rc   => %w{ binary-files },
+    }
+
+    optdata << size_limit_option = {
+      :tags => %w{ --size-limit },
+      :arg  => [ :integer ],
+      :set  => Proc.new { |val| @size_limit = val }
+    }
   end
   
   def add_match_options optdata
@@ -251,6 +255,13 @@ class Glark::Options
       :set  => Proc.new { |fname| @expr = get_expression_factory.read_file fname }
     }
 
+    optdata << orand_expr_option = {
+      :tags => %w{ -o -a },
+      :set  => Proc.new do |md, opt, args|
+        args.unshift opt
+        @expr = get_expression_factory.make_expression args
+      end
+    }
   end
 
   def add_output_options optdata
@@ -357,7 +368,6 @@ class Glark::Options
       :arg  => [ :string ],
       :set  => Proc.new { |val| @file_highlight = make_highlight "file-color", val }
     }
-    
   end
 
   def add_info_options optdata
@@ -405,7 +415,6 @@ class Glark::Options
       :tags => %w{ --dump },
       :set  => Proc.new { dump_all_fields; exit 0 }
     }
-
   end
 
   def range
