@@ -56,47 +56,6 @@ class Glark::MatchTestCase < Glark::TestCase
     end
   end
 
-  def test_invert_with_match
-    expected = [
-                "    1 ABC",
-                "    2 DEF",
-                "    3 GHI",
-                "    5 MNO",
-                "    6 PQR",
-                "    7 STU",
-               ]
-
-    Log.verbose = false
-    
-    opts = Glark::Options.instance
-    opts.invert_match = true
-    opts.verbose = false
-    Log.verbose = false
-
-    run_abc_test expected, 'K'
-  end
-
-  def test_invert_no_matches
-    expected = [
-                "    1 ABC",
-                "    2 DEF",
-                "    3 GHI",
-                "    4 JKL",
-                "    5 MNO",
-                "    6 PQR",
-                "    7 STU",
-               ]
-
-    Log.verbose = false
-    
-    opts = Glark::Options.instance
-    opts.invert_match = true
-    opts.verbose = false
-    Log.verbose = false
-
-    run_abc_test expected, 'X'
-  end
-
   def get_colors patterns
     defcolors = Text::ANSIHighlighter::DEFAULT_COLORS
 

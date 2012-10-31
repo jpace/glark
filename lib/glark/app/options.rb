@@ -22,7 +22,6 @@ class Glark::Options
   include Loggable, Singleton
 
   attr_accessor :binary_files
-  attr_accessor :count
   attr_accessor :directory
   attr_accessor :exclude_matching
   attr_accessor :explain
@@ -32,11 +31,9 @@ class Glark::Options
   attr_accessor :filter
   attr_accessor :highlight
   attr_accessor :highlighter
-  attr_accessor :invert_match
   attr_accessor :label
   attr_accessor :line_number_highlight
   attr_accessor :local_config_files
-  attr_accessor :match_limit
   attr_accessor :out
   attr_accessor :output
   attr_accessor :quiet
@@ -50,8 +47,9 @@ class Glark::Options
   attr_accessor :with_fullname
   attr_accessor :without_basename
   attr_accessor :without_fullname
-  attr_accessor :write_null
 
+  attr_reader :count
+  attr_reader :invert_match
   attr_reader :range
 
   def expr
@@ -795,8 +793,7 @@ class Glark::Options
   def get_output_options files
     output_opts = OutputOptions.new
 
-    output_opts.after = @context.after
-    output_opts.before = @context.before
+    output_opts.context = @context
     output_opts.file_highlight = @file_highlight
     output_opts.filter = @filter
     output_opts.highlight = @highlight

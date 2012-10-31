@@ -3,8 +3,7 @@
 # vim: set filetype=ruby : set sw=2
 
 class OutputOptions
-  attr_accessor :after
-  attr_accessor :before
+  attr_accessor :context
   attr_accessor :file_highlight
   attr_accessor :filter
   attr_accessor :highlight
@@ -20,6 +19,7 @@ class OutputOptions
   def initialize 
     @after = nil
     @before = nil
+    @context = nil
     @file_highlight = nil
     @filter = filter
     @highlight = nil
@@ -31,5 +31,13 @@ class OutputOptions
     @show_file_names = nil
     @show_line_numbers = nil
     @write_null = nil
+  end
+
+  def after
+    @context && @context.after
+  end
+
+  def before
+    @context && @context.before
   end
 end
