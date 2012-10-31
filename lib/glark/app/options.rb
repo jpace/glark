@@ -7,6 +7,7 @@ require 'glark/match/factory'
 require 'glark/match/options'
 require 'glark/input/range'
 require 'glark/output/options'
+require 'glark/output/context'
 
 module Glark
   PACKAGE = 'glark'
@@ -50,42 +51,6 @@ class Glark::RangeOption
     }
 
     [ range_after_option, range_before_option, range_option ]
-  end
-end
-
-class Glark::ContextOption
-  attr_accessor :after
-  attr_accessor :before
-
-  def initialize 
-    @after = nil
-    @before = nil
-  end
-
-  def options
-    context_option = {
-      :tags => %w{ -C --context },
-      :res  => %r{ ^ - ([1-9]\d*) $ }x,
-      :arg  => [ :optional, :integer ],
-      :set  => Proc.new { |val, opt, args| @after = @before = val || 2 },
-      :rc   => %w{ context },
-    }
-
-    context_after_option = {
-      :tags => %w{ --after-context -A },
-      :arg  => [ :integer ],
-      :set  => Proc.new { |val| @after = val },
-      :rc   => %w{ after-context },
-    }
-
-    context_before_option = {
-      :tags => %w{ --before-context -B },
-      :arg  => [ :integer ],
-      :set  => Proc.new { |val| @before = val },
-      :rc   => %w{ before-context },
-    }
-
-    [ context_option, context_after_option, context_before_option ]
   end
 end
 
@@ -270,9 +235,9 @@ class Glark::Options
   end
 
   def add_output_options optdata
-    @context_option = Glark::ContextOption.new
-    optdata.concat @context_option.options
-
+    @context = Glark::Context.new
+    @context.add_as_option optdata
+    
     optdata << invert_match_option = {
       :tags => %w{ -v --invert-match },
       :set  => Proc.new { @invert_match = true }
@@ -421,18 +386,18 @@ class Glark::Options
   end
 
   def after
-    @context_option.after
+    @context.after
   end
 
   def before
-    @context_option.before
+    @context.before
   end
   
   def reset
     @matchopts = MatchOptions.new
     
-    @context_option.after  = 0          # lines of context before the match
-    @context_option.before = 0          # lines of context after the match
+    @context.after  = 0          # lines of context before the match
+    @context.before = 0          # lines of context after the match
     @binary_files          = "binary"   # 
     @count                 = false      # just count the lines
     @directory             = "read"     # read, skip, or recurse, a la grep
@@ -538,8 +503,8 @@ class Glark::Options
     @matchopts.highlight = nil
     @highlighter = nil
     @show_line_numbers = false
-    @context_option.after = 0
-    @context_option.before = 0
+    @context.after = 0
+    @context.before = 0
     clear_colors
   end
 
@@ -555,7 +520,7 @@ class Glark::Options
     @output = output
 
     case @output
-    when "ansi", "xterm"
+    when "ansi", "xterm", "glark"
       set_glark_output_style
     when "grep"
       set_grep_output_style
@@ -754,8 +719,8 @@ class Glark::Options
 
   def write_configuration
     fields = {
-      "after-context" => @context_option.after,
-      "before-context" => @context_option.before,
+      "after-context" => @context.after,
+      "before-context" => @context.before,
       "binary-files" => @binary_files,
       "file-color" => @file_highlight,
       "filter" => @filter,
@@ -781,8 +746,8 @@ class Glark::Options
 
   def dump_all_fields
     fields = {
-      "after" => @context_option.after,
-      "before" => @context_option.before,
+      "after" => @context.after,
+      "before" => @context.before,
       "binary_files" => @binary_files,
       "count" => @count,
       "directory" => @directory,
@@ -834,6 +799,7 @@ class Glark::Options
   def validate
     range = @range_option.range
     return true if range.nil?
+    
     begin
       range.valid?
     rescue Glark::RangeError => e
@@ -866,8 +832,8 @@ class Glark::Options
   def get_output_options files
     output_opts = OutputOptions.new
 
-    output_opts.after = @context_option.after
-    output_opts.before = @context_option.before
+    output_opts.after = @context.after
+    output_opts.before = @context.before
     output_opts.file_highlight = @file_highlight
     output_opts.filter = @filter
     output_opts.highlight = @highlight
