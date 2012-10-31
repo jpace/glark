@@ -295,7 +295,7 @@ class Glark::Options
 
     optdata << grep_output_option = {
       :tags => %w{ -g --grep },
-      :set  => Proc.new { set_output_style "grep" }
+      :set  => Proc.new { set_grep_output_style }
     }
 
     optdata << show_lnums_option = {
@@ -428,10 +428,6 @@ class Glark::Options
     @context_option.before
   end
   
-  def [] name
-    instance_eval "@" + name.to_s
-  end
-  
   def reset
     @matchopts = MatchOptions.new
     
@@ -477,7 +473,7 @@ class Glark::Options
 
     $/ = "\n"
     
-    set_output_style "ansi"
+    set_glark_output_style
 
     reset_colors
   end
@@ -494,30 +490,35 @@ class Glark::Options
     make_colors 0
   end
 
-  def highlight? str
+  def highlight_multi? str
     %w{ multi on true yes }.detect { |x| str == x }
   end
 
   def reset_colors
-    if @highlight && @highlighter
-      @matchopts.text_highlights       = case @highlight
-                                         when highlight?(@highlight), true
-                                           multi_colors
-                                         when "single"
-                                           single_color
-                                         when "none", "off", "false", "no", nil, false
-                                           []
-                                         else
-                                           warn "highlight format '" + @highlight.to_s + "' not recognized"
-                                           single_color
-                                         end
-      @file_highlight        = @highlighter.make "reverse bold"
-      @line_number_highlight = nil
+    if !@highlight || !@highlighter
+      clear_colors
     else
-      @matchopts.text_highlights = []
-      @file_highlight        = nil
-      @line_number_highlight = nil
+      set_colors
     end
+  end
+
+  def set_colors
+    @matchopts.text_highlights = case @highlight
+                                 when highlight_multi?(@highlight), true
+                                   multi_colors
+                                 when "single"
+                                   single_color
+                                 else
+                                   raise "highlight format '" + @highlight.to_s + "' not recognized"
+                                 end
+    @file_highlight        = @highlighter.make "reverse bold"
+    @line_number_highlight = nil
+  end
+
+  def clear_colors
+    @matchopts.text_highlights = []
+    @file_highlight        = nil
+    @line_number_highlight = nil
   end
 
   def set_highlight type
@@ -525,24 +526,40 @@ class Glark::Options
     reset_colors
   end
 
-  def set_output_style output
-    @output      = output
-
-    @highlighter = case @output
-                   when "ansi", "xterm"
-                     Text::ANSIHighlighter
-                   when "grep"
-                     @highlight = false
-                     @show_line_numbers = false
-                     @context_option.after = 0
-                     @context_option.before = 0
-                     nil
-                   when "text", "match"
-                     @highlight = nil
-                     nil
-                   end
-    
+  def set_glark_output_style
+    @output = "glark"
+    @highlighter = Text::ANSIHighlighter
     reset_colors
+  end
+
+  def set_grep_output_style
+    @output = "grep"
+    @highlight = false
+    @highlighter = nil
+    @show_line_numbers = false
+    @context_option.after = 0
+    @context_option.before = 0
+    clear_colors
+  end
+
+  def set_text_output_style
+    @output = "text"
+    @highlight = false
+    @highlighter = nil
+    clear_colors
+  end
+
+  def set_output_style output
+    @output = output
+
+    case @output
+    when "ansi", "xterm"
+      set_glark_output_style
+    when "grep"
+      set_grep_output_style
+    when "text", "match"
+      set_text_output_style
+    end
   end
 
   def run args
@@ -558,7 +575,7 @@ class Glark::Options
 
     # honor thy EMACS; go to grep mode
     if ENV["EMACS"]
-      set_output_style "grep"
+      set_grep_output_style
     end
 
     read_options
@@ -632,7 +649,7 @@ class Glark::Options
       when "filter"
         @filter = to_boolean value
       when "grep"
-        set_output_style("grep") if to_boolean value
+        set_grep_output_style if to_boolean value
       when "highlight"
         @highlight = value
       when "ignore-case"
@@ -809,7 +826,7 @@ class Glark::Options
   def get_match_options
     # this is used by both match options and output options.
     @matchopts.highlight = @highlight
-    return @matchopts if true
+    @matchopts
   end
 
   # check options for collisions/data validity
