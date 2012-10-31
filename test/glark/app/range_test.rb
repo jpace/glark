@@ -89,4 +89,11 @@ class Glark::RangeAppTestCase < Glark::AppTestCase
                ]
     run_app_test expected, [ '--before', '50%', 'The\w+Tale' ], fname
   end
+
+  def test_no_matches_in_range
+    fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+    expected = [
+               ]
+    run_app_test expected, [ '-R', '55%,90%', 'TheD\w+Tale' ], fname
+  end
 end

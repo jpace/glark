@@ -5,6 +5,7 @@
 # Options for matching.
 
 class MatchOptions
+  attr_accessor :expr
   attr_accessor :extended
   attr_accessor :extract_matches
   attr_accessor :highlight
@@ -14,12 +15,13 @@ class MatchOptions
   attr_accessor :whole_words
 
   def initialize 
-    @ignorecase = nil
-    @whole_words = nil
-    @whole_lines = nil
+    @expr = nil
     @extended = nil
-    @highlight = nil
-    @text_highlights = nil
     @extract_matches = nil
+    @highlight = nil
+    @ignorecase = nil
+    @text_highlights = nil
+    @whole_lines = nil
+    @whole_words = nil
   end
 end

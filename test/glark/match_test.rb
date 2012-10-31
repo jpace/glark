@@ -296,33 +296,4 @@ class Glark::MatchTestCase < Glark::TestCase
 
     run_z_test expected, exprargs
   end
-
-  def test_range_in_range
-    expected = [
-                "    5 [30m[43mM[0mNO",
-               ]
-
-    Log.verbose = false
-    
-    opts = Glark::Options.instance
-    opts.range = Glark::Range.new '4', '5'
-    opts.verbose = false
-    Log.verbose = true
-
-    run_abc_test expected, 'M'
-  end
-
-  def test_range_out_of_range
-    expected = [
-               ]
-
-    Log.verbose = false
-    
-    opts = Glark::Options.instance
-    opts.range = Glark::Range.new '6', '8'
-    opts.verbose = false
-    Log.verbose = true
-
-    run_abc_test expected, 'M'
-  end
 end

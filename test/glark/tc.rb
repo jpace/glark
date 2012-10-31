@@ -64,6 +64,7 @@ class Glark::TestCase < Test::Unit::TestCase
       tf = Tempfile.new "glark"
       fname = tf.path
       yield tf
+      tf.flush
       tf.close
     end
     fname

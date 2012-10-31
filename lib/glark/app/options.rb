@@ -97,15 +97,12 @@ class Glark::Options
   attr_accessor :directory
   attr_accessor :exclude_matching
   attr_accessor :explain
-  attr_accessor :expr
-  attr_accessor :extended
   attr_accessor :extract_matches
   attr_accessor :file_highlight
   attr_accessor :file_names_only
   attr_accessor :filter
   attr_accessor :highlight
   attr_accessor :highlighter
-  attr_accessor :ignorecase
   attr_accessor :invert_match
   attr_accessor :label
   attr_accessor :line_number_highlight
@@ -119,19 +116,21 @@ class Glark::Options
   attr_accessor :show_line_numbers
   attr_accessor :size_limit
   attr_accessor :split_as_path
-  attr_accessor :text_highlights
   attr_accessor :verbose
-  attr_accessor :version
-  attr_accessor :whole_lines
-  attr_accessor :whole_words
   attr_accessor :with_basename
   attr_accessor :with_fullname
   attr_accessor :without_basename
   attr_accessor :without_fullname
   attr_accessor :write_null
 
+  def expr
+    @matchopts.expr
+  end
+
   def initialize
     optdata = Array.new
+
+    @matchopts = MatchOptions.new
 
     add_input_options optdata
     add_match_options optdata
@@ -231,35 +230,41 @@ class Glark::Options
   def add_match_options optdata
     optdata << whole_word_option = {
       :tags => %w{ -w --word },
-      :set  => Proc.new { @whole_words = true }
+      :set  => Proc.new { @matchopts.whole_words = true }
     }
     
     optdata << ignore_case_option = {
       :tags => %w{ -i --ignore-case },
-      :set  => Proc.new { @ignorecase = true }
+      :set  => Proc.new { @matchopts.ignorecase = true }
     }
 
     optdata << whole_line_option = {
       :tags => %w{ -x --line-regexp },
-      :set  => Proc.new { @whole_lines = true }
+      :set  => Proc.new { @matchopts.whole_lines = true }
     }
 
     optdata << extended_option = {
       :tags => %w{ --extended },
-      :set  => Proc.new { @extended = true }
+      :set  => Proc.new { @matchopts.extended = true }
     }
 
     optdata << expr_file_option = {
       :tags => %w{ -f --file },
       :arg  => [ :string ],
-      :set  => Proc.new { |fname| @expr = get_expression_factory.read_file fname }
+      :set  => Proc.new { |fname| @matchopts.expr = get_expression_factory.read_file fname }
+    }
+
+    optdata << text_color_option = {
+      :tags => %w{ --text-color },
+      :arg  => [ :string ],
+      :set  => Proc.new { |val| @matchopts.text_highlights = [ make_highlight "text-color", val ] }
     }
 
     optdata << orand_expr_option = {
       :tags => %w{ -o -a },
       :set  => Proc.new do |md, opt, args|
         args.unshift opt
-        @expr = get_expression_factory.make_expression args
+        @matchopts.expr = get_expression_factory.make_expression args
       end
     }
   end
@@ -357,12 +362,6 @@ class Glark::Options
       :set  => Proc.new { |md| val = md ? md[1] : "multi"; set_highlight val }
     }
 
-    optdata << text_color_option = {
-      :tags => %w{ --text-color },
-      :arg  => [ :string ],
-      :set  => Proc.new { |val| @text_highlights = [ make_highlight "text-color", val ] }
-    }
-
     optdata << file_color_option = {
       :tags => %w{ --file-color },
       :arg  => [ :string ],
@@ -421,24 +420,12 @@ class Glark::Options
     @range_option.range
   end
 
-  def range= rg
-    @range_option.range = rg
-  end
-
   def after
     @context_option.after
   end
 
-  def after= aft
-    @context_option.after = aft
-  end
-
   def before
     @context_option.before
-  end
-
-  def before= bef
-    @context_option.before = bef
   end
   
   def [] name
@@ -446,20 +433,22 @@ class Glark::Options
   end
   
   def reset
+    @matchopts = MatchOptions.new
+    
     @context_option.after  = 0          # lines of context before the match
     @context_option.before = 0          # lines of context after the match
     @binary_files          = "binary"   # 
     @count                 = false      # just count the lines
     @directory             = "read"     # read, skip, or recurse, a la grep
-    @expr                  = nil        # the expression to be evaluated
+    @matchopts.expr        = nil        # the expression to be evaluated
     @exclude_matching      = false      # exclude files whose names match the expression
     @explain               = false      # display a legible version of the expression
-    @extended              = false      # whether to use extended regular expressions
+    @matchopts.extended    = false      # whether to use extended regular expressions
     @extract_matches       = false      # whether to show _only_ the part that matched
     @file_names_only       = false      # display only the file names
     @filter                = true       # display only matches
     @invert_match          = false      # display non-matching lines
-    @ignorecase            = false      # match case
+    @matchopts.ignorecase  = false      # match case
     @match_limit           = nil        # the maximum number of matches to display per file
     @local_config_files    = false      # use local .glarkrc files
     @quiet                 = false      # minimize warnings
@@ -467,8 +456,8 @@ class Glark::Options
     @show_line_numbers     = true       # display numbers of matching lines
     @show_file_names       = nil        # show the names of matching files; nil == > 1; true == >= 1; false means never
     @verbose               = nil        # display debugging output
-    @whole_lines           = false      # true means patterns must match the entire line
-    @whole_words           = false      # true means all patterns are '\b'ed front and back
+    @matchopts.whole_lines = false      # true means patterns must match the entire line
+    @matchopts.whole_words = false      # true means all patterns are '\b'ed front and back
     @write_null            = false      # in @file_names_only mode, write '\0' instead of '\n'
     @with_basename         = nil        # match files with this basename
     @without_basename      = nil        # match files without this basename
@@ -478,7 +467,7 @@ class Glark::Options
 
     @highlight             = "multi"    # highlight matches (using ANSI codes)
 
-    @text_highlights       = []
+    @matchopts.text_highlights = []
     @file_highlight        = nil
     @line_number_highlight = nil
 
@@ -511,21 +500,21 @@ class Glark::Options
 
   def reset_colors
     if @highlight && @highlighter
-      @text_highlights       = case @highlight
-                               when highlight?(@highlight), true
-                                 multi_colors
-                               when "single"
-                                 single_color
-                               when "none", "off", "false", "no", nil, false
-                                 []
-                               else
-                                 warn "highlight format '" + @highlight.to_s + "' not recognized"
-                                 single_color
-                               end
+      @matchopts.text_highlights       = case @highlight
+                                         when highlight?(@highlight), true
+                                           multi_colors
+                                         when "single"
+                                           single_color
+                                         when "none", "off", "false", "no", nil, false
+                                           []
+                                         else
+                                           warn "highlight format '" + @highlight.to_s + "' not recognized"
+                                           single_color
+                                         end
       @file_highlight        = @highlighter.make "reverse bold"
       @line_number_highlight = nil
     else
-      @text_highlights       = []
+      @matchopts.text_highlights = []
       @file_highlight        = nil
       @line_number_highlight = nil
     end
@@ -586,8 +575,9 @@ class Glark::Options
   end
 
   def read_local_rcfiles
+    hdir = Env.home_directory
     dir = Pathname.new(".").expand_path
-    while !dir.root? && dir != hd
+    while !dir.root? && dir != hdir
       rcfile = dir + ".glarkrc"
       if rcfile.exist?
         read_rcfile rcfile
@@ -636,7 +626,7 @@ class Glark::Options
       case name
       when "expression"
         # this should be more intelligent than just splitting on whitespace:
-        @expr = get_expression_factory.make_expression value.split(/\s+/)
+        @matchopts.expr = get_expression_factory.make_expression value.split(/\s+/)
       when "file-color"
         @file_highlight = make_highlight name, value
       when "filter"
@@ -646,7 +636,7 @@ class Glark::Options
       when "highlight"
         @highlight = value
       when "ignore-case"
-        @ignorecase = to_boolean value
+        @matchopts.ignorecase = to_boolean value
       when "known-nontext-files"
         value.split.each do |ext|
           FileTester.set_nontext ext
@@ -664,9 +654,9 @@ class Glark::Options
       when "quiet"
         Log.quiet = @quiet = to_boolean(value)
       when "text-color"
-        @text_highlights = [ make_highlight name, value ]
+        @matchopts.text_highlights = [ make_highlight name, value ]
       when %r{^text\-color\-(\d+)$}
-        @text_highlights[$1.to_i] = make_highlight name, value
+        @matchopts.text_highlights[$1.to_i] = make_highlight name, value
       when "verbose"
         Log.verbose = @verbose = to_boolean(value) ? 1 : nil
       when "verbosity"
@@ -681,7 +671,7 @@ class Glark::Options
   
   # creates a color for the given option, based on its value
   def make_highlight opt, value
-    if hl = self.class.instance.highlighter
+    if hl = @highlighter
       if value
         hl.make value
       else
@@ -715,7 +705,7 @@ class Glark::Options
       end
       
       if @args && @args.size > 0
-        @expr = get_expression_factory.make_expression @args, !known_end
+        @matchopts.expr = get_expression_factory.make_expression @args, !known_end
         return
       end
     end
@@ -733,11 +723,11 @@ class Glark::Options
     # solitary "-v" means "--version", not --invert-match
     show_version if @args.size == 1 && @args[0] == "-v"
     
-    @expr = nil
+    @matchopts.expr = nil
     
     nil while @args.size > 0 && @optset.process_option(@args)
 
-    unless @expr
+    unless @matchopts.expr
       read_expression
     end
   end
@@ -750,7 +740,7 @@ class Glark::Options
       "file-color" => @file_highlight,
       "filter" => @filter,
       "highlight" => @highlight,
-      "ignore-case" => @ignorecase,
+      "ignore-case" => @matchopts.ignorecase,
       "known-nontext-files" => FileTester.nontext_extensions.sort.join(' '),
       "known-text-files" => FileTester.text_extensions.sort.join(' '),
       "line-number-color" => @line_number_highlight,
@@ -759,7 +749,7 @@ class Glark::Options
       "quiet" => @quiet,
       "size-limit" => @size_limit,
       "split-as-path" => @split_as_path,
-      "text-color" => @text_highlights.join(' '),
+      "text-color" => @matchopts.text_highlights.join(' '),
       "verbose" => @verbose,
     }
     
@@ -778,13 +768,13 @@ class Glark::Options
       "directory" => @directory,
       "exclude_matching" => @exclude_matching,
       "explain" => @explain,
-      "expr" => @expr,
+      "expr" => @matchopts.expr,
       "extract_matches" => @extract_matches,
       "file_highlight" => @file_highlight ? @file_highlight.highlight("filename") : "filename",
       "file_names_only" => @file_names_only,
       "filter" => @filter,
       "highlight" => @highlight,
-      "ignorecase" => @ignorecase,
+      "ignorecase" => @matchopts.ignorecase,
       "invert_match" => @invert_match,
       "known_nontext_files" => FileTester.nontext_extensions.join(", "),
       "known_text_files" => FileTester.text_extensions.join(", "),
@@ -797,11 +787,11 @@ class Glark::Options
       "ruby version" => RUBY_VERSION,
       "show_file_names" => @show_file_names,
       "show_line_numbers" => @show_line_numbers,
-      "text_highlights" => @text_highlights.compact.collect { |hl| hl.highlight("text") }.join(", "),
+      "text_highlights" => @matchopts.text_highlights.compact.collect { |hl| hl.highlight("text") }.join(", "),
       "verbose" => @verbose,
       "version" => Glark::VERSION,
-      "whole_lines" => @whole_lines,
-      "whole_words" => @whole_words,
+      "whole_lines" => @matchopts.whole_lines,
+      "whole_words" => @matchopts.whole_words,
       "with-basename" => @with_basename,
       "with-fullname" => @with_fullname,
       "without-basename" => @without_basename,
@@ -817,20 +807,14 @@ class Glark::Options
   end
 
   def get_match_options
-    matchopts = MatchOptions.new
-    matchopts.extended = @extended
-    matchopts.extract_matches = @extract_matches
-    matchopts.highlight = @highlight
-    matchopts.ignorecase = @ignorecase
-    matchopts.text_highlights = @text_highlights
-    matchopts.whole_lines = @whole_lines
-    matchopts.whole_words = @whole_words
-    matchopts
+    # this is used by both match options and output options.
+    @matchopts.highlight = @highlight
+    return @matchopts if true
   end
 
   # check options for collisions/data validity
   def validate
-    range = self.range
+    range = @range_option.range
     return true if range.nil?
     begin
       range.valid?
