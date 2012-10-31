@@ -4,7 +4,7 @@
 
 require 'glark/output/format'
 
-class FileNameFormat < OutputFormat
+class FileNames < OutputFormat
   def initialize fname, fmtopts
     super
     @write_null = fmtopts.write_null
@@ -18,7 +18,7 @@ class FileNameFormat < OutputFormat
     false
   end
 
-  def print_only_file_name
+  def print_file_name
     if @write_null
       @out.print @file.fname + "\0"
     else
@@ -28,7 +28,7 @@ class FileNameFormat < OutputFormat
 
   def process_end lnum
     if matched? != @invert_match
-      print_only_file_name
+      print_file_name
     end
   end
 end

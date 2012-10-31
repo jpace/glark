@@ -8,7 +8,7 @@ require 'glark/input/file'
 require 'glark/input/line_status'
 require 'glark/output/format'
 
-class MatchingOutputFormat < OutputFormat
+class Lines < OutputFormat
   def initialize file, fmtopts
     super
 
@@ -79,10 +79,6 @@ class MatchingOutputFormat < OutputFormat
     elsif matched?
       write_matching 0, lnum
     end
-  end
-
-  def add_match startline, endline
-    super
   end
 
   def process_match startline, endline, fromline, toline

@@ -2,15 +2,14 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/output/format'
 require 'glark/output/file_header'
-require 'glark/output/matching_format'
+require 'glark/output/lines'
 
 # -------------------------------------------------------
 # Glark output format
 # -------------------------------------------------------
 
-class GlarkOutputFormat < MatchingOutputFormat
+class GlarkLines < Lines
   def initialize file, options
     super
 

@@ -2,8 +2,7 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/output/format'
-require 'glark/output/matching_format'
+require 'glark/output/lines'
 
 # -------------------------------------------------------
 # Grep output format
@@ -11,7 +10,7 @@ require 'glark/output/matching_format'
 
 # This matches grep, mostly. It is for running within emacs, thus,
 # it does not support context or highlighting.
-class GrepOutputFormat < MatchingOutputFormat
+class GrepLines < Lines
   # prints the line, and adjusts for the fact that in our world, lines are
   # 0-indexed, whereas they are displayed as if 1-indexed.
   def print_line lnum, ch = nil

@@ -8,13 +8,13 @@ require 'riel'
 require 'glark/app/options'
 require 'glark/input/binary_file'
 require 'glark/input/file'
-require 'glark/output/file_name_format'
-require 'glark/output/glark_format'
+require 'glark/output/file_names'
 require 'glark/output/glark_count'
+require 'glark/output/glark_lines'
 require 'glark/output/grep_count'
-require 'glark/output/grep_format'
-require 'glark/output/unfiltered'
+require 'glark/output/grep_lines'
 require 'glark/output/options'
+require 'glark/output/unfiltered_lines'
 
 $stdout.sync = true             # unbuffer
 $stderr.sync = true             # unbuffer
@@ -39,23 +39,8 @@ class Glark::Runner
                          (@opts.label ||
                           @files.size > 1 ||
                           (@files[0] != "-" && FileType.type(@files[0]) == FileType::DIRECTORY))))
-
-    @formatter_cls = case @opts.output
-                     when "grep"
-                       GrepOutputFormat
-                     when "ansi", "xterm", nil
-                       GlarkOutputFormat
-                     when "match"
-                       error "output to match list is not yet supported"
-                       GlarkMatchList
-                       # exit 2
-                     end
     
     @invert_match = @opts.invert_match
-
-    @after  = @opts.after
-    @before = @opts.before
-    @output = @opts.output
 
     # 0 == matches, 1 == no matches, 2 == error
     @exit_status = @invert_match ? 0 : 1
@@ -119,13 +104,13 @@ class Glark::Runner
         formatter = GlarkCount.new file, format_opts
       end
     elsif @opts.file_names_only
-      formatter = FileNameFormat.new file, format_opts
+      formatter = FileNames.new file, format_opts
     elsif !@opts.filter
-      formatter = Unfiltered.new file, format_opts
+      formatter = UnfilteredLines.new file, format_opts
     elsif @opts.output == "grep"
-      formatter = GrepOutputFormat.new file, format_opts
+      formatter = GrepLines.new file, format_opts
     else
-      formatter = GlarkOutputFormat.new file, format_opts
+      formatter = GlarkLines.new file, format_opts
     end
 
     [ file, formatter ]

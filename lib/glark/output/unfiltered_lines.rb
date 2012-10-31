@@ -2,11 +2,10 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/output/format'
-require 'glark/output/matching_format'
+require 'glark/output/lines'
 require 'glark/output/file_header'
 
-class Unfiltered < MatchingOutputFormat
+class UnfilteredLines < Lines
   def initialize fname, fmtopts
     super
     @file_header = nil          # not nil after file header written    
