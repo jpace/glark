@@ -4,6 +4,7 @@
 require 'rubygems'
 require 'riel'
 require 'glark/match/factory'
+require 'glark/match/options'
 require 'glark/input/range'
 require 'glark/output/options'
 
@@ -73,7 +74,7 @@ class Glark::ContextOption
     context_after_option = {
       :tags => %w{ --after-context -A },
       :arg  => [ :integer ],
-      :set  => Proc.new { |val| @after = val },
+      :set  => Proc.new { |val| puts "self: #{self.class}"; @after = val },
       :rc   => %w{ after-context },
     }
 
@@ -767,16 +768,16 @@ class Glark::Options
     end
   end
 
-  def get_expr_factory_options
-    fopts = FactoryOptions.new
-    fopts.extended = @extended
-    fopts.extract_matches = @extract_matches
-    fopts.highlight = @highlight
-    fopts.ignorecase = @ignorecase
-    fopts.text_highlights = @text_highlights
-    fopts.whole_lines = @whole_lines
-    fopts.whole_words = @whole_words
-    fopts
+  def get_match_options
+    matchopts = MatchOptions.new
+    matchopts.extended = @extended
+    matchopts.extract_matches = @extract_matches
+    matchopts.highlight = @highlight
+    matchopts.ignorecase = @ignorecase
+    matchopts.text_highlights = @text_highlights
+    matchopts.whole_lines = @whole_lines
+    matchopts.whole_words = @whole_words
+    matchopts
   end
 
   # check options for collisions/data validity
@@ -793,7 +794,7 @@ class Glark::Options
 
   def get_expression_factory
     # we'll be creating this each time, in case these options change
-    ExpressionFactory.new get_expr_factory_options
+    ExpressionFactory.new get_match_options
   end
 
   def show_version
@@ -815,8 +816,8 @@ class Glark::Options
   def get_output_options files
     output_opts = OutputOptions.new
 
-    output_opts.after = @after
-    output_opts.before = @before
+    output_opts.after = @context_option.after
+    output_opts.before = @context_option.before
     output_opts.file_highlight = @file_highlight
     output_opts.filter = @filter
     output_opts.highlight = @highlight
@@ -828,5 +829,7 @@ class Glark::Options
     output_opts.show_file_names = display_file_names? files
     output_opts.show_line_numbers = @show_line_numbers
     output_opts.write_null = @write_null
+
+    output_opts
   end
 end

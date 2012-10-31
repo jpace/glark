@@ -37,14 +37,10 @@ class RegexpExpression < Expression
   end
 
   def evaluate line, lnum, file, formatter
-    if Log.verbose
-      log { "evaluating <<<#{line[0 .. -2]}>>>" }
-    end
-    
     md = match? line
     return false unless md
 
-    log { "matched" }
+    log { "md: #{md}" }
     if @extract_matches
       if md.kind_of? MatchData
         line.replace md[-1] + "\n"
@@ -68,10 +64,7 @@ class RegexpExpression < Expression
   end
 
   def highlight_match lnum, file, formatter
-    log { "lnum: #{lnum}; file: #{file}" }
-    
     lnums = file.get_region lnum
-    log { "lnums(#{lnum}): #{lnums}" }
     return unless lnums
 
     lnums.each do |ln|

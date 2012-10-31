@@ -44,8 +44,6 @@ class Expression
     lastmatch = 0
     lnum = 0
     file.each_line do |line|
-      info "line: #{line.chomp}"
-      info "lnum: #{lnum}"
       if ((!rgstart || lnum >= rgstart) && 
           (!rgend   || lnum < rgend)   &&
           evaluate(line, lnum, file, formatter))

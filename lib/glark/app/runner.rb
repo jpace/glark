@@ -82,22 +82,7 @@ class Glark::Runner
 
   def create_file filecls, name, io
     file = filecls.new name, io, @opts.range
-
-    output_opts = OutputOptions.new
-
-    output_opts.after = @opts.after
-    output_opts.before = @opts.before
-    output_opts.file_highlight = @opts.file_highlight
-    output_opts.filter = @opts.filter
-    output_opts.highlight = @opts.highlight
-    output_opts.invert_match = @opts.invert_match
-    output_opts.label = @opts.label
-    output_opts.line_number_highlight = @opts.line_number_highlight
-    output_opts.match_limit = @opts.match_limit
-    output_opts.out = @opts.out
-    output_opts.show_file_names = @show_file_names
-    output_opts.show_line_numbers = @opts.show_line_numbers
-    output_opts.write_null = @opts.write_null
+    output_opts = @opts.get_output_options @files
 
     output_type = nil
     

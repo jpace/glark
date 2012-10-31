@@ -91,6 +91,9 @@ class Lines < Common
   end
 
   def set_status startline, endline
+    info "@before: #{@before}".yellow
+    info "@after: #{@after}".yellow
+
     st = [0, startline - @before].max
     @stati.set_match startline - @before, startline, endline, endline + @after
   end
