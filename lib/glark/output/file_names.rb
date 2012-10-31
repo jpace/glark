@@ -2,9 +2,9 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/output/format'
+require 'glark/output/common'
 
-class FileNames < OutputFormat
+class FileNames < Common
   def initialize fname, opts
     super
     @write_null = opts.write_null

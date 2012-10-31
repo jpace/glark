@@ -8,7 +8,7 @@
 require 'glark/input/file'
 require 'glark/output/results'
 
-class FormattedOutputFormat < Results
+class Formatted < Results
   attr_reader :formatted
 
   def initialize

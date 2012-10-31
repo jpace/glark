@@ -5,6 +5,7 @@ require 'rubygems'
 require 'riel'
 require 'glark/match/factory'
 require 'glark/input/range'
+require 'glark/output/options'
 
 module Glark
   PACKAGE = 'glark'
@@ -800,5 +801,32 @@ class Glark::Options
     puts "Written by Jeff Pace (jeugenepace@gmail.com)."
     puts "Released under the Lesser GNU Public License."
     exit 0
+  end
+
+  def display_file_names? files
+    return true  if @show_file_names
+    return false if !@show_file_names.nil?
+    return true  if @label
+    return false if files.size == 0
+    return true  if files.size > 1
+    files[0] != "-" && FileType.type(files[0]) == FileType::DIRECTORY
+  end
+
+  def get_output_options files
+    output_opts = OutputOptions.new
+
+    output_opts.after = @after
+    output_opts.before = @before
+    output_opts.file_highlight = @file_highlight
+    output_opts.filter = @filter
+    output_opts.highlight = @highlight
+    output_opts.invert_match = @invert_match
+    output_opts.label = @label
+    output_opts.line_number_highlight = @line_number_highlight
+    output_opts.match_limit = @match_limit
+    output_opts.out = @out
+    output_opts.show_file_names = display_file_names? files
+    output_opts.show_line_numbers = @show_line_numbers
+    output_opts.write_null = @write_null
   end
 end

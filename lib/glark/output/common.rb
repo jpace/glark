@@ -4,13 +4,11 @@
 
 # Generic output.
 
-require 'rubygems'
-require 'riel'
 require 'glark/input/file'
 require 'glark/output/formatted'
 require 'glark/output/options'
 
-class OutputFormat < FormattedOutputFormat
+class Common < Formatted
   def initialize file, opts
     super()
 

@@ -6,9 +6,9 @@
 
 require 'glark/input/file'
 require 'glark/input/line_status'
-require 'glark/output/format'
+require 'glark/output/common'
 
-class Lines < OutputFormat
+class Lines < Common
   def initialize file, opts
     super
 
