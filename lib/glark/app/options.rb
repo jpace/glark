@@ -474,8 +474,6 @@ class Glark::Options
     $/ = "\n"
     
     set_glark_output_style
-
-    reset_colors
   end
 
   def make_colors limit = -1
@@ -529,7 +527,7 @@ class Glark::Options
   def set_glark_output_style
     @output = "glark"
     @highlighter = Text::ANSIHighlighter
-    reset_colors
+    set_colors
   end
 
   def set_grep_output_style

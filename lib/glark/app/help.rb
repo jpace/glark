@@ -56,7 +56,6 @@ class GlarkHelp
     puts "  -N, --no-line-number           Do not display line numbers"
     puts "      --line-number-color COLOR  Specify the highlight color for line numbers"
     puts "  -m, --match-limit=NUM          Find only the first NUM matches in each file"
-    # puts "      --output=FORMAT            Produce output in the format (ansi, grep)"
     puts "      --text-color COLOR         Specify the highlight color for text"
     puts "  -u, --highlight[=FORMAT]       Enable highlighting. Format is single or multi"
     puts "  -U, --no-highlight             Disable highlighting"
