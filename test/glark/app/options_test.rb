@@ -104,10 +104,10 @@ class Glark::OptionsTestCase < Glark::TestCase
       args = [ ctx, 'foo' ]
       run_option_test(args,
                       { 
-                        :after => 2,
-                        :before => 2,
                         :expr => RegexpExpression.new(%r{foo}, 0),
-                      })
+                      }) do |opts|
+        assert_output_options opts, { :after => 2, :before => 2 }
+      end
     end
   end
 
@@ -121,10 +121,10 @@ class Glark::OptionsTestCase < Glark::TestCase
       ].each do |args|
         run_option_test(args | %w{ foo },
                         { 
-                          :after => val,
-                          :before => val,
                           :expr => RegexpExpression.new(%r{foo}, 0),
-                        })
+                        }) do |opts|
+          assert_output_options opts, { :after => val, :before => val }
+        end
       end
     end
     
@@ -133,10 +133,10 @@ class Glark::OptionsTestCase < Glark::TestCase
       args = [ '-' + val.to_s, 'foo' ]
       run_option_test(args,
                       { 
-                        :after => val,
-                        :before => val,
                         :expr => RegexpExpression.new(%r{foo}, 0),
-                      })
+                      }) do |opts|
+        assert_output_options opts, { :after => val, :before => val }
+      end
     end
   end
 
@@ -150,9 +150,10 @@ class Glark::OptionsTestCase < Glark::TestCase
       ].each do |args|
         run_option_test(args | %w{ foo },
                         { 
-                          :after => val,
                           :expr => RegexpExpression.new(%r{foo}, 0),
-                        })
+                        }) do |opts|
+          assert_output_options opts, { :after => val }
+        end
       end
     end
   end
@@ -167,9 +168,10 @@ class Glark::OptionsTestCase < Glark::TestCase
       ].each do |args|
         run_option_test(args | %w{ foo },
                         { 
-                          :before => val,
                           :expr => RegexpExpression.new(%r{foo}, 0),
-                        })
+                        }) do |opts|
+        assert_output_options opts, { :before => val }
+      end
       end
     end
   end

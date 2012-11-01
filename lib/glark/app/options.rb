@@ -344,14 +344,6 @@ class Glark::Options
       :set  => Proc.new { dump_all_fields; exit 0 }
     }
   end
-
-  def after
-    @context.after
-  end
-
-  def before
-    @context.before
-  end
   
   def reset
     @matchopts = MatchOptions.new
