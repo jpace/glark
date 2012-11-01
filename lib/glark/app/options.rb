@@ -59,8 +59,6 @@ class Glark::Options
   def initialize
     optdata = Array.new
 
-    @matchopts = MatchOptions.new
-
     add_input_options optdata
     add_match_options optdata
     add_output_options optdata
@@ -157,25 +155,9 @@ class Glark::Options
   end
   
   def add_match_options optdata
-    optdata << whole_word_option = {
-      :tags => %w{ -w --word },
-      :set  => Proc.new { @matchopts.whole_words = true }
-    }
+    @matchopts = MatchOptions.new
     
-    optdata << ignore_case_option = {
-      :tags => %w{ -i --ignore-case },
-      :set  => Proc.new { @matchopts.ignorecase = true }
-    }
-
-    optdata << whole_line_option = {
-      :tags => %w{ -x --line-regexp },
-      :set  => Proc.new { @matchopts.whole_lines = true }
-    }
-
-    optdata << extended_option = {
-      :tags => %w{ --extended },
-      :set  => Proc.new { @matchopts.extended = true }
-    }
+    @matchopts.add_as_options optdata
 
     optdata << expr_file_option = {
       :tags => %w{ -f --file },
@@ -346,8 +328,6 @@ class Glark::Options
   end
   
   def reset
-    @matchopts = MatchOptions.new
-    
     @context.after  = 0          # lines of context before the match
     @context.before = 0          # lines of context after the match
     @binary_files          = "binary"   # 
