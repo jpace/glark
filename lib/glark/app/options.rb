@@ -54,7 +54,7 @@ end
 # -------------------------------------------------------
 
 class Glark::Options
-  include Loggable, Singleton
+  include Loggable
 
   attr_accessor :binary_files
   attr_accessor :directory
@@ -105,7 +105,41 @@ class Glark::Options
     
     @optset = OptProc::OptionSet.new optdata
     
-    reset
+    @binary_files          = "binary"   # 
+    @count                 = false      # just count the lines
+    @directory             = "read"     # read, skip, or recurse, a la grep
+    @exclude_matching      = false      # exclude files whose names match the expression
+    @explain               = false      # display a legible version of the expression
+    @extract_matches       = false      # whether to show _only_ the part that matched
+    @highlight             = "multi"    # highlight matches (using ANSI codes)
+    @local_config_files    = false      # use local .glarkrc files
+
+    @matchopts.expr        = nil        # the expression to be evaluated
+    @matchopts.extended    = false      # whether to use extended regular expressions
+    @matchopts.highlight   = @highlight
+    @matchopts.ignorecase  = false      # match case
+    @matchopts.whole_lines = false      # true means patterns must match the entire line
+    @matchopts.whole_words = false      # true means all patterns are '\b'ed front and back
+
+    @quiet                 = false      # minimize warnings
+    @range.clear              # range to search; nil => the entire file
+    @show_file_names       = nil        # show the names of matching files; nil == > 1; true == >= 1; false means never
+    @split_as_path         = true       # whether to split arguments that include the path separator
+    @verbose               = nil        # display debugging output
+    @with_basename         = nil        # match files with this basename
+    @with_fullname         = nil        # match files with this fullname
+    @without_basename      = nil        # match files without this basename
+    @without_fullname      = nil        # match files without this fullname
+    
+    clear_colors
+
+    @outputopts.label = nil
+    @size_limit            = nil
+    @out                   = $stdout
+
+    $/ = "\n"
+    
+    set_glark_output_style
   end
 
   def add_input_options optdata
@@ -301,51 +335,7 @@ class Glark::Options
     }
   end
   
-  def reset
-    @binary_files          = "binary"   # 
-    @count                 = false      # just count the lines
-    @directory             = "read"     # read, skip, or recurse, a la grep
-    @exclude_matching      = false      # exclude files whose names match the expression
-    @explain               = false      # display a legible version of the expression
-    @extract_matches       = false      # whether to show _only_ the part that matched
-    @highlight             = "multi"    # highlight matches (using ANSI codes)
-    @local_config_files    = false      # use local .glarkrc files
-
-    @matchopts.expr        = nil        # the expression to be evaluated
-    @matchopts.extended    = false      # whether to use extended regular expressions
-    @matchopts.highlight   = @highlight
-    @matchopts.ignorecase  = false      # match case
-    @matchopts.whole_lines = false      # true means patterns must match the entire line
-    @matchopts.whole_words = false      # true means all patterns are '\b'ed front and back
-
-    @outputopts.context.after  = 0          # lines of context before the match
-    @outputopts.context.before = 0          # lines of context after the match
-    @outputopts.file_names_only       = false      # display only the file names
-    @outputopts.filter = true       # display only matches
-    @outputopts.invert_match = false      # display non-matching lines
-    @outputopts.match_limit = nil        # the maximum number of matches to display per file
-    @outputopts.show_line_numbers = true       # display numbers of matching lines
-    @outputopts.write_null = false      # in @file_names_only mode, write '\0' instead of '\n'
-
-    @quiet                 = false      # minimize warnings
-    @range.clear              # range to search; nil => the entire file
-    @show_file_names       = nil        # show the names of matching files; nil == > 1; true == >= 1; false means never
-    @split_as_path         = true       # whether to split arguments that include the path separator
-    @verbose               = nil        # display debugging output
-    @with_basename         = nil        # match files with this basename
-    @with_fullname         = nil        # match files with this fullname
-    @without_basename      = nil        # match files without this basename
-    @without_fullname      = nil        # match files without this fullname
-    
-    clear_colors
-
-    @outputopts.label = nil
-    @size_limit            = nil
-    @out                   = $stdout
-
-    $/ = "\n"
-    
-    set_glark_output_style
+  def init
   end
 
   def make_colors limit = -1

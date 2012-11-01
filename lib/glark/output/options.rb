@@ -3,34 +3,35 @@
 # vim: set filetype=ruby : set sw=2
 
 class OutputOptions
-  attr_accessor :context
-  attr_accessor :file_highlight
-  attr_accessor :file_names_only
-  attr_accessor :filter
+
+  attr_accessor :context        # lines before and after
+  attr_accessor :file_highlight 
+  attr_accessor :file_names_only # display only the file names
+  attr_accessor :filter         # display only matches
   attr_accessor :highlight
-  attr_accessor :invert_match
+  attr_accessor :invert_match   # display non-matching lines
   attr_accessor :label
   attr_accessor :line_number_highlight
-  attr_accessor :match_limit
+  attr_accessor :match_limit    # the maximum number of matches to display per file
   attr_accessor :out
-  attr_accessor :show_file_names
-  attr_accessor :show_line_numbers
-  attr_accessor :write_null
+  attr_accessor :show_file_names   # display file names
+  attr_accessor :show_line_numbers # display numbers of matching lines
+  attr_accessor :write_null # in @file_names_only mode, write '\0' instead of '\n'
 
   def initialize 
     @context = Glark::Context.new
     @file_highlight = nil
-    @file_names_only = nil
-    @filter = filter
+    @file_names_only = false
+    @filter = true
     @highlight = nil
-    @invert_match = nil
+    @invert_match = false
     @label = nil
     @line_number_highlight = nil
     @match_limit = nil
     @out = nil
     @show_file_names = nil
-    @show_line_numbers = nil
-    @write_null = nil
+    @show_line_numbers = true
+    @write_null = false
   end
 
   def after

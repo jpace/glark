@@ -8,8 +8,8 @@ class Glark::Context
   attr_accessor :before
 
   def initialize 
-    @after = nil
-    @before = nil
+    @after = 0
+    @before = 0
   end
 
   def add_as_option optdata

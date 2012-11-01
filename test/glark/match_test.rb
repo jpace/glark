@@ -9,7 +9,7 @@ require 'tc'
 class Glark::MatchTestCase < Glark::TestCase
   def run_search_test expected, contents, exprargs
     info "exprargs: #{exprargs}".yellow
-    opts = Glark::Options.instance
+    opts = Glark::Options.new
     
     # Egads, Ruby is fun. Converting a maybe-array into a definite one:
     args = [ exprargs ].flatten
@@ -52,7 +52,7 @@ class Glark::MatchTestCase < Glark::TestCase
           File.delete fname
         end
       end
-      Glark::Options.instance.reset
+      # Glark::Options.instance.reset
     end
   end
 

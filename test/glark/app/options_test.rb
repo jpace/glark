@@ -29,7 +29,7 @@ class Glark::OptionsTestCase < Glark::TestCase
   end    
 
   def run_option_test args, exp, &blk
-    gopt = Glark::Options.instance
+    gopt = Glark::Options.new
     gopt.run args
 
     exp.each do |name, expval|
@@ -38,8 +38,6 @@ class Glark::OptionsTestCase < Glark::TestCase
     end
     
     blk.call(gopt) if blk
-
-    gopt.reset
   end
 
   def test_default_values
