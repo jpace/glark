@@ -25,7 +25,6 @@ class Glark::Range
   end
 
   def to_line var, linecount
-    info "var: #{var}".on_red
     if var
       if md = PCT_RE.match(var) 
         count = linecount

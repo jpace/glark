@@ -3,6 +3,7 @@
 
 require 'rubygems'
 require 'riel'
+require 'glark/app/rcfile'
 require 'glark/match/factory'
 require 'glark/match/options'
 require 'glark/input/range'
@@ -484,28 +485,13 @@ class Glark::Options
     log { "record separator set to #{$/.inspect}" }
   end
 
-  def read_rcfile rcfile
-    return unless rcfile.exist?
-
-    rcfile.readlines.each do |line|
-      line.sub! Regexp.new('\s*#.*'), ''
-      line.chomp!
-      name, value = line.split Regexp.new('\s*[=:]\s*')
-      next unless name && value
-
-      # rc association is somewhat supported:
-      @optset.options.each do |option|
-        if option.match_rc? name
-          val = option.convert_value value
-          option.set val
-          next
-        end
-      end
-
+  def read_rcfile rcfname
+    rcfile = Glark::RCFile.new rcfname
+    
+    rcfile.names.each do |name|
+      value = rcfile.value name
+      
       case name
-      when "expression"
-        # this should be more intelligent than just splitting on whitespace:
-        @matchopts.expr = get_expression_factory.make_expression value.split(/\s+/)
       when "file-color"
         @file_highlight = make_highlight name, value
       when "grep"
