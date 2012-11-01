@@ -21,7 +21,7 @@ class Glark::AppTestCase < Glark::TestCase
 
     Log.verbose = true
 
-    glark = Glark::Runner.new gopt.expr, files
+    glark = Glark::Runner.new gopt, gopt.expr, files
     files.each do |file|
       info "file: #{file}".red
       glark.search file

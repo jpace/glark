@@ -15,7 +15,7 @@ class Glark::MatchTestCase < Glark::TestCase
     args = [ exprargs ].flatten
 
     expr = opts.get_expression_factory.make_expression args
-
+    
     outfname = infname = nil
 
     begin
@@ -26,7 +26,7 @@ class Glark::MatchTestCase < Glark::TestCase
         infname = write_file contents
 
         files = [ infname ]
-        glark = Glark::Runner.new expr, files
+        glark = Glark::Runner.new opts, expr, files
         glark.search infname
       end
 

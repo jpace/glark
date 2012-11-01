@@ -27,8 +27,8 @@ class Glark::Runner
 
   attr_reader :exit_status
   
-  def initialize func, files
-    @opts  = Glark::Options.instance
+  def initialize opts, func, files
+    @opts  = opts
     @func  = func
     @searched_files = Array.new          # files searched, so we don't cycle through links
     

@@ -68,6 +68,11 @@ class Glark::Range
     compare(from, other.from) || compare(to, other.to) || 0
   end
 
+  def clear
+    @from = nil
+    @to = nil
+  end
+
   def add_as_option optdata
     optdata << range_after_option = {
       :tags    => %w{ --after },

@@ -45,7 +45,7 @@ class Glark::App
                 [ '-' ]
               end
 
-      glark = Glark::Runner.new opts.expr, files 
+      glark = Glark::Runner.new opts, opts.expr, files 
 
       files.each do |f|
         glark.search f  
