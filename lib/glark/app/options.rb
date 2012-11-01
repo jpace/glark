@@ -30,12 +30,23 @@ class Glark::Colors
       if value
         @highlighter.make value
       else
-        error opt + " requires a color"
-        exit 2
+        raise "error: '" + opt + "' requires a color"
       end
     else
       log { "no highlighter defined" }
     end
+  end
+
+  def make_colors limit = -1
+    Text::Highlighter::DEFAULT_COLORS[0 .. limit].collect { |color| @highlighter.make color }
+  end
+
+  def multi_colors 
+    make_colors
+  end
+
+  def single_color
+    make_colors 0
   end
 end
 
@@ -357,9 +368,9 @@ class Glark::Options
   def set_colors
     @matchopts.text_highlights = case @highlight
                                  when highlight_multi?(@highlight), true
-                                   multi_colors
+                                   @colors.multi_colors
                                  when "single"
-                                   single_color
+                                   @colors.single_color
                                  else
                                    raise "highlight format '" + @highlight.to_s + "' not recognized"
                                  end
@@ -389,7 +400,7 @@ class Glark::Options
     @output = "grep"
     set_highlight false
 
-    self.highlighter = nil
+    @colors.highlighter = nil
     @outputopts.show_line_numbers = false
     @outputopts.context.after = 0
     @outputopts.context.before = 0
@@ -516,16 +527,7 @@ class Glark::Options
   
   # creates a color for the given option, based on its value
   def make_highlight opt, value
-    if hl = highlighter
-      if value
-        hl.make value
-      else
-        error opt + " requires a color"
-        exit 2
-      end
-    else
-      log { "no highlighter defined" }
-    end
+    @colors.make_highlight opt, value
   end
 
   # returns whether the value matches a true value, such as "yes", "true", or "on".
