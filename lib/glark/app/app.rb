@@ -57,6 +57,7 @@ class Glark::App
     rescue => e
       # show the message, and the stack trace only if verbose:
       $stderr.puts "error: #{e}"
+      ### $$$ production code shouldn't have the backtrace:
       if opts.verbose || true
         $stderr.puts e.backtrace
         raise

@@ -34,14 +34,6 @@ class Glark::Runner
     
     @files = files
 
-    # @show_file_names = (@opts.show_file_names(@files) ||
-    #                     (@opts.show_file_names.nil? && 
-    #                      (@opts.label ||
-    #                       @files.size > 1 ||
-    #                       (@files[0] != "-" && FileType.type(@files[0]) == FileType::DIRECTORY))))    
-
-    @show_file_names = @opts.display_file_names? @files
-
     @invert_match = @opts.invert_match
 
     # 0 == matches, 1 == no matches, 2 == error

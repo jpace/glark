@@ -187,8 +187,7 @@ class Glark::Options
   def add_output_options optdata
     @outputopts = OutputOptions.new
 
-    @context = Glark::Context.new
-    @context.add_as_option optdata
+    @outputopts.add_as_options optdata
     
     optdata << invert_match_option = {
       :tags => %w{ -v --invert-match },
@@ -334,8 +333,8 @@ class Glark::Options
   end
   
   def reset
-    @context.after  = 0          # lines of context before the match
-    @context.before = 0          # lines of context after the match
+    @outputopts.context.after  = 0          # lines of context before the match
+    @outputopts.context.before = 0          # lines of context after the match
     @binary_files          = "binary"   # 
     @count                 = false      # just count the lines
     @directory             = "read"     # read, skip, or recurse, a la grep
@@ -442,8 +441,8 @@ class Glark::Options
     @matchopts.highlight = nil
     @highlighter = nil
     @outputopts.show_line_numbers = false
-    @context.after = 0
-    @context.before = 0
+    @outputopts.context.after = 0
+    @outputopts.context.before = 0
     clear_colors
   end
 
@@ -658,8 +657,8 @@ class Glark::Options
 
   def write_configuration
     fields = {
-      "after-context" => @context.after,
-      "before-context" => @context.before,
+      "after-context" => @outputopts.context.after,
+      "before-context" => @outputopts.context.before,
       "binary-files" => @binary_files,
       "file-color" => @file_highlight,
       "filter" => @outputopts.filter,
@@ -685,8 +684,8 @@ class Glark::Options
 
   def dump_all_fields
     fields = {
-      "after" => @context.after,
-      "before" => @context.before,
+      "after" => @outputopts.context.after,
+      "before" => @outputopts.context.before,
       "binary_files" => @binary_files,
       "count" => @count,
       "directory" => @directory,
@@ -769,7 +768,7 @@ class Glark::Options
   end
 
   def get_output_options files
-    @outputopts.context = @context
+    # @outputopts.context = @context
     @outputopts.file_highlight = @file_highlight
     @outputopts.highlight = @highlight
     @outputopts.line_number_highlight = @line_number_highlight

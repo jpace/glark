@@ -18,9 +18,7 @@ class OutputOptions
   attr_accessor :write_null
 
   def initialize 
-    @after = nil
-    @before = nil
-    @context = nil
+    @context = Glark::Context.new
     @file_highlight = nil
     @file_names_only = nil
     @filter = filter
@@ -41,5 +39,9 @@ class OutputOptions
 
   def before
     @context && @context.before
+  end
+
+  def add_as_options optdata
+    @context.add_as_option optdata
   end
 end
