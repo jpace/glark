@@ -163,24 +163,10 @@ class Glark::Options
     
     @matchopts.add_as_options optdata
 
-    optdata << expr_file_option = {
-      :tags => %w{ -f --file },
-      :arg  => [ :string ],
-      :set  => Proc.new { |fname| @matchopts.expr = get_expression_factory.read_file fname }
-    }
-
     optdata << text_color_option = {
       :tags => %w{ --text-color },
       :arg  => [ :string ],
       :set  => Proc.new { |val| @matchopts.text_highlights = [ make_highlight "text-color", val ] }
-    }
-
-    optdata << orand_expr_option = {
-      :tags => %w{ -o -a },
-      :set  => Proc.new do |md, opt, args|
-        args.unshift opt
-        @matchopts.expr = get_expression_factory.make_expression args
-      end
     }
   end
 
@@ -189,21 +175,6 @@ class Glark::Options
 
     @outputopts.add_as_options optdata
     
-    optdata << invert_match_option = {
-      :tags => %w{ -v --invert-match },
-      :set  => Proc.new { @outputopts.invert_match = true }
-    }
-
-    optdata << filter_option = {
-      :tags => %w{ --filter },
-      :set  => Proc.new { @outputopts.filter = true }
-    }
-
-    optdata << nofilter_option = {
-      :tags => %w{ --no-filter --nofilter },
-      :set  => Proc.new { @outputopts.filter = false }
-    }
-
     optdata << nohighlight_option = {
       :tags => %w{ -U --no-highlight },
       :set  => Proc.new { set_highlight nil }
@@ -214,40 +185,15 @@ class Glark::Options
       :set  => Proc.new { set_grep_output_style }
     }
 
-    optdata << show_lnums_option = {
-      :tags => %w{ -n --line-number },
-      :set  => Proc.new { @outputopts.show_line_numbers = true }
-    }
-
-    optdata << no_show_lnums_option = {
-      :tags => %w{ -N --no-line-number },
-      :set  => Proc.new { @outputopts.show_line_numbers = false }
-    }
-
     optdata << lnum_color_option = {
       :tags => %w{ --line-number-color },
       :arg  => [ :string ],
       :set  => Proc.new { |val| @line_number_highlight = make_highlight "line-number-color", val },
     }
 
-    optdata << matching_fnames_option = {
-      :tags => %w{ -l --files-with-matches },
-      :set  => Proc.new { @outputopts.file_names_only = true; @outputopts.invert_match = false }
-    }
-
-    optdata << nonmatching_fnames_option = {
-      :tags => %w{ -L --files-without-match },
-      :set  => Proc.new { @outputopts.file_names_only = true; @outputopts.invert_match = true }
-    }
-
     optdata << count_option = {
       :tags => %w{ -c --count },
       :set  => Proc.new { @count = true }
-    }
-
-    optdata << write_null_option = {
-      :tags => %w{ -Z --null },
-      :set  => Proc.new { @outputopts.write_null = true }
     }
 
     optdata << show_fname_option = {
@@ -258,18 +204,6 @@ class Glark::Options
     optdata << no_show_fname_option = {
       :tags => %w{ -h --no-filename },
       :set  => Proc.new { @show_file_names = false }
-    }
-
-    optdata << label_option = { 
-      :tags => %w{ --label },
-      :arg  => [ :string ],
-      :set  => Proc.new { |val| @outputopts.label = val }
-    }
-
-    optdata << match_limit_option = { 
-      :tags => %w{ -m --match-limit },
-      :arg  => [ :integer ],
-      :set  => Proc.new { |val| @outputopts.match_limit = val }
     }
 
     optdata << highlight_option = { 

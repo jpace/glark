@@ -6,6 +6,7 @@
 
 require 'rubygems'
 require 'riel/log'
+require 'glark/match/factory'
 
 class MatchOptions
   include Loggable
@@ -49,6 +50,20 @@ class MatchOptions
     optdata << extended_option = {
       :tags => %w{ --extended },
       :set  => Proc.new { @extended = true }
+    }
+
+    optdata << expr_file_option = {
+      :tags => %w{ -f --file },
+      :arg  => [ :string ],
+      :set  => Proc.new { |fname| @expr = ExpressionFactory.new(self).read_file fname }
+    }
+
+    optdata << orand_expr_option = {
+      :tags => %w{ -o -a },
+      :set  => Proc.new do |md, opt, args|
+        args.unshift opt
+        @expr = ExpressionFactory.new(self).make_expression args
+      end
     }
   end
 end

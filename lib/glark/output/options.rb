@@ -43,5 +43,57 @@ class OutputOptions
 
   def add_as_options optdata
     @context.add_as_option optdata
+
+    optdata << invert_match_option = {
+      :tags => %w{ -v --invert-match },
+      :set  => Proc.new { @invert_match = true }
+    }
+
+    optdata << filter_option = {
+      :tags => %w{ --filter },
+      :set  => Proc.new { @filter = true }
+    }
+
+    optdata << nofilter_option = {
+      :tags => %w{ --no-filter --nofilter },
+      :set  => Proc.new { @filter = false }
+    }
+
+    optdata << show_lnums_option = {
+      :tags => %w{ -n --line-number },
+      :set  => Proc.new { @show_line_numbers = true }
+    }
+
+    optdata << no_show_lnums_option = {
+      :tags => %w{ -N --no-line-number },
+      :set  => Proc.new { @show_line_numbers = false }
+    }
+
+    optdata << matching_fnames_option = {
+      :tags => %w{ -l --files-with-matches },
+      :set  => Proc.new { @file_names_only = true; @invert_match = false }
+    }
+
+    optdata << nonmatching_fnames_option = {
+      :tags => %w{ -L --files-without-match },
+      :set  => Proc.new { @file_names_only = true; @invert_match = true }
+    }
+
+    optdata << write_null_option = {
+      :tags => %w{ -Z --null },
+      :set  => Proc.new { @write_null = true }
+    }
+
+    optdata << label_option = { 
+      :tags => %w{ --label },
+      :arg  => [ :string ],
+      :set  => Proc.new { |val| @label = val }
+    }
+
+    optdata << match_limit_option = { 
+      :tags => %w{ -m --match-limit },
+      :arg  => [ :integer ],
+      :set  => Proc.new { |val| @match_limit = val }
+    }
   end
 end
