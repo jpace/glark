@@ -114,12 +114,7 @@ class Glark::Options
     @highlight             = "multi"    # highlight matches (using ANSI codes)
     @local_config_files    = false      # use local .glarkrc files
 
-    @matchopts.expr        = nil        # the expression to be evaluated
-    @matchopts.extended    = false      # whether to use extended regular expressions
     @matchopts.highlight   = @highlight
-    @matchopts.ignorecase  = false      # match case
-    @matchopts.whole_lines = false      # true means patterns must match the entire line
-    @matchopts.whole_words = false      # true means all patterns are '\b'ed front and back
 
     @quiet                 = false      # minimize warnings
     @range.clear              # range to search; nil => the entire file
