@@ -15,23 +15,13 @@ module Glark
   VERSION = '1.9.1'
 end
 
-class Glark::ColorOptions
+class Glark::Colors
   include Loggable
   
-  attr_accessor :file_highlight
-  attr_accessor :highlight
   attr_accessor :highlighter
-  attr_accessor :line_number_highlight
 
-  def initialize matchopts
-    @matchopts = matchopts
-  end
-
-  def set_highlight hl
-    stack "hl: #{hl}".yellow
-    @highlight = hl
-    @matchopts.highlight = hl
-    @highlighter = hl && Text::ANSIHighlighter
+  def initialize hl = nil
+    @highlighter = nil
   end
 
   # creates a color for the given option, based on its value
@@ -66,7 +56,6 @@ class Glark::Options
   attr_accessor :highlighter
   attr_accessor :line_number_highlight
   attr_accessor :local_config_files
-  attr_accessor :out
   attr_accessor :output
   attr_accessor :quiet
   attr_accessor :show_break
@@ -94,6 +83,10 @@ class Glark::Options
   def file_names_only
     @outputopts.file_names_only
   end
+
+  def out= io
+    @outputopts.out = io
+  end
   
   def initialize
     optdata = Array.new
@@ -114,8 +107,6 @@ class Glark::Options
     @highlight             = "multi"    # highlight matches (using ANSI codes)
     @local_config_files    = false      # use local .glarkrc files
 
-    @matchopts.highlight   = @highlight
-
     @quiet                 = false      # minimize warnings
     @range.clear              # range to search; nil => the entire file
     @show_file_names       = nil        # show the names of matching files; nil == > 1; true == >= 1; false means never
@@ -130,9 +121,10 @@ class Glark::Options
 
     @outputopts.label = nil
     @size_limit            = nil
-    @out                   = $stdout
 
     $/ = "\n"
+
+    @colors = Glark::Colors.new
     
     set_glark_output_style
   end
@@ -693,11 +685,9 @@ class Glark::Options
   end
 
   def get_output_options files
-    # @outputopts.context = @context
     @outputopts.file_highlight = @file_highlight
     @outputopts.highlight = @highlight
     @outputopts.line_number_highlight = @line_number_highlight
-    @outputopts.out = @out
     @outputopts.show_file_names = display_file_names? files
 
     @outputopts

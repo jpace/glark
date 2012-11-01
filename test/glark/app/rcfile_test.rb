@@ -22,8 +22,6 @@ class Glark::RcfileTestCase < Glark::TestCase
     end
     
     blk.call(gopt) if blk
-
-    gopt.reset
   end
 
   def test_simple

@@ -32,8 +32,6 @@ class Glark::AppTestCase < Glark::TestCase
     puts ">>>>>".yellow
     puts sio.string
     puts "<<<<<".yellow
-
-    gopt.reset
     
     sio.string
   end

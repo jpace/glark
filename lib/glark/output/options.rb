@@ -28,7 +28,7 @@ class OutputOptions
     @label = nil
     @line_number_highlight = nil
     @match_limit = nil
-    @out = nil
+    @out = $stdout
     @show_file_names = nil
     @show_line_numbers = true
     @write_null = false

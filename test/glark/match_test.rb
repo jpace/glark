@@ -52,7 +52,6 @@ class Glark::MatchTestCase < Glark::TestCase
           File.delete fname
         end
       end
-      # Glark::Options.instance.reset
     end
   end
 
