@@ -53,7 +53,6 @@ class Glark::Options
   attr_accessor :extract_matches
   attr_accessor :file_highlight
   attr_accessor :highlight
-  attr_accessor :highlighter
   attr_accessor :line_number_highlight
   attr_accessor :local_config_files
   attr_accessor :output
@@ -125,6 +124,7 @@ class Glark::Options
     $/ = "\n"
 
     @colors = Glark::Colors.new
+    @highlighter = nil
     
     set_glark_output_style
   end
@@ -322,11 +322,16 @@ class Glark::Options
     }
   end
   
-  def init
+  def highlighter
+    @colors.highlighter 
+  end
+
+  def highlighter= hl
+    @colors.highlighter = hl
   end
 
   def make_colors limit = -1
-    Text::Highlighter::DEFAULT_COLORS[0 .. limit].collect { |color| @highlighter.make color }
+    Text::Highlighter::DEFAULT_COLORS[0 .. limit].collect { |color| highlighter.make color }
   end
 
   def multi_colors 
@@ -342,7 +347,7 @@ class Glark::Options
   end
 
   def reset_colors
-    if !@highlight || !@highlighter
+    if !@highlight || !highlighter
       clear_colors
     else
       set_colors
@@ -358,7 +363,7 @@ class Glark::Options
                                  else
                                    raise "highlight format '" + @highlight.to_s + "' not recognized"
                                  end
-    @file_highlight        = @highlighter.make "reverse bold"
+    @file_highlight        = highlighter.make "reverse bold"
     @line_number_highlight = nil
   end
 
@@ -371,7 +376,7 @@ class Glark::Options
   def set_highlight type
     @highlight = type
     @matchopts.highlight = @highlight
-    @highlighter = @highlight && Text::ANSIHighlighter
+    self.highlighter = @highlight && Text::ANSIHighlighter
     reset_colors
   end
 
@@ -384,7 +389,7 @@ class Glark::Options
     @output = "grep"
     set_highlight false
 
-    @highlighter = nil
+    self.highlighter = nil
     @outputopts.show_line_numbers = false
     @outputopts.context.after = 0
     @outputopts.context.before = 0
@@ -511,7 +516,7 @@ class Glark::Options
   
   # creates a color for the given option, based on its value
   def make_highlight opt, value
-    if hl = @highlighter
+    if hl = highlighter
       if value
         hl.make value
       else
