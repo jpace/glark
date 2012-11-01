@@ -285,9 +285,10 @@ class Glark::OptionsTestCase < Glark::TestCase
     %w{ --filter }.each do |opt|
       run_option_test([ opt, 'foo' ],
                       { 
-                        :filter => true,
                         :expr => RegexpExpression.new(%r{foo}, 0),
-                      })
+                      }) do |opts|
+        assert_output_options opts, { :filter => true }
+      end
     end
   end
   
@@ -295,9 +296,10 @@ class Glark::OptionsTestCase < Glark::TestCase
     %w{ --no-filter --nofilter }.each do |opt|
       run_option_test([ opt, 'foo' ],
                       { 
-                        :filter => false,
                         :expr => RegexpExpression.new(%r{foo}, 0),
-                      })
+                      }) do |opts|
+        assert_output_options opts, { :filter => false }
+      end
     end
   end
   

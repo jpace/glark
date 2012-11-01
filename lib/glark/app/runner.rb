@@ -86,7 +86,7 @@ class Glark::Runner
       end
     elsif @opts.file_names_only
       output_type = FileNames.new file, output_opts
-    elsif !@opts.filter
+    elsif !output_opts.filter
       output_type = UnfilteredLines.new file, output_opts
     elsif @opts.output == "grep"
       output_type = GrepLines.new file, output_opts
