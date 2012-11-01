@@ -1,0 +1,8 @@
+# comment here
+highlight: single
+# highlight: multi
+local-config-files: true
+
+line-number-color: bold red
+ignore-case: true
+size-limit: 1000

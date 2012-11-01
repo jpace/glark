@@ -11,3 +11,7 @@ Tue Oct 30 08:55:25 2012
 Wed Oct 31 07:50:46 2012
 
   documented --extended option.
+
+Thu Nov  1 14:41:02 2012
+
+  removed filter from rcfile; unused and useless.

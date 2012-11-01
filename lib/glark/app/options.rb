@@ -508,8 +508,6 @@ class Glark::Options
         @matchopts.expr = get_expression_factory.make_expression value.split(/\s+/)
       when "file-color"
         @file_highlight = make_highlight name, value
-      when "filter"
-        @outputopts.filter = to_boolean value
       when "grep"
         set_grep_output_style if to_boolean value
       when "highlight"
