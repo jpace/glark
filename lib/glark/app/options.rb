@@ -14,6 +14,40 @@ module Glark
   VERSION = '1.9.1'
 end
 
+class Glark::ColorOptions
+  include Loggable
+  
+  attr_accessor :file_highlight
+  attr_accessor :highlight
+  attr_accessor :highlighter
+  attr_accessor :line_number_highlight
+
+  def initialize matchopts
+    @matchopts = matchopts
+  end
+
+  def set_highlight hl
+    stack "hl: #{hl}".yellow
+    @highlight = hl
+    @matchopts.highlight = hl
+    @highlighter = hl && Text::ANSIHighlighter
+  end
+
+  # creates a color for the given option, based on its value
+  def make_highlight opt, value
+    if @highlighter
+      if value
+        @highlighter.make value
+      else
+        error opt + " requires a color"
+        exit 2
+      end
+    else
+      log { "no highlighter defined" }
+    end
+  end
+end
+
 # -------------------------------------------------------
 # Options
 # -------------------------------------------------------
@@ -300,7 +334,7 @@ class Glark::Options
 
     @highlight             = "multi"    # highlight matches (using ANSI codes)
     @matchopts.highlight   = @highlight
-
+    
     @matchopts.text_highlights = []
     @file_highlight        = nil
     @line_number_highlight = nil
@@ -359,33 +393,24 @@ class Glark::Options
 
   def set_highlight type
     @highlight = type
+    @matchopts.highlight = @highlight
+    @highlighter = @highlight && Text::ANSIHighlighter
     reset_colors
   end
 
   def set_glark_output_style
     @output = "glark"
-    @matchopts.highlight = @highlight
-    @highlighter = Text::ANSIHighlighter
-    set_colors
+    set_highlight @highlight
   end
 
   def set_grep_output_style
     @output = "grep"
-    @highlight = false
-    @matchopts.highlight = nil
+    set_highlight false
+
     @highlighter = nil
     @outputopts.show_line_numbers = false
     @outputopts.context.after = 0
     @outputopts.context.before = 0
-    clear_colors
-  end
-
-  def set_text_output_style
-    @output = "text"
-    @highlight = false
-    @matchopts.highlight = nil
-    @highlighter = nil
-    clear_colors
   end
 
   def set_output_style output
@@ -396,8 +421,6 @@ class Glark::Options
       set_glark_output_style
     when "grep"
       set_grep_output_style
-    when "text", "match"
-      set_text_output_style
     end
   end
 
