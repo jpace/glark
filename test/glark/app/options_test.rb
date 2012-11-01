@@ -310,10 +310,9 @@ class Glark::OptionsTestCase < Glark::TestCase
                         :output => "grep",
                         :expr => RegexpExpression.new(%r{foo}, 0),
                         :highlight => false,
-                        :show_line_numbers => false,
                       }) do |opts|
         assert_match_options opts, { :text_highlights => [] }
-        assert_output_options opts, { :after => 0, :before => 0 }
+        assert_output_options opts, { :after => 0, :before => 0, :show_line_numbers => false }
       end
     end
   end
@@ -322,9 +321,10 @@ class Glark::OptionsTestCase < Glark::TestCase
     %w{ -n --line-number }.each do |opt|
       run_option_test([ opt, 'foo' ],
                       { 
-                        :show_line_numbers => true,
                         :expr => RegexpExpression.new(%r{foo}, 0),
-                      })
+                      }) do |opts|
+        assert_output_options opts, { :show_line_numbers => true }
+      end
     end
   end
 
@@ -332,9 +332,10 @@ class Glark::OptionsTestCase < Glark::TestCase
     %w{ -N --no-line-number }.each do |opt|
       run_option_test([ opt, 'foo' ],
                       { 
-                        :show_line_numbers => false,
                         :expr => RegexpExpression.new(%r{foo}, 0),
-                      })
+                      }) do |opts|
+        assert_output_options opts, { :show_line_numbers => false }
+      end
     end
   end
 
@@ -554,9 +555,10 @@ class Glark::OptionsTestCase < Glark::TestCase
       ].each do |opt|
         run_option_test(opt | %w{ foo },
                         {
-                          :label => label,
                           :expr => RegexpExpression.new(%r{foo}, 0),
-                        })
+                        }) do |opts|
+          assert_output_options opts, { :label => label }
+        end
       end
     end
   end

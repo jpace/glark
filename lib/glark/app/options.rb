@@ -27,11 +27,8 @@ class Glark::Options
   attr_accessor :explain
   attr_accessor :extract_matches
   attr_accessor :file_highlight
-  attr_accessor :file_names_only
-  attr_accessor :filter
   attr_accessor :highlight
   attr_accessor :highlighter
-  attr_accessor :label
   attr_accessor :line_number_highlight
   attr_accessor :local_config_files
   attr_accessor :out
@@ -39,7 +36,6 @@ class Glark::Options
   attr_accessor :quiet
   attr_accessor :show_break
   attr_accessor :show_file_names
-  attr_accessor :show_line_numbers
   attr_accessor :size_limit
   attr_accessor :split_as_path
   attr_accessor :verbose
@@ -56,6 +52,14 @@ class Glark::Options
     @matchopts.expr
   end
 
+  def filter
+    @outputopts.filter
+  end
+
+  def file_names_only
+    @outputopts.file_names_only
+  end
+  
   def initialize
     optdata = Array.new
 
@@ -181,22 +185,24 @@ class Glark::Options
   end
 
   def add_output_options optdata
+    @outputopts = OutputOptions.new
+
     @context = Glark::Context.new
     @context.add_as_option optdata
     
     optdata << invert_match_option = {
       :tags => %w{ -v --invert-match },
-      :set  => Proc.new { @invert_match = true }
+      :set  => Proc.new { @outputopts.invert_match = true }
     }
 
     optdata << filter_option = {
       :tags => %w{ --filter },
-      :set  => Proc.new { @filter = true }
+      :set  => Proc.new { @outputopts.filter = true }
     }
 
     optdata << nofilter_option = {
       :tags => %w{ --no-filter --nofilter },
-      :set  => Proc.new { @filter = false }
+      :set  => Proc.new { @outputopts.filter = false }
     }
 
     optdata << nohighlight_option = {
@@ -211,12 +217,12 @@ class Glark::Options
 
     optdata << show_lnums_option = {
       :tags => %w{ -n --line-number },
-      :set  => Proc.new { @show_line_numbers = true }
+      :set  => Proc.new { @outputopts.show_line_numbers = true }
     }
 
     optdata << no_show_lnums_option = {
       :tags => %w{ -N --no-line-number },
-      :set  => Proc.new { @show_line_numbers = false }
+      :set  => Proc.new { @outputopts.show_line_numbers = false }
     }
 
     optdata << lnum_color_option = {
@@ -227,12 +233,12 @@ class Glark::Options
 
     optdata << matching_fnames_option = {
       :tags => %w{ -l --files-with-matches },
-      :set  => Proc.new { @file_names_only = true; @invert_match = false }
+      :set  => Proc.new { @outputopts.file_names_only = true; @outputopts.invert_match = false }
     }
 
     optdata << nonmatching_fnames_option = {
       :tags => %w{ -L --files-without-match },
-      :set  => Proc.new { @file_names_only = true; @invert_match = true }
+      :set  => Proc.new { @outputopts.file_names_only = true; @outputopts.invert_match = true }
     }
 
     optdata << count_option = {
@@ -242,7 +248,7 @@ class Glark::Options
 
     optdata << write_null_option = {
       :tags => %w{ -Z --null },
-      :set  => Proc.new { @write_null = true }
+      :set  => Proc.new { @outputopts.write_null = true }
     }
 
     optdata << show_fname_option = {
@@ -258,13 +264,13 @@ class Glark::Options
     optdata << label_option = { 
       :tags => %w{ --label },
       :arg  => [ :string ],
-      :set  => Proc.new { |val| @label = val }
+      :set  => Proc.new { |val| @outputopts.label = val }
     }
 
     optdata << match_limit_option = { 
       :tags => %w{ -m --match-limit },
       :arg  => [ :integer ],
-      :set  => Proc.new { |val| @match_limit = val }
+      :set  => Proc.new { |val| @outputopts.match_limit = val }
     }
 
     optdata << highlight_option = { 
@@ -338,21 +344,21 @@ class Glark::Options
     @explain               = false      # display a legible version of the expression
     @matchopts.extended    = false      # whether to use extended regular expressions
     @extract_matches       = false      # whether to show _only_ the part that matched
-    @file_names_only       = false      # display only the file names
-    @filter                = true       # display only matches
-    @invert_match          = false      # display non-matching lines
+    @outputopts.file_names_only       = false      # display only the file names
+    @outputopts.filter = true       # display only matches
+    @outputopts.invert_match = false      # display non-matching lines
     @matchopts.ignorecase  = false      # match case
-    @match_limit           = nil        # the maximum number of matches to display per file
+    @outputopts.match_limit = nil        # the maximum number of matches to display per file
     @local_config_files    = false      # use local .glarkrc files
     @quiet                 = false      # minimize warnings
     @range.from            = nil # range to start searching; nil => the entire file
     @range.to              = nil # range stop searching; nil => the entire file
-    @show_line_numbers     = true       # display numbers of matching lines
+    @outputopts.show_line_numbers = true       # display numbers of matching lines
     @show_file_names       = nil        # show the names of matching files; nil == > 1; true == >= 1; false means never
     @verbose               = nil        # display debugging output
     @matchopts.whole_lines = false      # true means patterns must match the entire line
     @matchopts.whole_words = false      # true means all patterns are '\b'ed front and back
-    @write_null            = false      # in @file_names_only mode, write '\0' instead of '\n'
+    @outputopts.write_null = false      # in @file_names_only mode, write '\0' instead of '\n'
     @with_basename         = nil        # match files with this basename
     @without_basename      = nil        # match files without this basename
     @with_fullname         = nil        # match files with this fullname
@@ -366,7 +372,7 @@ class Glark::Options
     @file_highlight        = nil
     @line_number_highlight = nil
 
-    @label                 = nil
+    @outputopts.label = nil
     @size_limit            = nil
     @out                   = $stdout
 
@@ -435,7 +441,7 @@ class Glark::Options
     @highlight = false
     @matchopts.highlight = nil
     @highlighter = nil
-    @show_line_numbers = false
+    @outputopts.show_line_numbers = false
     @context.after = 0
     @context.before = 0
     clear_colors
@@ -547,7 +553,7 @@ class Glark::Options
       when "file-color"
         @file_highlight = make_highlight name, value
       when "filter"
-        @filter = to_boolean value
+        @outputopts.filter = to_boolean value
       when "grep"
         set_grep_output_style if to_boolean value
       when "highlight"
@@ -656,7 +662,7 @@ class Glark::Options
       "before-context" => @context.before,
       "binary-files" => @binary_files,
       "file-color" => @file_highlight,
-      "filter" => @filter,
+      "filter" => @outputopts.filter,
       "highlight" => @highlight,
       "ignore-case" => @matchopts.ignorecase,
       "known-nontext-files" => FileTester.nontext_extensions.sort.join(' '),
@@ -689,22 +695,22 @@ class Glark::Options
       "expr" => @matchopts.expr,
       "extract_matches" => @extract_matches,
       "file_highlight" => @file_highlight ? @file_highlight.highlight("filename") : "filename",
-      "file_names_only" => @file_names_only,
-      "filter" => @filter,
+      "file_names_only" => @outputopts.file_names_only,
+      "filter" => @outputopts.filter,
       "highlight" => @highlight,
       "ignorecase" => @matchopts.ignorecase,
-      "invert_match" => @invert_match,
+      "invert_match" => @outputopts.invert_match,
       "known_nontext_files" => FileTester.nontext_extensions.join(", "),
       "known_text_files" => FileTester.text_extensions.join(", "),
-      "label" => @label,
+      "label" => @outputopts.label,
       "line_number_highlight" => @line_number_highlight ? @line_number_highlight.highlight("12345") : "12345",
       "local_config_files" => @local_config_files,
-      "match_limit" => @match_limit,
+      "match_limit" => @outputopts.match_limit,
       "output" => @output,
       "quiet" => @quiet,
       "ruby version" => RUBY_VERSION,
       "show_file_names" => @show_file_names,
-      "show_line_numbers" => @show_line_numbers,
+      "show_line_numbers" => @outputopts.show_line_numbers,
       "text_highlights" => @matchopts.text_highlights.compact.collect { |hl| hl.highlight("text") }.join(", "),
       "verbose" => @verbose,
       "version" => Glark::VERSION,
@@ -714,7 +720,7 @@ class Glark::Options
       "with-fullname" => @with_fullname,
       "without-basename" => @without_basename,
       "without-fullname" => @without_fullname,
-      "write_null" => @write_null,
+      "write_null" => @outputopts.write_null,
     }
 
     len = fields.keys.collect { |f| f.length }.max
@@ -756,28 +762,20 @@ class Glark::Options
   def display_file_names? files
     return true  if @show_file_names
     return false if !@show_file_names.nil?
-    return true  if @label
+    return true  if @outputopts.label
     return false if files.size == 0
     return true  if files.size > 1
     files[0] != "-" && FileType.type(files[0]) == FileType::DIRECTORY
   end
 
   def get_output_options files
-    output_opts = OutputOptions.new
+    @outputopts.context = @context
+    @outputopts.file_highlight = @file_highlight
+    @outputopts.highlight = @highlight
+    @outputopts.line_number_highlight = @line_number_highlight
+    @outputopts.out = @out
+    @outputopts.show_file_names = display_file_names? files
 
-    output_opts.context = @context
-    output_opts.file_highlight = @file_highlight
-    output_opts.filter = @filter
-    output_opts.highlight = @highlight
-    output_opts.invert_match = @invert_match
-    output_opts.label = @label
-    output_opts.line_number_highlight = @line_number_highlight
-    output_opts.match_limit = @match_limit
-    output_opts.out = @out
-    output_opts.show_file_names = display_file_names? files
-    output_opts.show_line_numbers = @show_line_numbers
-    output_opts.write_null = @write_null
-
-    output_opts
+    @outputopts
   end
 end

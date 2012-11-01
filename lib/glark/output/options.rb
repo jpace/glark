@@ -5,6 +5,7 @@
 class OutputOptions
   attr_accessor :context
   attr_accessor :file_highlight
+  attr_accessor :file_names_only
   attr_accessor :filter
   attr_accessor :highlight
   attr_accessor :invert_match
@@ -21,6 +22,7 @@ class OutputOptions
     @before = nil
     @context = nil
     @file_highlight = nil
+    @file_names_only = nil
     @filter = filter
     @highlight = nil
     @invert_match = nil
