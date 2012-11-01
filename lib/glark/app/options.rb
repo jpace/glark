@@ -52,10 +52,6 @@ class Glark::Options
     @matchopts.expr
   end
 
-  def filter
-    @outputopts.filter
-  end
-
   def file_names_only
     @outputopts.file_names_only
   end
