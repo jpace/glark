@@ -44,6 +44,7 @@ class Glark::Options
   attr_reader :count
   attr_reader :invert_match
   attr_reader :range
+  attr_reader :colors
 
   def expr
     @matchopts.expr
@@ -210,7 +211,7 @@ class Glark::Options
     optdata << lnum_color_option = {
       :tags => %w{ --line-number-color },
       :arg  => [ :string ],
-      :set  => Proc.new { |val| @colors.set_line_number_highlight make_highlight "line-number-color", val },
+      :set  => Proc.new { |val| @colors.line_number_highlight = make_highlight "line-number-color", val },
     }
 
     optdata << count_option = {
@@ -237,7 +238,7 @@ class Glark::Options
     optdata << file_color_option = {
       :tags => %w{ --file-color },
       :arg  => [ :string ],
-      :set  => Proc.new { |val| @colors.set_file_highlight make_highlight "file-color", val }
+      :set  => Proc.new { |val| @colors.file_highlight = make_highlight "file-color", val }
     }
   end
 
@@ -298,10 +299,6 @@ class Glark::Options
     else
       set_colors
     end
-  end
-
-  def line_number_highlight
-    @colors.line_number_highlight
   end
 
   def set_colors
@@ -429,7 +426,7 @@ class Glark::Options
       when "local-config-files"
         @local_config_files = to_boolean value
       when "line-number-color"
-        @colors.set_line_number_highlight make_highlight name, value
+        @colors.line_number_highlight = make_highlight name, value
       when "output"
         set_output_style value
       when "quiet"

@@ -48,6 +48,7 @@ class Glark::Colors
 
   def text_color_style= tcstyle
     @text_color_style = tcstyle
+    @highlighter = @text_color_style && Text::ANSIHighlighter
   end
 
   def set_text_highlight index, color

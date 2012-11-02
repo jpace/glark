@@ -753,9 +753,10 @@ class Glark::OptionsTestCase < Glark::TestCase
       ].each do |opt|
         run_option_test(opt | [ 'foo' ],
                         {
-                          :file_highlight => Text::ANSIHighlighter.make(color),
                           :expr => RegexpExpression.new(%r{foo}, 0),
-                        })
+                        }) do |opts|
+          assert_equal Text::ANSIHighlighter.make(color), opts.colors.file_highlight
+        end
       end
     end
   end
