@@ -71,7 +71,6 @@ class Glark::Options
     @exclude_matching      = false      # exclude files whose names match the expression
     @explain               = false      # display a legible version of the expression
     @extract_matches       = false      # whether to show _only_ the part that matched
-    @text_color_style      = "multi"    # highlight matches (using ANSI codes)
     @local_config_files    = false      # use local .glarkrc files
 
     @quiet                 = false      # minimize warnings
@@ -334,8 +333,8 @@ class Glark::Options
   end
 
   def set_highlight type
-    set_text_color_style type
-    @colors.highlighter = text_color_style && Text::ANSIHighlighter
+    @colors.text_color_style = type
+    @colors.highlighter = @colors.text_color_style && Text::ANSIHighlighter
     reset_colors
   end
 
@@ -436,7 +435,7 @@ class Glark::Options
       when "grep"
         set_grep_output_style if to_boolean value
       when "highlight"
-        set_text_color_style value
+        @colors.text_color_style = value
       when "ignore-case"
         @matchopts.ignorecase = to_boolean value
       when "known-nontext-files"
@@ -532,7 +531,7 @@ class Glark::Options
       "binary-files" => @binary_files,
       "file-color" => file_highlight,
       "filter" => @outputopts.filter,
-      "highlight" => text_color_style,
+      "highlight" => @colors.text_color_style,
       "ignore-case" => @matchopts.ignorecase,
       "known-nontext-files" => FileTester.nontext_extensions.sort.join(' '),
       "known-text-files" => FileTester.text_extensions.sort.join(' '),
@@ -566,7 +565,7 @@ class Glark::Options
       "file_highlight" => file_highlight ? file_highlight.highlight("filename") : "filename",
       "file_names_only" => @outputopts.file_names_only,
       "filter" => @outputopts.filter,
-      "highlight" => text_color_style,
+      "highlight" => @colors.text_color_style,
       "ignorecase" => @matchopts.ignorecase,
       "invert_match" => @outputopts.invert_match,
       "known_nontext_files" => FileTester.nontext_extensions.join(", "),
