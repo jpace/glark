@@ -12,39 +12,33 @@ class Glark::OptionsTestCase < Glark::TestCase
     ENV['HOME'] = '/this/should/not/exist'
   end
 
-  def assert_match_options gopt, exp
-    matchopts = gopt.match_options
+  def assert_method_values opts, exp
     exp.each do |name, expval|
-      val = matchopts.method(name).call
+      val = opts.method(name).call
       assert_equal expval, val
     end
+  end
+
+  def assert_match_options gopt, exp
+    matchopts = gopt.match_options
+    assert_method_values matchopts, exp
   end    
 
   def assert_output_options gopt, exp
     outputopts = gopt.output_options
     outputopts.set_files Array.new
-    exp.each do |name, expval|
-      val = outputopts.method(name).call
-      assert_equal expval, val
-    end
+    assert_method_values outputopts, exp
   end    
 
   def assert_color_options gopt, exp
     colors = gopt.colors
-    exp.each do |name, expval|
-      val = colors.method(name).call
-      assert_equal expval, val
-    end
+    assert_method_values colors, exp
   end
   
   def run_option_test args, exp, &blk
     gopt = Glark::Options.new
     gopt.run args
-
-    exp.each do |name, expval|
-      val = gopt.method(name).call
-      assert_equal expval, val
-    end
+    assert_method_values gopt, exp
     
     blk.call(gopt) if blk
   end
