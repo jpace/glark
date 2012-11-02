@@ -191,12 +191,6 @@ class Glark::Options
     @matchopts = MatchOptions.new @colors
     
     @matchopts.add_as_options optdata
-
-    optdata << text_color_option = {
-      :tags => %w{ --text-color },
-      :arg  => [ :string ],
-      :set  => Proc.new { |val| set_text_highlights [ make_highlight "text-color", val ] }
-    }
   end
 
   def add_output_options optdata
@@ -356,8 +350,7 @@ class Glark::Options
 
     @colors.highlighter = nil
     @outputopts.show_line_numbers = false
-    @outputopts.context.after = 0
-    @outputopts.context.before = 0
+    @outputopts.context.clear
   end
 
   def set_output_style output
@@ -606,26 +599,22 @@ class Glark::Options
     end
   end
 
-  def get_match_options
+  def match_options
     @matchopts
+  end
+
+  def output_options
+    @outputopts
   end
 
   # check options for collisions/data validity
   def validate
-    range = @range
-    return true if range.nil?
-    
-    begin
-      range.valid?
-    rescue Glark::RangeError => e
-      $stderr.puts e
-      exit 2
-    end
+    @range.validate!
   end
 
   def get_expression_factory
     # we'll be creating this each time, in case these options change
-    ExpressionFactory.new get_match_options
+    ExpressionFactory.new match_options
   end
 
   def show_version
@@ -633,19 +622,5 @@ class Glark::Options
     puts "Written by Jeff Pace (jeugenepace@gmail.com)."
     puts "Released under the Lesser GNU Public License."
     exit 0
-  end
-
-  def display_file_names? files
-    return true  if @show_file_names
-    return false if !@show_file_names.nil?
-    return true  if @outputopts.label
-    return false if files.size == 0
-    return true  if files.size > 1
-    files[0] != "-" && FileType.type(files[0]) == FileType::DIRECTORY
-  end
-
-  def get_output_options files
-    @outputopts.set_files files
-    @outputopts
   end
 end

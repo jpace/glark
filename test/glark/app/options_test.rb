@@ -13,7 +13,7 @@ class Glark::OptionsTestCase < Glark::TestCase
   end
 
   def assert_match_options gopt, exp
-    matchopts = gopt.get_match_options
+    matchopts = gopt.match_options
     exp.each do |name, expval|
       val = matchopts.method(name).call
       assert_equal expval, val
@@ -21,7 +21,8 @@ class Glark::OptionsTestCase < Glark::TestCase
   end    
 
   def assert_output_options gopt, exp
-    outputopts = gopt.get_output_options Array.new
+    outputopts = gopt.output_options
+    outputopts.set_files Array.new
     exp.each do |name, expval|
       val = outputopts.method(name).call
       assert_equal expval, val

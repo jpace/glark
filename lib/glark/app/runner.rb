@@ -34,7 +34,7 @@ class Glark::Runner
     
     @files = files
 
-    @opts.get_output_options @files
+    @opts.output_options.set_files @files
 
     @invert_match = @opts.invert_match
 
@@ -76,7 +76,7 @@ class Glark::Runner
 
   def create_file filecls, name, io
     file = filecls.new name, io, @opts.range
-    output_opts = @opts.get_output_options @files
+    output_opts = @opts.output_options
 
     output_type = nil
     

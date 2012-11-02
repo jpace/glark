@@ -37,7 +37,7 @@ class Glark::Range
     end
   end
 
-  def valid?
+  def validate!
     return true if @from.nil? || @to.nil?
 
     smd = PCT_RE.match @from
@@ -47,13 +47,14 @@ class Glark::Range
     return true if smd.nil? != emd.nil?
 
     if smd
-      check_range smd[1], emd[1]
+      check_range! smd[1], emd[1]
     else
-      check_range @from, @to
+      check_range! @from, @to
     end
+    true
   end
 
-  def check_range from, to
+  def check_range! from, to
     if from.to_f > to.to_f
       raise Glark::RangeError.new "error: range start (#{@from}) follows range end (#{@to})"
     end

@@ -61,7 +61,6 @@ class Glark::Colors
   end
 
   def set
-    info "@text_color_style: #{@text_color_style}".on_blue
     @text_highlights = case @text_color_style
                        when highlight_multi?(@text_color_style), true
                          multi_colors

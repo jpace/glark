@@ -75,5 +75,11 @@ class MatchOptions
         @expr = ExpressionFactory.new(self).make_expression args
       end
     }
+
+    optdata << text_color_option = {
+      :tags => %w{ --text-color },
+      :arg  => [ :string ],
+      :set  => Proc.new { |val| @colors.text_highlights = [ @colors.make_highlight "text-color", val ] }
+    }
   end
 end

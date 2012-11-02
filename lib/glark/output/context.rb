@@ -12,6 +12,11 @@ class Glark::Context
     @before = 0
   end
 
+  def clear
+    @after = 0
+    @before = 0
+  end
+
   def add_as_option optdata
     optdata << context_option = {
       :tags => %w{ -C --context },

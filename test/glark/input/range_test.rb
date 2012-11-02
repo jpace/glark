@@ -13,50 +13,50 @@ class Glark::RangeTestCase < Glark::TestCase
 
   def test_valid_neither    
     rg = Glark::Range.new
-    rg.valid?
+    assert rg.validate!
   end
 
   def test_valid_only_from
     rg = Glark::Range.new '3'
-    rg.valid?
+    assert rg.validate!
   end
 
   def test_valid_only_to
     rg = Glark::Range.new nil, '17'
-    rg.valid?
+    assert rg.validate!
   end
 
   def test_valid_from_number_to_number
     rg = Glark::Range.new '3', '17'
-    rg.valid?
+    assert rg.validate!
   end
 
   def test_valid_from_number_to_pct
     rg = Glark::Range.new '3', '17%'
-    rg.valid?
+    assert rg.validate!
   end
 
   def test_valid_from_pct_to_pct
     rg = Glark::Range.new '3%', '17%'
-    rg.valid?
+    assert rg.validate!
   end
 
   def test_valid_from_pct_to_number
     rg = Glark::Range.new '3%', '17'
-    rg.valid?
+    assert rg.validate!
   end
 
   def test_invalid_from_pct_to_pct
     rg = Glark::Range.new '13%', '3%'
     assert_raises(Glark::RangeError) do
-      rg.valid?
+      rg.validate!
     end
   end
 
   def test_invalid_from_number_to_number
     rg = Glark::Range.new '13', '3'
     assert_raises(Glark::RangeError) do
-      rg.valid?
+      rg.validate!
     end
   end
 
