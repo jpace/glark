@@ -5,7 +5,6 @@
 class OutputOptions
 
   attr_accessor :context        # lines before and after
-  attr_accessor :file_highlight 
   attr_accessor :file_names_only # display only the file names
   attr_accessor :filter         # display only matches
   attr_accessor :highlight
@@ -16,6 +15,7 @@ class OutputOptions
   attr_accessor :show_file_names   # display file names
   attr_accessor :show_line_numbers # display numbers of matching lines
   attr_accessor :write_null # in @file_names_only mode, write '\0' instead of '\n'
+
   attr_reader :colors
 
   def initialize colors
@@ -37,6 +37,14 @@ class OutputOptions
 
   def line_number_highlight
     @colors.line_number_highlight
+  end
+
+  def file_highlight 
+    @colors.file_highlight
+  end
+
+  def highlight
+    @colors.text_color_style
   end
 
   def after
