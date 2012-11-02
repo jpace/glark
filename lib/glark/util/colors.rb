@@ -50,8 +50,21 @@ class Glark::Colors
     @text_color_style = tcstyle
     if @text_color_style
       @highlighter = @text_color_style && Text::ANSIHighlighter
+      @text_highlights = case @text_color_style
+                         when highlight_multi?(@text_color_style), true
+                           multi_colors
+                         when "single"
+                           single_color
+                         else
+                           raise "highlight format '" + @text_color_style.to_s + "' not recognized"
+                         end
+      @file_highlight = @highlighter.make "reverse bold"
+      @line_number_highlight = nil
     else
-      clear
+      @highlighter = nil
+      @text_highlights = Array.new
+      @file_highlight = nil
+      @line_number_highlight = nil
     end
   end
 
@@ -61,24 +74,5 @@ class Glark::Colors
 
   def highlight_multi? str
     %w{ multi on true yes }.detect { |x| str == x }
-  end
-
-  def clear
-    @text_highlights = Array.new
-    @file_highlight = nil
-    @line_number_highlight = nil
-  end
-
-  def set
-    @text_highlights = case @text_color_style
-                       when highlight_multi?(@text_color_style), true
-                         multi_colors
-                       when "single"
-                         single_color
-                       else
-                         raise "highlight format '" + @text_color_style.to_s + "' not recognized"
-                       end
-    @file_highlight = @highlighter.make "reverse bold"
-    @line_number_highlight = nil
   end
 end

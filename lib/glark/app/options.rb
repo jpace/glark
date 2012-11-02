@@ -84,22 +84,12 @@ class Glark::Options
     @without_basename      = nil        # match files without this basename
     @without_fullname      = nil        # match files without this fullname
     
-    clear_colors
-
     @outputopts.label = nil
-    @size_limit            = nil
+    @size_limit = nil
 
     $/ = "\n"
 
     set_glark_output_style
-  end
-
-  def text_color_style
-    @colors.text_color_style
-  end
-
-  def set_text_color_style tcstyle
-    @colors.text_color_style = tcstyle
   end
 
   def add_input_options optdata
@@ -200,7 +190,7 @@ class Glark::Options
     
     optdata << nohighlight_option = {
       :tags => %w{ -U --no-highlight },
-      :set  => Proc.new { set_highlight nil }
+      :set  => Proc.new { @colors.text_color_style =  nil }
     }
 
     optdata << grep_output_option = {
@@ -232,7 +222,7 @@ class Glark::Options
     optdata << highlight_option = { 
       :tags => %w{ -u --highlight },
       :arg  => [ :optional, :regexp, %r{ ^ (?:(multi|single)|none) $ }x ],
-      :set  => Proc.new { |md| val = md ? md[1] : "multi"; set_highlight val }
+      :set  => Proc.new { |md| val = md ? md[1] : "multi"; @colors.text_color_style =  val }
     }
 
     optdata << file_color_option = {
@@ -293,38 +283,14 @@ class Glark::Options
     @colors.highlighter 
   end
 
-  def reset_colors
-    if !text_color_style || !highlighter
-      clear_colors
-    else
-      set_colors
-    end
-  end
-
-  def set_colors
-    @colors.set
-  end
-
-  def clear_colors
-    @colors.clear
-  end
-
-  def set_highlight type
-    @colors.text_color_style = type
-    @colors.highlighter = @colors.text_color_style && Text::ANSIHighlighter
-    reset_colors
-  end
-
   def set_glark_output_style
     @output = "glark"
-    set_highlight "multi"
+    @colors.text_color_style = "multi"
   end
 
   def set_grep_output_style
     @output = "grep"
-    set_highlight false
-
-    @colors.highlighter = nil
+    @colors.text_color_style = false
     @outputopts.show_line_numbers = false
     @outputopts.context.clear
   end

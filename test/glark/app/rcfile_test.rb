@@ -27,12 +27,12 @@ class Glark::RcfileTestCase < Glark::TestCase
   def test_simple
     run_option_test(%w{ foo }, []) do |opts|
       # default values
-      assert_equal "multi", opts.text_color_style
+      assert_equal "multi", opts.colors.text_color_style
       assert_equal false, opts.local_config_files
 
       opts.read_rcfile Pathname.new '/proj/org/incava/glark/test/resources/rcfile.txt'
 
-      assert_equal "single", opts.text_color_style
+      assert_equal "single", opts.colors.text_color_style
       assert_equal true, opts.local_config_files
       assert_equal [ "bold", "red" ], opts.colors.line_number_highlight.colors
       assert opts.match_options.ignorecase

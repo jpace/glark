@@ -29,6 +29,14 @@ class Glark::OptionsTestCase < Glark::TestCase
     end
   end    
 
+  def assert_color_options gopt, exp
+    colors = gopt.colors
+    exp.each do |name, expval|
+      val = colors.method(name).call
+      assert_equal expval, val
+    end
+  end
+  
   def run_option_test args, exp, &blk
     gopt = Glark::Options.new
     gopt.run args
@@ -179,9 +187,10 @@ class Glark::OptionsTestCase < Glark::TestCase
     %w{ -u --highlight }.each do |hlopt|
       run_option_test([ hlopt, 'foo' ],
                       { 
-                        :text_color_style => "multi",
                         :expr => RegexpExpression.new(%r{foo}, 0),
-                      })
+                      }) do |opts|
+        assert_color_options opts, { :text_color_style => "multi" }
+      end
     end
 
     %w{ multi }.each do |val|
@@ -191,9 +200,10 @@ class Glark::OptionsTestCase < Glark::TestCase
       ].each do |opt|
         run_option_test(opt | [ 'foo' ],
                         { 
-                          :text_color_style => val,
                           :expr => RegexpExpression.new(%r{foo}, 0),
-                        })
+                        }) do |opts|
+          assert_color_options opts, { :text_color_style => val }
+        end
       end
     end
 
@@ -206,10 +216,10 @@ class Glark::OptionsTestCase < Glark::TestCase
       ].each do |opt|
         run_option_test(opt | [ 'foo' ],
                         { 
-                          :text_color_style => val,
                           :expr => RegexpExpression.new(%r{foo}, 0),
                         }) do |opts|
           assert_match_options opts, { :text_highlights => [ singlecolor ] }
+          assert_color_options opts, { :text_color_style => val }
         end
       end
     end
@@ -217,11 +227,11 @@ class Glark::OptionsTestCase < Glark::TestCase
     %w{ none }.each do |val|
       run_option_test([ '--highlight=' + val, 'foo' ],
                       { 
-                        :text_color_style => nil,
                         :expr => RegexpExpression.new(%r{foo}, 0),
                       }) do |opts|
-          assert_match_options opts, { :text_highlights => [] }
-        end
+        assert_match_options opts, { :text_highlights => [] }
+        assert_color_options opts, { :text_color_style => nil }
+      end
     end
   end
 
@@ -229,10 +239,10 @@ class Glark::OptionsTestCase < Glark::TestCase
     %w{ -U --no-highlight }.each do |hlopt|
       run_option_test([ hlopt, 'foo' ],
                       { 
-                        :text_color_style => nil,
                         :expr => RegexpExpression.new(%r{foo}, 0),
                       }) do |opts|
         assert_match_options opts, { :text_highlights => [] }
+        assert_color_options opts, { :text_color_style => nil }
       end
     end
   end
@@ -310,10 +320,10 @@ class Glark::OptionsTestCase < Glark::TestCase
                       { 
                         :output => "grep",
                         :expr => RegexpExpression.new(%r{foo}, 0),
-                        :text_color_style => false,
                       }) do |opts|
         assert_match_options opts, { :text_highlights => [] }
         assert_output_options opts, { :after => 0, :before => 0, :show_line_numbers => false }
+        assert_color_options opts, { :text_color_style => false }
       end
     end
   end
@@ -755,7 +765,7 @@ class Glark::OptionsTestCase < Glark::TestCase
                         {
                           :expr => RegexpExpression.new(%r{foo}, 0),
                         }) do |opts|
-          assert_equal Text::ANSIHighlighter.make(color), opts.colors.file_highlight
+          assert_color_options opts, { :file_highlight => Text::ANSIHighlighter.make(color) }
         end
       end
     end
