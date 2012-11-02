@@ -11,14 +11,16 @@ class OutputOptions
   attr_accessor :highlight
   attr_accessor :invert_match   # display non-matching lines
   attr_accessor :label
-  attr_accessor :line_number_highlight
   attr_accessor :match_limit    # the maximum number of matches to display per file
   attr_accessor :out
   attr_accessor :show_file_names   # display file names
   attr_accessor :show_line_numbers # display numbers of matching lines
   attr_accessor :write_null # in @file_names_only mode, write '\0' instead of '\n'
+  attr_reader :colors
 
-  def initialize 
+  def initialize colors
+    @colors = colors
+    
     @context = Glark::Context.new
     @file_highlight = nil
     @file_names_only = false
@@ -26,12 +28,15 @@ class OutputOptions
     @highlight = nil
     @invert_match = false
     @label = nil
-    @line_number_highlight = nil
     @match_limit = nil
     @out = $stdout
     @show_file_names = nil
     @show_line_numbers = true
     @write_null = false
+  end
+
+  def line_number_highlight
+    @colors.line_number_highlight
   end
 
   def after

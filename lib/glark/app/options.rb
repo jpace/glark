@@ -95,12 +95,11 @@ class Glark::Options
   end
 
   def text_color_style
-    info "@text_color_style: #{@text_color_style}".on_blue
-    @text_color_style
+    @colors.text_color_style
   end
 
   def set_text_color_style tcstyle
-    @text_color_style = tcstyle
+    @colors.text_color_style = tcstyle
   end
 
   def add_input_options optdata
@@ -201,7 +200,7 @@ class Glark::Options
   end
 
   def add_output_options optdata
-    @outputopts = OutputOptions.new
+    @outputopts = OutputOptions.new @colors
 
     @outputopts.add_as_options optdata
     
@@ -300,22 +299,6 @@ class Glark::Options
     @colors.highlighter 
   end
 
-  def make_colors limit = -1
-    Text::Highlighter::DEFAULT_COLORS[0 .. limit].collect { |color| highlighter.make color }
-  end
-
-  def multi_colors 
-    make_colors
-  end
-
-  def single_color
-    make_colors 0
-  end
-
-  def highlight_multi? str
-    %w{ multi on true yes }.detect { |x| str == x }
-  end
-
   def reset_colors
     if !text_color_style || !highlighter
       clear_colors
@@ -349,23 +332,11 @@ class Glark::Options
   end
 
   def set_colors
-    info "text_color_style: #{text_color_style}".on_blue
-    set_text_highlights case text_color_style
-                        when highlight_multi?(text_color_style), true
-                          @colors.multi_colors
-                        when "single"
-                          @colors.single_color
-                        else
-                          raise "highlight format '" + text_color_style.to_s + "' not recognized"
-                        end
-    set_file_highlight highlighter.make "reverse bold"
-    set_line_number_highlight nil
+    @colors.set
   end
 
   def clear_colors
-    set_text_highlights Array.new
-    set_file_highlight nil
-    set_line_number_highlight nil
+    @colors.clear
   end
 
   def set_highlight type
@@ -676,7 +647,6 @@ class Glark::Options
   def get_output_options files
     @outputopts.file_highlight = file_highlight
     @outputopts.highlight = text_color_style
-    @outputopts.line_number_highlight = line_number_highlight
     @outputopts.show_file_names = display_file_names? files
 
     @outputopts
