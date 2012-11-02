@@ -629,8 +629,8 @@ class Glark::OptionsTestCase < Glark::TestCase
        [ '--text-color=' + color ],
       ].each do |opt|
         run_test(opt | [ 'foo' ],
-                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
-          assert_match_options opts, { :text_highlights => [ Text::ANSIHighlighter.make(color) ] }
+                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+                 :match => { :text_highlights => [ Text::ANSIHighlighter.make(color) ] })
         end
       end
     end
@@ -644,8 +644,8 @@ class Glark::OptionsTestCase < Glark::TestCase
        [ '--file-color='  + color ],
       ].each do |opt|
         run_test(opt | [ 'foo' ],
-                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
-          assert_color_options opts, { :file_highlight => Text::ANSIHighlighter.make(color) }
+                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+                 :colors => { :file_highlight => Text::ANSIHighlighter.make(color) })
         end
       end
     end
