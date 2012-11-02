@@ -10,16 +10,14 @@ class RegexpExpression < Expression
 
   def initialize re, hlidx, args = Hash.new
     @re = re
-    @highlight = args[:highlight]
-    if @highlight
-      @text_highlights = args[:text_highlights]
-      @hlidx           = if @text_highlights.length > 0 && args[:highlight] == "multi"
-                           hlidx % @text_highlights.length
-                         else
-                           0
-                         end 
-    end
-    
+
+    if @text_highlights = args[:text_highlights]
+      @hlidx = if @text_highlights.length > 0 && args[:highlight] == "multi"
+                 hlidx % @text_highlights.length
+               else
+                 0
+               end 
+    end    
     @extract_matches = args[:extract_matches]
     
     super()
@@ -52,7 +50,9 @@ class RegexpExpression < Expression
     
     @match_line_number = lnum
 
-    if @highlight
+    info "@text_highlights: #{@text_highlights}".cyan
+
+    if @text_highlights && @text_highlights.size > 0
       highlight_match lnum, file, formatter
     end
     

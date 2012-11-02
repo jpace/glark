@@ -28,8 +28,6 @@ class Glark::Options
   attr_accessor :exclude_matching
   attr_accessor :explain
   attr_accessor :extract_matches
-  attr_accessor :file_highlight
-  attr_accessor :line_number_highlight
   attr_accessor :local_config_files
   attr_accessor :output
   attr_accessor :quiet
@@ -46,7 +44,6 @@ class Glark::Options
   attr_reader :count
   attr_reader :invert_match
   attr_reader :range
-  attr_reader :highlight
 
   def expr
     @matchopts.expr
@@ -72,7 +69,7 @@ class Glark::Options
     @exclude_matching      = false      # exclude files whose names match the expression
     @explain               = false      # display a legible version of the expression
     @extract_matches       = false      # whether to show _only_ the part that matched
-    @highlight             = "multi"    # highlight matches (using ANSI codes)
+    @hlstyle             = "multi"    # highlight matches (using ANSI codes)
     @local_config_files    = false      # use local .glarkrc files
 
     @quiet                 = false      # minimize warnings
@@ -95,6 +92,10 @@ class Glark::Options
     @colors = Glark::Colors.new
     
     set_glark_output_style
+  end
+
+  def highlight
+    @hlstyle
   end
 
   def add_input_options optdata
@@ -311,7 +312,7 @@ class Glark::Options
   end
 
   def reset_colors
-    if !@highlight || !highlighter
+    if !@hlstyle || !highlighter
       clear_colors
     else
       set_colors
@@ -343,13 +344,13 @@ class Glark::Options
   end
 
   def set_colors
-    set_text_highlights case @highlight
-                        when highlight_multi?(@highlight), true
+    set_text_highlights case @hlstyle
+                        when highlight_multi?(@hlstyle), true
                           @colors.multi_colors
                         when "single"
                           @colors.single_color
                         else
-                          raise "highlight format '" + @highlight.to_s + "' not recognized"
+                          raise "highlight format '" + @hlstyle.to_s + "' not recognized"
                         end
     set_file_highlight highlighter.make "reverse bold"
     set_line_number_highlight nil
@@ -362,15 +363,15 @@ class Glark::Options
   end
 
   def set_highlight type
-    @highlight = type
-    @matchopts.highlight = @highlight
-    @colors.highlighter = @highlight && Text::ANSIHighlighter
+    @hlstyle = type
+    @matchopts.highlight = @hlstyle
+    @colors.highlighter = @hlstyle && Text::ANSIHighlighter
     reset_colors
   end
 
   def set_glark_output_style
     @output = "glark"
-    set_highlight @highlight
+    set_highlight @hlstyle
   end
 
   def set_grep_output_style
@@ -466,7 +467,7 @@ class Glark::Options
       when "grep"
         set_grep_output_style if to_boolean value
       when "highlight"
-        @highlight = value
+        @hlstyle = value
         @matchopts.highlight = value
       when "ignore-case"
         @matchopts.ignorecase = to_boolean value
@@ -563,7 +564,7 @@ class Glark::Options
       "binary-files" => @binary_files,
       "file-color" => file_highlight,
       "filter" => @outputopts.filter,
-      "highlight" => @highlight,
+      "highlight" => @hlstyle,
       "ignore-case" => @matchopts.ignorecase,
       "known-nontext-files" => FileTester.nontext_extensions.sort.join(' '),
       "known-text-files" => FileTester.text_extensions.sort.join(' '),
@@ -597,7 +598,7 @@ class Glark::Options
       "file_highlight" => file_highlight ? file_highlight.highlight("filename") : "filename",
       "file_names_only" => @outputopts.file_names_only,
       "filter" => @outputopts.filter,
-      "highlight" => @highlight,
+      "highlight" => @hlstyle,
       "ignorecase" => @matchopts.ignorecase,
       "invert_match" => @outputopts.invert_match,
       "known_nontext_files" => FileTester.nontext_extensions.join(", "),
@@ -670,7 +671,7 @@ class Glark::Options
 
   def get_output_options files
     @outputopts.file_highlight = file_highlight
-    @outputopts.highlight = @highlight
+    @outputopts.highlight = @hlstyle
     @outputopts.line_number_highlight = line_number_highlight
     @outputopts.show_file_names = display_file_names? files
 
