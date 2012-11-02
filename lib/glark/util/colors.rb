@@ -11,12 +11,14 @@ class Glark::Colors
   attr_accessor :text_highlights
   attr_accessor :file_highlight
   attr_accessor :line_number_highlight
+  attr_accessor :style          # single, multi, or nil (no text highlights)
 
   def initialize hl = nil
     @highlighter = nil
     @text_highlights = Array.new
     @file_highlight = nil
     @line_number_highlight = nil
+    @style = nil
   end
 
   # creates a color for the given option, based on its value

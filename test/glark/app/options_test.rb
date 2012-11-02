@@ -178,7 +178,7 @@ class Glark::OptionsTestCase < Glark::TestCase
     %w{ -u --highlight }.each do |hlopt|
       run_option_test([ hlopt, 'foo' ],
                       { 
-                        :highlight => "multi",
+                        :text_color_style => "multi",
                         :expr => RegexpExpression.new(%r{foo}, 0),
                       })
     end
@@ -190,7 +190,7 @@ class Glark::OptionsTestCase < Glark::TestCase
       ].each do |opt|
         run_option_test(opt | [ 'foo' ],
                         { 
-                          :highlight => val,
+                          :text_color_style => val,
                           :expr => RegexpExpression.new(%r{foo}, 0),
                         })
       end
@@ -205,7 +205,7 @@ class Glark::OptionsTestCase < Glark::TestCase
       ].each do |opt|
         run_option_test(opt | [ 'foo' ],
                         { 
-                          :highlight => val,
+                          :text_color_style => val,
                           :expr => RegexpExpression.new(%r{foo}, 0),
                         }) do |opts|
           assert_match_options opts, { :text_highlights => [ singlecolor ] }
@@ -216,7 +216,7 @@ class Glark::OptionsTestCase < Glark::TestCase
     %w{ none }.each do |val|
       run_option_test([ '--highlight=' + val, 'foo' ],
                       { 
-                        :highlight => nil,
+                        :text_color_style => nil,
                         :expr => RegexpExpression.new(%r{foo}, 0),
                       }) do |opts|
           assert_match_options opts, { :text_highlights => [] }
@@ -228,7 +228,7 @@ class Glark::OptionsTestCase < Glark::TestCase
     %w{ -U --no-highlight }.each do |hlopt|
       run_option_test([ hlopt, 'foo' ],
                       { 
-                        :highlight => nil,
+                        :text_color_style => nil,
                         :expr => RegexpExpression.new(%r{foo}, 0),
                       }) do |opts|
         assert_match_options opts, { :text_highlights => [] }
@@ -309,7 +309,7 @@ class Glark::OptionsTestCase < Glark::TestCase
                       { 
                         :output => "grep",
                         :expr => RegexpExpression.new(%r{foo}, 0),
-                        :highlight => false,
+                        :text_color_style => false,
                       }) do |opts|
         assert_match_options opts, { :text_highlights => [] }
         assert_output_options opts, { :after => 0, :before => 0, :show_line_numbers => false }
