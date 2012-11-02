@@ -320,27 +320,27 @@ class Glark::Options
   end
 
   def set_text_highlights text_colors
-    @matchopts.set_text_highlights text_colors
+    @colors.text_highlights = text_colors
   end
 
   def set_text_highlight index, text_color
-    @matchopts.set_text_highlight index, text_color
+    @colors.text_highlights[index] = text_color
   end
 
   def set_file_highlight color
-    @file_highlight = color
+    @colors.file_highlight = color
   end
 
   def file_highlight
-    @file_highlight
+    @colors.file_highlight
   end
-
+  
   def set_line_number_highlight color
-    @line_number_highlight = color
+    @colors.line_number_highlight = color
   end
 
   def line_number_highlight
-    @line_number_highlight
+    @colors.line_number_highlight
   end
 
   def set_colors
