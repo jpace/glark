@@ -29,7 +29,6 @@ class Glark::Options
   attr_accessor :explain
   attr_accessor :extract_matches
   attr_accessor :file_highlight
-  attr_accessor :highlight
   attr_accessor :line_number_highlight
   attr_accessor :local_config_files
   attr_accessor :output
@@ -47,6 +46,7 @@ class Glark::Options
   attr_reader :count
   attr_reader :invert_match
   attr_reader :range
+  attr_reader :highlight
 
   def expr
     @matchopts.expr
@@ -93,7 +93,6 @@ class Glark::Options
     $/ = "\n"
 
     @colors = Glark::Colors.new
-    @highlighter = nil
     
     set_glark_output_style
   end
