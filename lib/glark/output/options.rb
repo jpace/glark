@@ -7,7 +7,6 @@ class OutputOptions
   attr_accessor :context        # lines before and after
   attr_accessor :file_names_only # display only the file names
   attr_accessor :filter         # display only matches
-  attr_accessor :highlight
   attr_accessor :invert_match   # display non-matching lines
   attr_accessor :label
   attr_accessor :match_limit    # the maximum number of matches to display per file
@@ -33,6 +32,16 @@ class OutputOptions
     @show_file_names = nil
     @show_line_numbers = true
     @write_null = false
+  end
+
+  def set_files files
+    if @show_file_names.nil?
+      @show_file_names = files.size > 1 || @label || (files.size == 1 && directory?(files[0]))
+    end
+  end
+
+  def directory? file
+    file != "-" && FileType.type(file) == FileType::DIRECTORY
   end
 
   def line_number_highlight

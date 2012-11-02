@@ -28,11 +28,13 @@ class Glark::Runner
   attr_reader :exit_status
   
   def initialize opts, func, files
-    @opts  = opts
-    @func  = func
+    @opts = opts
+    @func = func
     @searched_files = Array.new          # files searched, so we don't cycle through links
     
     @files = files
+
+    @opts.get_output_options @files
 
     @invert_match = @opts.invert_match
 

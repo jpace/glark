@@ -42,6 +42,8 @@ class Glark::App
                 [ '-' ]
               end
 
+      opts.get_output_options files
+
       glark = Glark::Runner.new opts, opts.expr, files 
 
       files.each do |f|

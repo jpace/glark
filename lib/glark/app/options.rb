@@ -645,8 +645,7 @@ class Glark::Options
   end
 
   def get_output_options files
-    @outputopts.show_file_names = display_file_names? files
-
+    @outputopts.set_files files
     @outputopts
   end
 end
