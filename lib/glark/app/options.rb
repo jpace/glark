@@ -213,7 +213,7 @@ class Glark::Options
     optdata << lnum_color_option = {
       :tags => %w{ --line-number-color },
       :arg  => [ :string ],
-      :set  => Proc.new { |val| @line_number_highlight = make_highlight "line-number-color", val },
+      :set  => Proc.new { |val| set_line_number_highlight make_highlight "line-number-color", val },
     }
 
     optdata << count_option = {
@@ -240,7 +240,7 @@ class Glark::Options
     optdata << file_color_option = {
       :tags => %w{ --file-color },
       :arg  => [ :string ],
-      :set  => Proc.new { |val| @file_highlight = make_highlight "file-color", val }
+      :set  => Proc.new { |val| set_file_highlight make_highlight "file-color", val }
     }
   end
 
@@ -295,10 +295,6 @@ class Glark::Options
     @colors.highlighter 
   end
 
-  def highlighter= hl
-    @colors.highlighter = hl
-  end
-
   def make_colors limit = -1
     Text::Highlighter::DEFAULT_COLORS[0 .. limit].collect { |color| highlighter.make color }
   end
@@ -323,12 +319,28 @@ class Glark::Options
     end
   end
 
-  def set_text_highlights text_highlights
-    @matchopts.text_highlights = text_highlights
+  def set_text_highlights text_colors
+    @matchopts.text_highlights = text_colors
   end
 
   def set_text_highlight index, text_color
     @matchopts.text_highlights[index] = text_color
+  end
+
+  def set_file_highlight color
+    @file_highlight = color
+  end
+
+  def file_highlight
+    @file_highlight
+  end
+
+  def set_line_number_highlight color
+    @line_number_highlight = color
+  end
+
+  def line_number_highlight
+    @line_number_highlight
   end
 
   def set_colors
@@ -340,20 +352,20 @@ class Glark::Options
                         else
                           raise "highlight format '" + @highlight.to_s + "' not recognized"
                         end
-    @file_highlight        = highlighter.make "reverse bold"
-    @line_number_highlight = nil
+    set_file_highlight highlighter.make "reverse bold"
+    set_line_number_highlight nil
   end
 
   def clear_colors
     set_text_highlights Array.new
-    @file_highlight        = nil
-    @line_number_highlight = nil
+    set_file_highlight nil
+    set_line_number_highlight nil
   end
 
   def set_highlight type
     @highlight = type
     @matchopts.highlight = @highlight
-    self.highlighter = @highlight && Text::ANSIHighlighter
+    @colors.highlighter = @highlight && Text::ANSIHighlighter
     reset_colors
   end
 
@@ -451,7 +463,7 @@ class Glark::Options
       
       case name
       when "file-color"
-        @file_highlight = make_highlight name, value
+        set_file_highlight make_highlight name, value
       when "grep"
         set_grep_output_style if to_boolean value
       when "highlight"
@@ -470,7 +482,7 @@ class Glark::Options
       when "local-config-files"
         @local_config_files = to_boolean value
       when "line-number-color"
-        @line_number_highlight = make_highlight name, value
+        set_line_number_highlight make_highlight name, value
       when "output"
         set_output_style value
       when "quiet"
@@ -550,13 +562,13 @@ class Glark::Options
       "after-context" => @outputopts.context.after,
       "before-context" => @outputopts.context.before,
       "binary-files" => @binary_files,
-      "file-color" => @file_highlight,
+      "file-color" => file_highlight,
       "filter" => @outputopts.filter,
       "highlight" => @highlight,
       "ignore-case" => @matchopts.ignorecase,
       "known-nontext-files" => FileTester.nontext_extensions.sort.join(' '),
       "known-text-files" => FileTester.text_extensions.sort.join(' '),
-      "line-number-color" => @line_number_highlight,
+      "line-number-color" => line_number_highlight,
       "local-config-files" => @local_config_files,
       "output" => @output,
       "quiet" => @quiet,
@@ -583,7 +595,7 @@ class Glark::Options
       "explain" => @explain,
       "expr" => @matchopts.expr,
       "extract_matches" => @extract_matches,
-      "file_highlight" => @file_highlight ? @file_highlight.highlight("filename") : "filename",
+      "file_highlight" => file_highlight ? file_highlight.highlight("filename") : "filename",
       "file_names_only" => @outputopts.file_names_only,
       "filter" => @outputopts.filter,
       "highlight" => @highlight,
@@ -592,7 +604,7 @@ class Glark::Options
       "known_nontext_files" => FileTester.nontext_extensions.join(", "),
       "known_text_files" => FileTester.text_extensions.join(", "),
       "label" => @outputopts.label,
-      "line_number_highlight" => @line_number_highlight ? @line_number_highlight.highlight("12345") : "12345",
+      "line_number_highlight" => line_number_highlight ? line_number_highlight.highlight("12345") : "12345",
       "local_config_files" => @local_config_files,
       "match_limit" => @outputopts.match_limit,
       "output" => @output,
@@ -658,9 +670,9 @@ class Glark::Options
   end
 
   def get_output_options files
-    @outputopts.file_highlight = @file_highlight
+    @outputopts.file_highlight = file_highlight
     @outputopts.highlight = @highlight
-    @outputopts.line_number_highlight = @line_number_highlight
+    @outputopts.line_number_highlight = line_number_highlight
     @outputopts.show_file_names = display_file_names? files
 
     @outputopts
