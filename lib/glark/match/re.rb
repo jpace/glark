@@ -50,8 +50,6 @@ class RegexpExpression < Expression
     
     @match_line_number = lnum
 
-    info "@text_highlights: #{@text_highlights}".cyan
-
     if @text_highlights && @text_highlights.size > 0
       highlight_match lnum, file, formatter
     end

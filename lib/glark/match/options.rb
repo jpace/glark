@@ -7,6 +7,7 @@
 require 'rubygems'
 require 'riel/log'
 require 'glark/match/factory'
+require 'glark/util/colors'
 
 class MatchOptions
   include Loggable
@@ -15,18 +16,29 @@ class MatchOptions
   attr_accessor :extended       # whether to use extended regular expressions
   attr_accessor :extract_matches
   attr_accessor :ignorecase     # match case
-  attr_accessor :text_highlights
   attr_accessor :whole_lines    # true means patterns must match the entire line
   attr_accessor :whole_words    # true means all patterns are '\b'ed front and back
 
-  def initialize 
+  def initialize colors
+    @colors = colors
     @expr = nil
     @extended = false
     @extract_matches = false
     @ignorecase = false
-    @text_highlights = nil
     @whole_lines = false
     @whole_words = false
+  end
+
+  def text_highlights
+    @colors.text_highlights
+  end
+
+  def set_text_highlights text_colors
+    @colors.text_highlights = text_colors
+  end
+
+  def set_text_highlight index, text_color
+    @colors.text_highlights[index] = text_color
   end
 
   def add_as_options optdata

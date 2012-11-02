@@ -8,9 +8,11 @@ class Glark::Colors
   include Loggable
   
   attr_accessor :highlighter
+  attr_accessor :text_highlights
 
   def initialize hl = nil
     @highlighter = nil
+    @text_highlights = Array.new
   end
 
   # creates a color for the given option, based on its value

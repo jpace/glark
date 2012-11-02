@@ -4,12 +4,12 @@
 require 'rubygems'
 require 'riel'
 require 'glark/app/rcfile'
-require 'glark/app/colors'
 require 'glark/match/factory'
 require 'glark/match/options'
 require 'glark/input/range'
 require 'glark/output/options'
 require 'glark/output/context'
+require 'glark/util/colors'
 
 module Glark
   PACKAGE = 'glark'
@@ -56,6 +56,8 @@ class Glark::Options
   def initialize
     optdata = Array.new
 
+    @colors = Glark::Colors.new    
+
     add_input_options optdata
     add_match_options optdata
     add_output_options optdata
@@ -89,8 +91,6 @@ class Glark::Options
 
     $/ = "\n"
 
-    @colors = Glark::Colors.new
-    
     set_glark_output_style
   end
 
@@ -184,7 +184,7 @@ class Glark::Options
   end
   
   def add_match_options optdata
-    @matchopts = MatchOptions.new
+    @matchopts = MatchOptions.new @colors
     
     @matchopts.add_as_options optdata
 
@@ -320,11 +320,11 @@ class Glark::Options
   end
 
   def set_text_highlights text_colors
-    @matchopts.text_highlights = text_colors
+    @matchopts.set_text_highlights text_colors
   end
 
   def set_text_highlight index, text_color
-    @matchopts.text_highlights[index] = text_color
+    @matchopts.set_text_highlight index, text_color
   end
 
   def set_file_highlight color
