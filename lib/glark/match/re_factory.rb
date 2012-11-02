@@ -11,7 +11,6 @@ require 'glark/match/re'
 class RegexpExpressionFactory
   include Loggable
 
-  attr_reader :expr
   attr_reader :count
 
   def initialize expropts
@@ -20,7 +19,6 @@ class RegexpExpressionFactory
     @wholewords      = expropts.whole_words
     @wholelines      = expropts.whole_lines
     @extended        = expropts.extended
-    @highlight       = expropts.highlight
     @text_highlights = expropts.text_highlights
     @extract_matches = expropts.extract_matches
   end
@@ -38,14 +36,8 @@ class RegexpExpressionFactory
                           :wholewords => @wholewords,
                           :wholelines => @wholelines,
                           :extended   => @extended)
-    
-    regex_args = {
-      :highlight       => @highlight,
-      :text_highlights => @text_highlights,
-      :extract_matches => @extract_matches
-    }    
 
-    re = RegexpExpression.new regex, @count, regex_args
+    re = RegexpExpression.new regex, @count, @text_highlights, @extract_matches
     @count += 1
     re
   end

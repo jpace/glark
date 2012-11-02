@@ -8,17 +8,17 @@ require 'glark/match/expression'
 class RegexpExpression < Expression
   attr_reader :re
 
-  def initialize re, hlidx, args = Hash.new
+  def initialize re, hlidx, text_highlights = nil, extract_matches = false
     @re = re
 
-    if @text_highlights = args[:text_highlights]
-      @hlidx = if @text_highlights.length > 0 && args[:highlight] == "multi"
+    if @text_highlights = text_highlights
+      @hlidx = if @text_highlights.length > 0
                  hlidx % @text_highlights.length
                else
                  0
                end 
     end    
-    @extract_matches = args[:extract_matches]
+    @extract_matches = extract_matches
     
     super()
   end

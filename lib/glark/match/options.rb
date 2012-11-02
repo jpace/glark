@@ -14,7 +14,6 @@ class MatchOptions
   attr_accessor :expr           # the expression to be evaluated
   attr_accessor :extended       # whether to use extended regular expressions
   attr_accessor :extract_matches
-  attr_accessor :highlight
   attr_accessor :ignorecase     # match case
   attr_accessor :text_highlights
   attr_accessor :whole_lines    # true means patterns must match the entire line
@@ -24,7 +23,6 @@ class MatchOptions
     @expr = nil
     @extended = false
     @extract_matches = false
-    @highlight = nil
     @ignorecase = false
     @text_highlights = nil
     @whole_lines = false

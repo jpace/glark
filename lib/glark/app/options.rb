@@ -364,7 +364,6 @@ class Glark::Options
 
   def set_highlight type
     @hlstyle = type
-    @matchopts.highlight = @hlstyle
     @colors.highlighter = @hlstyle && Text::ANSIHighlighter
     reset_colors
   end
@@ -468,7 +467,6 @@ class Glark::Options
         set_grep_output_style if to_boolean value
       when "highlight"
         @hlstyle = value
-        @matchopts.highlight = value
       when "ignore-case"
         @matchopts.ignorecase = to_boolean value
       when "known-nontext-files"
