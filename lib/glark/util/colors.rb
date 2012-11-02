@@ -50,6 +50,10 @@ class Glark::Colors
     @text_color_style = tcstyle
   end
 
+  def set_text_highlight index, color
+    @text_highlights[index] = color
+  end
+
   def highlight_multi? str
     %w{ multi on true yes }.detect { |x| str == x }
   end

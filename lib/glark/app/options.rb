@@ -210,7 +210,7 @@ class Glark::Options
     optdata << lnum_color_option = {
       :tags => %w{ --line-number-color },
       :arg  => [ :string ],
-      :set  => Proc.new { |val| set_line_number_highlight make_highlight "line-number-color", val },
+      :set  => Proc.new { |val| @colors.set_line_number_highlight make_highlight "line-number-color", val },
     }
 
     optdata << count_option = {
@@ -237,7 +237,7 @@ class Glark::Options
     optdata << file_color_option = {
       :tags => %w{ --file-color },
       :arg  => [ :string ],
-      :set  => Proc.new { |val| set_file_highlight make_highlight "file-color", val }
+      :set  => Proc.new { |val| @colors.set_file_highlight make_highlight "file-color", val }
     }
   end
 
@@ -298,26 +298,6 @@ class Glark::Options
     else
       set_colors
     end
-  end
-
-  def set_text_highlights text_colors
-    @colors.text_highlights = text_colors
-  end
-
-  def set_text_highlight index, text_color
-    @colors.text_highlights[index] = text_color
-  end
-
-  def set_file_highlight color
-    @colors.file_highlight = color
-  end
-
-  def file_highlight
-    @colors.file_highlight
-  end
-  
-  def set_line_number_highlight color
-    @colors.line_number_highlight = color
   end
 
   def line_number_highlight
@@ -431,7 +411,7 @@ class Glark::Options
       
       case name
       when "file-color"
-        set_file_highlight make_highlight name, value
+        @colors.set_file_highlight make_highlight name, value
       when "grep"
         set_grep_output_style if to_boolean value
       when "highlight"
@@ -440,24 +420,24 @@ class Glark::Options
         @matchopts.ignorecase = to_boolean value
       when "known-nontext-files"
         value.split.each do |ext|
-          FileTester.set_nontext ext
+          FileType.set_nontext ext
         end
       when "known-text-files"
         value.split.each do |ext|
-          FileTester.set_text ext
+          FileType.set_text ext
         end
       when "local-config-files"
         @local_config_files = to_boolean value
       when "line-number-color"
-        set_line_number_highlight make_highlight name, value
+        @colors.set_line_number_highlight make_highlight name, value
       when "output"
         set_output_style value
       when "quiet"
         Log.quiet = @quiet = to_boolean(value)
       when "text-color"
-        set_text_highlights [ make_highlight name, value ]
+        @colors.text_highlights [ make_highlight name, value ]
       when %r{^text\-color\-(\d+)$}
-        set_text_highlight $1.to_i, make_highlight(name, value)
+        @colors.set_text_highlight $1.to_i, make_highlight(name, value)
       when "verbose"
         Log.verbose = @verbose = to_boolean(value) ? 1 : nil
       when "verbosity"
@@ -529,13 +509,13 @@ class Glark::Options
       "after-context" => @outputopts.context.after,
       "before-context" => @outputopts.context.before,
       "binary-files" => @binary_files,
-      "file-color" => file_highlight,
+      "file-color" => @colors.file_highlight,
       "filter" => @outputopts.filter,
       "highlight" => @colors.text_color_style,
       "ignore-case" => @matchopts.ignorecase,
-      "known-nontext-files" => FileTester.nontext_extensions.sort.join(' '),
-      "known-text-files" => FileTester.text_extensions.sort.join(' '),
-      "line-number-color" => line_number_highlight,
+      "known-nontext-files" => FileType.nontext_extensions.sort.join(' '),
+      "known-text-files" => FileType.text_extensions.sort.join(' '),
+      "line-number-color" => @colors.line_number_highlight,
       "local-config-files" => @local_config_files,
       "output" => @output,
       "quiet" => @quiet,
@@ -546,7 +526,6 @@ class Glark::Options
     }
     
     fields.keys.sort.each do |fname|
-      puts  
       puts "#{fname}: #{fields[fname]}"
     end
   end
@@ -562,16 +541,16 @@ class Glark::Options
       "explain" => @explain,
       "expr" => @matchopts.expr,
       "extract_matches" => @extract_matches,
-      "file_highlight" => file_highlight ? file_highlight.highlight("filename") : "filename",
+      "file_highlight" => @colors.file_highlight ? @colors.file_highlight.highlight("filename") : "filename",
       "file_names_only" => @outputopts.file_names_only,
       "filter" => @outputopts.filter,
       "highlight" => @colors.text_color_style,
       "ignorecase" => @matchopts.ignorecase,
       "invert_match" => @outputopts.invert_match,
-      "known_nontext_files" => FileTester.nontext_extensions.join(", "),
-      "known_text_files" => FileTester.text_extensions.join(", "),
+      "known_nontext_files" => FileType.nontext_extensions.join(", "),
+      "known_text_files" => FileType.text_extensions.join(", "),
       "label" => @outputopts.label,
-      "line_number_highlight" => line_number_highlight ? line_number_highlight.highlight("12345") : "12345",
+      "line_number_highlight" => @colors.line_number_highlight ? @colors.line_number_highlight.highlight("12345") : "12345",
       "local_config_files" => @local_config_files,
       "match_limit" => @outputopts.match_limit,
       "output" => @output,
