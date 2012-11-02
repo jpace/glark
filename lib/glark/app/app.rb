@@ -11,9 +11,6 @@ require 'riel'
 require 'glark/app/options'
 require 'glark/app/runner'
 
-module Glark
-end
-
 # The app.
 class Glark::App
   include Loggable

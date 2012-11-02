@@ -90,9 +90,9 @@ class Glark::OptionsTestCase < Glark::TestCase
                       { 
                         :directory => "recurse",
                         :expr => RegexpExpression.new(%r{foo}i, 0),
-                        :file_names_only => true,
                       }) do |opts|
         assert_match_options opts, { :ignorecase => true }
+        assert_output_options opts, { :file_names_only => true }
       end
     end
   end
@@ -395,10 +395,9 @@ class Glark::OptionsTestCase < Glark::TestCase
     %w{ -l --files-with-matches }.each do |opt|
       run_option_test([ opt, 'foo' ],
                       {
-                        :file_names_only => true,
                         :expr => RegexpExpression.new(%r{foo}, 0),
                       }) do |opts|
-        assert_output_options opts, { :invert_match => false }
+        assert_output_options opts, { :invert_match => false, :file_names_only => true }
       end
     end
   end
@@ -407,10 +406,9 @@ class Glark::OptionsTestCase < Glark::TestCase
     %w{ -L --files-without-match }.each do |opt|
       run_option_test([ opt, 'foo' ],
                       {
-                        :file_names_only => true,
                         :expr => RegexpExpression.new(%r{foo}, 0),
                       }) do |opts|
-        assert_output_options opts, { :invert_match => true }
+        assert_output_options opts, { :invert_match => true, :file_names_only => true }
       end
     end
   end

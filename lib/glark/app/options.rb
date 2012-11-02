@@ -52,10 +52,6 @@ class Glark::Options
     @matchopts.expr
   end
 
-  def file_names_only
-    @outputopts.file_names_only
-  end
-
   def out= io
     @outputopts.out = io
   end
@@ -195,7 +191,7 @@ class Glark::Options
     optdata << text_color_option = {
       :tags => %w{ --text-color },
       :arg  => [ :string ],
-      :set  => Proc.new { |val| @matchopts.text_highlights = [ make_highlight "text-color", val ] }
+      :set  => Proc.new { |val| set_text_highlights [ make_highlight "text-color", val ] }
     }
   end
 
@@ -327,21 +323,29 @@ class Glark::Options
     end
   end
 
+  def set_text_highlights text_highlights
+    @matchopts.text_highlights = text_highlights
+  end
+
+  def set_text_highlight index, text_color
+    @matchopts.text_highlights[index] = text_color
+  end
+
   def set_colors
-    @matchopts.text_highlights = case @highlight
-                                 when highlight_multi?(@highlight), true
-                                   @colors.multi_colors
-                                 when "single"
-                                   @colors.single_color
-                                 else
-                                   raise "highlight format '" + @highlight.to_s + "' not recognized"
-                                 end
+    set_text_highlights case @highlight
+                        when highlight_multi?(@highlight), true
+                          @colors.multi_colors
+                        when "single"
+                          @colors.single_color
+                        else
+                          raise "highlight format '" + @highlight.to_s + "' not recognized"
+                        end
     @file_highlight        = highlighter.make "reverse bold"
     @line_number_highlight = nil
   end
 
   def clear_colors
-    @matchopts.text_highlights = Array.new
+    set_text_highlights Array.new
     @file_highlight        = nil
     @line_number_highlight = nil
   end
@@ -472,9 +476,9 @@ class Glark::Options
       when "quiet"
         Log.quiet = @quiet = to_boolean(value)
       when "text-color"
-        @matchopts.text_highlights = [ make_highlight name, value ]
+        set_text_highlights [ make_highlight name, value ]
       when %r{^text\-color\-(\d+)$}
-        @matchopts.text_highlights[$1.to_i] = make_highlight name, value
+        set_text_highlight $1.to_i, make_highlight(name, value)
       when "verbose"
         Log.verbose = @verbose = to_boolean(value) ? 1 : nil
       when "verbosity"

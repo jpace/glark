@@ -84,7 +84,7 @@ class Glark::Runner
       else
         output_type = GlarkCount.new file, output_opts
       end
-    elsif @opts.file_names_only
+    elsif output_opts.file_names_only
       output_type = FileNames.new file, output_opts
     elsif !output_opts.filter
       output_type = UnfilteredLines.new file, output_opts

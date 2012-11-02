@@ -37,6 +37,7 @@ class Glark::RcfileTestCase < Glark::TestCase
       assert_equal [ "bold", "red" ], opts.line_number_highlight.colors
       assert opts.get_match_options.ignorecase
       assert_equal 1000, opts.size_limit
+      assert_equal [ "underline", "magenta" ], opts.get_match_options.text_highlights[3].colors
     end
   end
 end
