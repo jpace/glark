@@ -31,7 +31,6 @@ class Glark::Options
   attr_accessor :local_config_files
   attr_accessor :quiet
   attr_accessor :show_break
-  attr_accessor :show_file_names
   attr_accessor :size_limit
   attr_accessor :split_as_path
   attr_accessor :verbose
@@ -40,10 +39,9 @@ class Glark::Options
   attr_accessor :without_basename
   attr_accessor :without_fullname
 
-  attr_reader :count
+  attr_reader :colors
   attr_reader :invert_match
   attr_reader :range
-  attr_reader :colors
 
   def expr
     @matchopts.expr
@@ -66,7 +64,6 @@ class Glark::Options
     @optset = OptProc::OptionSet.new optdata
     
     @binary_files          = "binary"   # 
-    @count                 = false      # just count the lines
     @directory             = "read"     # read, skip, or recurse, a la grep
     @exclude_matching      = false      # exclude files whose names match the expression
     @explain               = false      # display a legible version of the expression
@@ -75,7 +72,6 @@ class Glark::Options
 
     @quiet                 = false      # minimize warnings
     @range.clear              # range to search; nil => the entire file
-    @show_file_names       = nil        # show the names of matching files; nil == > 1; true == >= 1; false means never
     @split_as_path         = true       # whether to split arguments that include the path separator
     @verbose               = nil        # display debugging output
     @with_basename         = nil        # match files with this basename
@@ -88,7 +84,7 @@ class Glark::Options
 
     $/ = "\n"
 
-    set_glark_output_style
+    @outputopts.style = "glark"
   end
 
   def add_input_options optdata
@@ -194,28 +190,28 @@ class Glark::Options
 
     optdata << grep_output_option = {
       :tags => %w{ -g --grep },
-      :set  => Proc.new { set_grep_output_style }
+      :set  => Proc.new {  @outputopts.style = "grep" }
     }
 
     optdata << lnum_color_option = {
       :tags => %w{ --line-number-color },
       :arg  => [ :string ],
-      :set  => Proc.new { |val| @colors.line_number_highlight = make_highlight "line-number-color", val },
+      :set  => Proc.new { |val| @colors.line_number_highlight = @colors.make_highlight "line-number-color", val },
     }
 
     optdata << count_option = {
       :tags => %w{ -c --count },
-      :set  => Proc.new { @count = true }
+      :set  => Proc.new { @outputopts.count = true }
     }
 
     optdata << show_fname_option = {
       :tags => %w{ -H --with-filename },
-      :set  => Proc.new { @show_file_names = true }
+      :set  => Proc.new { @outputopts.show_file_names = true }
     }
 
     optdata << no_show_fname_option = {
       :tags => %w{ -h --no-filename },
-      :set  => Proc.new { @show_file_names = false }
+      :set  => Proc.new { @outputopts.show_file_names = false }
     }
 
     optdata << highlight_option = { 
@@ -227,7 +223,7 @@ class Glark::Options
     optdata << file_color_option = {
       :tags => %w{ --file-color },
       :arg  => [ :string ],
-      :set  => Proc.new { |val| @colors.file_highlight = make_highlight "file-color", val }
+      :set  => Proc.new { |val| @colors.file_highlight = @colors.make_highlight "file-color", val }
     }
   end
 
@@ -282,26 +278,6 @@ class Glark::Options
     @colors.highlighter 
   end
 
-  def set_glark_output_style
-    # @output = "glark"
-    @outputopts.style = "glark"
-    # @colors.text_color_style = "multi"
-  end
-
-  def set_grep_output_style
-    @output = "grep"
-    @outputopts.style = "grep"
-  end
-
-  def set_output_style output
-    case output
-    when "ansi", "xterm", "glark"
-      set_glark_output_style
-    when "grep"
-      set_grep_output_style
-    end
-  end
-
   def run args
     @args = args
 
@@ -315,7 +291,7 @@ class Glark::Options
 
     # honor thy EMACS; go to grep mode
     if ENV["EMACS"]
-      set_grep_output_style
+      @outputopts.style = "grep"
     end
 
     read_options
@@ -370,9 +346,9 @@ class Glark::Options
       
       case name
       when "file-color"
-        @colors.set_file_highlight make_highlight name, value
+        @colors.set_file_highlight @colors.make_highlight name, value
       when "grep"
-        set_grep_output_style if to_boolean value
+        @outputopts.style = "grep" if to_boolean value
       when "highlight"
         @colors.text_color_style = value
       when "ignore-case"
@@ -388,15 +364,15 @@ class Glark::Options
       when "local-config-files"
         @local_config_files = to_boolean value
       when "line-number-color"
-        @colors.line_number_highlight = make_highlight name, value
+        @colors.line_number_highlight = @colors.make_highlight name, value
       when "output"
-        set_output_style value
+        @outputsopts.style = value
       when "quiet"
         Log.quiet = @quiet = to_boolean(value)
       when "text-color"
-        @colors.text_highlights [ make_highlight name, value ]
+        @colors.text_highlights [ @colors.make_highlight name, value ]
       when %r{^text\-color\-(\d+)$}
-        @colors.set_text_highlight $1.to_i, make_highlight(name, value)
+        @colors.set_text_highlight $1.to_i, @colors.make_highlight(name, value)
       when "verbose"
         Log.verbose = @verbose = to_boolean(value) ? 1 : nil
       when "verbosity"
@@ -494,7 +470,7 @@ class Glark::Options
       "after" => @outputopts.context.after,
       "before" => @outputopts.context.before,
       "binary_files" => @binary_files,
-      "count" => @count,
+      "count" => @outputopts.count,
       "directory" => @directory,
       "exclude_matching" => @exclude_matching,
       "explain" => @explain,
@@ -515,7 +491,7 @@ class Glark::Options
       "output" => @outputopts.style,
       "quiet" => @quiet,
       "ruby version" => RUBY_VERSION,
-      "show_file_names" => @show_file_names,
+      "show_file_names" => @outputopts.show_file_names,
       "show_line_numbers" => @outputopts.show_line_numbers,
       "text_highlights" => @matchopts.text_highlights.compact.collect { |hl| hl.highlight("text") }.join(", "),
       "verbose" => @verbose,

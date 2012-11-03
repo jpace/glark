@@ -5,6 +5,7 @@
 class OutputOptions
 
   attr_accessor :context         # lines before and after
+  attr_accessor :count           # only count the matches
   attr_accessor :file_names_only # display only the file names
   attr_accessor :filter          # display only matches
   attr_accessor :invert_match    # display non-matching lines
@@ -21,6 +22,7 @@ class OutputOptions
   def initialize colors
     @colors = colors
     @context = Glark::Context.new
+    @count = false
     @file_highlight = nil
     @file_names_only = false
     @filter = true
@@ -29,7 +31,7 @@ class OutputOptions
     @label = nil
     @match_limit = nil
     @out = $stdout
-    @show_file_names = nil
+    @show_file_names = nil      # nil == > 1; true == >= 1; false means never
     @show_line_numbers = true
     @style = nil
     @write_null = false

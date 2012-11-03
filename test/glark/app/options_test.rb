@@ -337,7 +337,8 @@ class Glark::OptionsTestCase < Glark::TestCase
   def test_count
     %w{ -c --count }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :count => true, :expr => RegexpExpression.new(%r{foo}, 0) })
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :output => { :count => true })
     end
   end
 
@@ -419,14 +420,16 @@ class Glark::OptionsTestCase < Glark::TestCase
   def test_no_show_file_names
     %w{ -h --no-filename }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :show_file_names => false, :expr => RegexpExpression.new(%r{foo}, 0) })
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :output => { :show_file_names => false })
     end
   end
 
   def test_show_file_names
     %w{ -H --with-filename }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :show_file_names => true, :expr => RegexpExpression.new(%r{foo}, 0) })
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :output => { :show_file_names => true })
     end
   end
 

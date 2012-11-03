@@ -80,7 +80,7 @@ class Glark::Runner
 
     output_type = nil
     
-    if @opts.count
+    if output_opts.count
       if output_opts.style == "grep" 
         output_type = GrepCount.new file, output_opts
       else
