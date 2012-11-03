@@ -174,47 +174,12 @@ class Glark::Options
   
   def add_match_options optdata
     @matchopts = MatchOptions.new @colors
-    
     @matchopts.add_as_options optdata
   end
 
   def add_output_options optdata
     @outputopts = OutputOptions.new @colors
-
     @outputopts.add_as_options optdata
-    
-    optdata << lnum_color_option = {
-      :tags => %w{ --line-number-color },
-      :arg  => [ :string ],
-      :set  => Proc.new { |val| @colors.line_number_highlight = @colors.make_highlight "line-number-color", val },
-    }
-
-    optdata << count_option = {
-      :tags => %w{ -c --count },
-      :set  => Proc.new { @outputopts.count = true }
-    }
-
-    optdata << show_fname_option = {
-      :tags => %w{ -H --with-filename },
-      :set  => Proc.new { @outputopts.show_file_names = true }
-    }
-
-    optdata << no_show_fname_option = {
-      :tags => %w{ -h --no-filename },
-      :set  => Proc.new { @outputopts.show_file_names = false }
-    }
-
-    optdata << highlight_option = { 
-      :tags => %w{ -u --highlight },
-      :arg  => [ :optional, :regexp, %r{ ^ (?:(multi|single)|none) $ }x ],
-      :set  => Proc.new { |md| val = md ? md[1] : "multi"; @colors.text_color_style =  val }
-    }
-
-    optdata << file_color_option = {
-      :tags => %w{ --file-color },
-      :arg  => [ :string ],
-      :set  => Proc.new { |val| @colors.file_highlight = @colors.make_highlight "file-color", val }
-    }
   end
 
   def add_info_options optdata

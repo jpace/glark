@@ -144,5 +144,38 @@ class OutputOptions
       :tags => %w{ -g --grep },
       :set  => Proc.new { self.style = "grep" }
     }
+
+    optdata << lnum_color_option = {
+      :tags => %w{ --line-number-color },
+      :arg  => [ :string ],
+      :set  => Proc.new { |val| @colors.line_number_highlight = @colors.make_highlight "line-number-color", val },
+    }
+
+    optdata << count_option = {
+      :tags => %w{ -c --count },
+      :set  => Proc.new { @count = true }
+    }
+    
+    optdata << show_fname_option = {
+      :tags => %w{ -H --with-filename },
+      :set  => Proc.new { @show_file_names = true }
+    }
+
+    optdata << no_show_fname_option = {
+      :tags => %w{ -h --no-filename },
+      :set  => Proc.new { @show_file_names = false }
+    }
+
+    optdata << highlight_option = { 
+      :tags => %w{ -u --highlight },
+      :arg  => [ :optional, :regexp, %r{ ^ (?:(multi|single)|none) $ }x ],
+      :set  => Proc.new { |md| val = md ? md[1] : "multi"; @colors.text_color_style =  val }
+    }
+
+    optdata << file_color_option = {
+      :tags => %w{ --file-color },
+      :arg  => [ :string ],
+      :set  => Proc.new { |val| @colors.file_highlight = @colors.make_highlight "file-color", val }
+    }
   end
 end
