@@ -23,9 +23,24 @@ class Glark::InfoOptions
     @explain = false      # display a legible version of the expression
   end
 
+  def config_fields
+    fields = {
+      "known-nontext-files" => FileType.nontext_extensions.sort.join(' '),
+      "known-text-files" => FileType.text_extensions.sort.join(' '),
+      "quiet" => Log.quiet,
+      "verbose" => Log.verbose,
+    }
+  end
+
   def dump_fields
     fields = { 
-      "explain" => @explain 
+      "explain" => @explain,
+      "known_nontext_files" => FileType.nontext_extensions.join(", "),
+      "known_text_files" => FileType.text_extensions.join(", "),
+      "quiet" => Log.quiet,
+      "ruby version" => RUBY_VERSION,
+      "verbose" => Log.verbose,
+      "version" => Glark::VERSION,
     }
   end
 

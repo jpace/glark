@@ -344,15 +344,11 @@ class Glark::Options
   def write_configuration
     fields = {
       "binary-files" => @binary_files,
-      "known-nontext-files" => FileType.nontext_extensions.sort.join(' '),
-      "known-text-files" => FileType.text_extensions.sort.join(' '),
       "local-config-files" => @local_config_files,
-      "quiet" => Log.quiet,
       "size-limit" => @size_limit,
       "split-as-path" => @split_as_path,
-      "verbose" => Log.verbose,
     }
-    [ @colors, @matchopts, @outputopts ].each do |opts|
+    [ @colors, @matchopts, @outputopts, @infoopts ].each do |opts|
       fields.merge! opts.config_fields
     end
     
@@ -367,13 +363,7 @@ class Glark::Options
       "directory" => @directory,
       "exclude_matching" => @exclude_matching,
       "extract_matches" => @extract_matches,
-      "known_nontext_files" => FileType.nontext_extensions.join(", "),
-      "known_text_files" => FileType.text_extensions.join(", "),
       "local_config_files" => @local_config_files,
-      "quiet" => Log.quiet,
-      "ruby version" => RUBY_VERSION,
-      "verbose" => Log.verbose,
-      "version" => Glark::VERSION,
       "with-basename" => @with_basename,
       "with-fullname" => @with_fullname,
       "without-basename" => @without_basename,
