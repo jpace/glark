@@ -252,19 +252,17 @@ class Glark::Options
 
   def read_rcfile rcfname
     rcfile = Glark::RCFile.new rcfname
+
+    rcvalues = rcfile.names.collect { |name| [ name, rcfile.value(name) ] }
+
+    [ @colors, @matchopts, @outputopts ].each do |opts|
+      opts.update_fields rcvalues
+    end
     
     rcfile.names.each do |name|
       value = rcfile.value name
       
       case name
-      when "file-color"
-        @colors.set_file_highlight @colors.make_highlight name, value
-      when "grep"
-        @outputopts.style = "grep" if to_boolean value
-      when "highlight"
-        @colors.text_color_style = value
-      when "ignore-case"
-        @matchopts.ignorecase = to_boolean value
       when "known-nontext-files"
         value.split.each do |ext|
           FileType.set_nontext ext
@@ -275,16 +273,8 @@ class Glark::Options
         end
       when "local-config-files"
         @local_config_files = to_boolean value
-      when "line-number-color"
-        @colors.line_number_highlight = @colors.make_highlight name, value
-      when "output"
-        @outputsopts.style = value
       when "quiet"
         Log.quiet = to_boolean(value)
-      when "text-color"
-        @colors.text_highlights [ @colors.make_highlight name, value ]
-      when %r{^text\-color\-(\d+)$}
-        @colors.set_text_highlight $1.to_i, @colors.make_highlight(name, value)
       when "verbose"
         Log.verbose = to_boolean(value) ? 1 : nil
       when "verbosity"

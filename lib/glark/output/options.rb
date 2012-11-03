@@ -2,8 +2,10 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
+require 'glark/util/optutil'
+
 class OutputOptions
-  include Loggable
+  include Loggable, Glark::OptionUtil
   
   attr_accessor :context         # lines before and after
   attr_accessor :count           # only count the matches
@@ -105,6 +107,17 @@ class OutputOptions
       "show_line_numbers" => @show_line_numbers,
       "write_null" => @write_null
     }
+  end
+
+  def update_fields fields
+    fields.each do |name, value|
+      case name
+      when "grep"
+        self.style = "grep" if to_boolean value
+      when "output"
+        self.style = value
+      end
+    end
   end
 
   def add_as_options optdata

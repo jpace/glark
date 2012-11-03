@@ -8,9 +8,10 @@ require 'rubygems'
 require 'riel/log'
 require 'glark/match/factory'
 require 'glark/util/colors'
+require 'glark/util/optutil'
 
 class MatchOptions
-  include Loggable
+  include Loggable, Glark::OptionUtil
   
   attr_accessor :expr           # the expression to be evaluated
   attr_accessor :extended       # whether to use extended regular expressions
@@ -56,6 +57,15 @@ class MatchOptions
       "whole_lines" => @whole_lines,
       "whole_words" => @whole_words,
     }
+  end
+
+  def update_fields fields
+    fields.each do |name, value|
+      case name
+      when "ignore-case"
+        @ignorecase = to_boolean value
+      end
+    end
   end
 
   def add_as_options optdata

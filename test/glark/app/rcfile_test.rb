@@ -40,4 +40,15 @@ class Glark::RcfileTestCase < Glark::TestCase
       assert_equal [ "underline", "magenta" ], opts.match_options.text_highlights[3].colors
     end
   end
+
+  def test_grep
+    run_option_test(%w{ foo }, []) do |opts|
+      # default values
+      assert_equal "glark", opts.output_options.style
+
+      opts.read_rcfile Pathname.new '/proj/org/incava/glark/test/resources/rcgrep.txt'
+
+      assert_equal "grep", opts.output_options.style
+    end
+  end
 end
