@@ -183,16 +183,6 @@ class Glark::Options
 
     @outputopts.add_as_options optdata
     
-    optdata << nohighlight_option = {
-      :tags => %w{ -U --no-highlight },
-      :set  => Proc.new { @colors.text_color_style =  nil }
-    }
-
-    optdata << grep_output_option = {
-      :tags => %w{ -g --grep },
-      :set  => Proc.new {  @outputopts.style = "grep" }
-    }
-
     optdata << lnum_color_option = {
       :tags => %w{ --line-number-color },
       :arg  => [ :string ],

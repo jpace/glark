@@ -134,5 +134,15 @@ class OutputOptions
       :arg  => [ :integer ],
       :set  => Proc.new { |val| @match_limit = val }
     }
+
+    optdata << nohighlight_option = {
+      :tags => %w{ -U --no-highlight },
+      :set  => Proc.new { @colors.text_color_style =  nil }
+    }
+
+    optdata << grep_output_option = {
+      :tags => %w{ -g --grep },
+      :set  => Proc.new { self.style = "grep" }
+    }
   end
 end
