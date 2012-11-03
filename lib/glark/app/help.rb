@@ -61,7 +61,7 @@ class GlarkHelp
     puts "  -U, --no-highlight             Disable highlighting"
     puts "  -v, --invert-match             Show lines not matching the expression"
     puts "  -y, --extract-matches          Display only the matching region, not the entire line"
-    puts "  -Z, --null                     In -l mode, write file names followed by NULL"
+    puts "  -Z, --null                     In --files-with-matches mode, write file names followed by NULL"
     puts ""
 
     puts "Debugging/Errors:"

@@ -15,3 +15,12 @@ Wed Oct 31 07:50:46 2012
 Thu Nov  1 14:41:02 2012
 
   removed filter from rcfile; unused and useless.
+
+Fri Nov  2 20:07:20 2012
+
+  --dump: fixed to display the current settings.
+  --conf: now displays configuration without empty lines between fields.
+
+Sat Nov  3 14:25:54 2012
+
+  help: improved comment for --null.
