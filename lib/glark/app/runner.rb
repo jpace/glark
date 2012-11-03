@@ -36,7 +36,7 @@ class Glark::Runner
 
     @opts.output_options.set_files @files
 
-    @invert_match = @opts.invert_match
+    @invert_match = @opts.output_options.invert_match
 
     # 0 == matches, 1 == no matches, 2 == error
     @exit_status = @invert_match ? 0 : 1

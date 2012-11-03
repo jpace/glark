@@ -37,7 +37,6 @@ class Glark::Options
   attr_accessor :without_fullname
 
   attr_reader :colors
-  attr_reader :invert_match
   attr_reader :range
 
   def expr

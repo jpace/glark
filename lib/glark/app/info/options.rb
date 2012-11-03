@@ -8,11 +8,12 @@
 require 'rubygems'
 require 'riel'
 require 'glark/app/help'
+require 'glark/util/optutil'
 
 module Glark; end
 
 class Glark::InfoOptions
-  include Loggable
+  include Loggable, Glark::OptionUtil
 
   attr_reader :colors
   attr_reader :explain
