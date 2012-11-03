@@ -14,13 +14,11 @@ class Glark::MatchTestCase < Glark::TestCase
     # Egads, Ruby is fun. Converting a maybe-array into a definite one:
     args = [ exprargs ].flatten
 
-    expr = opts.get_expression_factory.make_expression args
+    expr = opts.match_options.read_expression args
     
     outfname = infname = nil
 
     begin
-      Log.verbose = true
-
       outfname = create_file do |outfile|
         opts.out = outfile
         infname = write_file contents
@@ -30,20 +28,22 @@ class Glark::MatchTestCase < Glark::TestCase
         glark.search infname
       end
 
-      puts "contents"
-      puts "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-      puts contents
-      puts "-------------------------------------------------------"
-      puts "expected"
-      puts expected
-      puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-      
-      info "IO::readlines(outfname): #{IO::readlines(outfname)}"
+      if false
+        puts "contents"
+        puts "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+        puts contents
+        puts "-------------------------------------------------------"
+        puts "expected"
+        puts expected
+        puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+        
+        info "IO::readlines(outfname): #{IO::readlines(outfname)}"
 
-      results = IO::readlines outfname
-      puts "results"
-      puts results
-      puts "*******************************************************" 
+        results = IO::readlines outfname
+        puts "results"
+        puts results
+        puts "*******************************************************" 
+      end
 
       run_file_test outfname, expected
     ensure

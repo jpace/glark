@@ -39,7 +39,6 @@ class RegexpExpression < Expression
     md = match? line
     return false unless md
 
-    log { "md: #{md}" }
     if @extract_matches
       if md.kind_of? MatchData
         line.replace md[-1] + "\n"

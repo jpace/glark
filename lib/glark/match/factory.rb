@@ -23,11 +23,9 @@ class ExpressionFactory
 
   # reads a file containing one regular expression per line.
   def read_file fname
-    log { "reading file: #{fname}" }
     expr = nil
     File.open(fname) do |file|
       file.each_line do |line|
-        log { "line: #{line}" }
         line.strip!
         next if line.empty?
 
@@ -41,9 +39,6 @@ class ExpressionFactory
         end
       end
     end
-    
-    log { "returning expression #{expr}" }
-    
     expr
   end
 

@@ -44,6 +44,27 @@ class Glark::InfoOptions
     }
   end
 
+  def update_fields fields
+    fields.each do |name, value|
+      case name
+      when "known-nontext-files"
+        value.split.each do |ext|
+          FileType.set_nontext ext
+        end
+      when "known-text-files"
+        value.split.each do |ext|
+          FileType.set_text ext
+        end
+      when "quiet"
+        Log.quiet = to_boolean(value)
+      when "verbose"
+        Log.verbose = to_boolean(value) ? 1 : nil
+      when "verbosity"
+        Log.verbose = value.to_i
+      end
+    end
+  end
+
   def add_as_options optdata
     optdata << version_option = {
       :tags => %w{ -V --version },

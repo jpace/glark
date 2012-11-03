@@ -30,6 +30,10 @@ class MatchOptions
     @whole_words = false
   end
 
+  def read_expression args, warn_option = false
+    @expr = ExpressionFactory.new(self).make_expression args, warn_option
+  end
+
   def text_highlights
     @colors.text_highlights
   end

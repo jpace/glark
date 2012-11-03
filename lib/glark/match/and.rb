@@ -13,7 +13,6 @@ class AndExpression < CompoundExpression
   end
 
   def match_within_distance op, lnum
-    info "op: #{op}; lnum: #{lnum}"
     op.matches.size > 0 and (op.matches[-1] - lnum <= @dist)
   end
 
@@ -42,12 +41,10 @@ class AndExpression < CompoundExpression
         # search for the maximum match within the distance limit
         other.matches.each do |m|
           if lnum - m <= @dist
-            log { "match: #{m} within range #{@dist} of #{lnum}" }
             @last_start = m
             return true
           end
         end
-        log { "other matches out of range" }
         return false
       end
     end

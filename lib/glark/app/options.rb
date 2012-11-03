@@ -5,12 +5,12 @@ require 'rubygems'
 require 'riel'
 require 'glark/app/info/options'
 require 'glark/app/rcfile'
-require 'glark/match/factory'
 require 'glark/match/options'
 require 'glark/input/range'
 require 'glark/output/options'
 require 'glark/output/context'
 require 'glark/util/colors'
+require 'glark/util/optutil'
 
 module Glark
   PACKAGE = 'glark'
@@ -22,7 +22,7 @@ end
 # -------------------------------------------------------
 
 class Glark::Options
-  include Loggable
+  include Loggable, Glark::OptionUtil
 
   attr_accessor :binary_files
   attr_accessor :directory
@@ -255,7 +255,7 @@ class Glark::Options
 
     rcvalues = rcfile.names.collect { |name| [ name, rcfile.value(name) ] }
 
-    [ @colors, @matchopts, @outputopts ].each do |opts|
+    [ @colors, @matchopts, @outputopts, @infoopts ].each do |opts|
       opts.update_fields rcvalues
     end
     
@@ -263,38 +263,14 @@ class Glark::Options
       value = rcfile.value name
       
       case name
-      when "known-nontext-files"
-        value.split.each do |ext|
-          FileType.set_nontext ext
-        end
-      when "known-text-files"
-        value.split.each do |ext|
-          FileType.set_text ext
-        end
       when "local-config-files"
         @local_config_files = to_boolean value
-      when "quiet"
-        Log.quiet = to_boolean(value)
-      when "verbose"
-        Log.verbose = to_boolean(value) ? 1 : nil
-      when "verbosity"
-        Log.verbose = value.to_i
       when "split-as-path"
         @split_as_path = to_boolean value
       when "size-limit"
         @size_limit = value.to_i
       end
     end
-  end
-  
-  # creates a color for the given option, based on its value
-  def make_highlight opt, value
-    @colors.make_highlight opt, value
-  end
-
-  # returns whether the value matches a true value, such as "yes", "true", or "on".
-  def to_boolean value
-    [ "yes", "true", "on" ].include? value.downcase
   end
 
   def read_environment_variable
@@ -314,7 +290,7 @@ class Glark::Options
       end
       
       if @args && @args.size > 0
-        @matchopts.expr = get_expression_factory.make_expression @args, !known_end
+        @matchopts.read_expression @args, !known_end
         return
       end
     end
@@ -395,10 +371,5 @@ class Glark::Options
   # check options for collisions/data validity
   def validate!
     @range.validate!
-  end
-
-  def get_expression_factory
-    # we'll be creating this each time, in case these options change
-    ExpressionFactory.new match_options
   end
 end
