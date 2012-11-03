@@ -20,30 +20,6 @@ class Glark::OptionsTestCase < Glark::TestCase
     end
   end
 
-  def assert_match_options gopt, exp
-    matchopts = gopt.match_options
-    assert_method_values matchopts, exp
-  end    
-
-  def assert_output_options gopt, exp
-    outputopts = gopt.output_options
-    outputopts.set_files Array.new
-    assert_method_values outputopts, exp
-  end    
-
-  def assert_color_options gopt, exp
-    colors = gopt.colors
-    assert_method_values colors, exp
-  end
-  
-  def run_option_test args, exp, &blk
-    gopt = Glark::Options.new
-    gopt.run args
-    assert_method_values gopt, exp
-    
-    blk.call(gopt) if blk
-  end
-
   def run_test args, expected, &blk
     gopt = Glark::Options.new
     gopt.run args
@@ -250,36 +226,32 @@ class Glark::OptionsTestCase < Glark::TestCase
   def test_invert_match
     %w{ -v --invert-match }.each do |vopt|
       run_test([ vopt, 'foo' ],
-               :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
-        assert_output_options opts, { :invert_match => true }
-      end
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :output => { :invert_match => true })
     end
   end
   
   def test_ignore_case
     %w{ -i --ignore-case }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :expr => RegexpExpression.new(%r{foo}i, 0) }) do |opts|
-        assert_match_options opts, { :ignorecase => true }
-      end
+               :app => { :expr => RegexpExpression.new(%r{foo}i, 0) },
+               :match => { :ignorecase => true })
     end
   end
   
   def test_filter
     %w{ --filter }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
-        assert_output_options opts, { :filter => true }
-      end
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :output => { :filter => true })
     end
   end
   
   def test_no_filter
     %w{ --no-filter --nofilter }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
-        assert_output_options opts, { :filter => false }
-      end
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :output => { :filter => false })
     end
   end
   
@@ -289,29 +261,26 @@ class Glark::OptionsTestCase < Glark::TestCase
                :app => { 
                  :output => "grep",
                  :expr => RegexpExpression.new(%r{foo}, 0),
-               }) do |opts|
-        assert_match_options opts, { :text_highlights => [] }
-        assert_output_options opts, { :after => 0, :before => 0, :show_line_numbers => false }
-        assert_color_options opts, { :text_color_style => false }
-      end
+               },
+               :match => { :text_highlights => [] },
+               :output => { :after => 0, :before => 0, :show_line_numbers => false },
+               :colors => { :text_color_style => false })
     end
   end
   
   def test_line_number
     %w{ -n --line-number }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
-        assert_output_options opts, { :show_line_numbers => true }
-      end
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :output => { :show_line_numbers => true })
     end
   end
 
   def test_no_line_number
     %w{ -N --no-line-number }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
-        assert_output_options opts, { :show_line_numbers => false }
-      end
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :output => { :show_line_numbers => false })
     end
   end
 
@@ -339,38 +308,32 @@ class Glark::OptionsTestCase < Glark::TestCase
   def test_whole_words
     %w{ -w --word }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :expr => RegexpExpression.new(%r{\bfoo\b}, 0) }) do |opts|
-        assert_match_options opts, { :whole_words => true }
-      end
+               :app => { :expr => RegexpExpression.new(%r{\bfoo\b}, 0) },
+               :match => { :whole_words => true })
     end
   end
 
   def test_whole_lines
     %w{ -x --line-regexp }.each do |opt|
-      run_option_test([ opt, 'foo' ], []) do |opts|
-        assert_equal RegexpExpression.new(%r{^foo$}, 0), opts.expr
-        assert_match_options opts, { :whole_lines => true }
-        # expr should be part of the match options:
-        # assert_match_options opts, { :whole_lines => true, :expr => RegexpExpression.new(%r{^foo$}, 0) }
-      end
+      run_test([ opt, 'foo' ],
+               :app => { :expr => RegexpExpression.new(%r{^foo$}, 0) },
+               :match => { :whole_lines => true })
     end
   end
 
   def test_files_with_matches
     %w{ -l --files-with-matches }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
-        assert_output_options opts, { :invert_match => false, :file_names_only => true }
-      end
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :output => { :invert_match => false, :file_names_only => true })
     end
   end
 
   def test_files_without_matches
     %w{ -L --files-without-match }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
-        assert_output_options opts, { :invert_match => true, :file_names_only => true }
-      end
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :output => { :invert_match => true, :file_names_only => true })
     end
   end
 
@@ -384,9 +347,8 @@ class Glark::OptionsTestCase < Glark::TestCase
   def test_write_null
     %w{ -Z --null }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
-        assert_output_options opts, { :write_null => true }
-      end
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :output => { :write_null => true })
     end
   end
 
@@ -425,7 +387,7 @@ class Glark::OptionsTestCase < Glark::TestCase
     end
   end
 
-  def do_split_as_path_test(exp, args)
+  def run_split_as_path_test exp, args
     args.each do |val|
       [ 
        [ '--split-as-path',   val ],
@@ -441,8 +403,8 @@ class Glark::OptionsTestCase < Glark::TestCase
     run_test([ '--split-as-path', 'foo' ],
              :app => { :split_as_path => true, :expr => RegexpExpression.new(%r{foo}, 0) })
     
-    do_split_as_path_test(true,  %w{ true  on  yes })
-    do_split_as_path_test(false, %w{ false off no  })
+    run_split_as_path_test(true,  %w{ true  on  yes })
+    run_split_as_path_test(false, %w{ false off no  })
   end
 
   def test_directory_long
@@ -478,9 +440,8 @@ class Glark::OptionsTestCase < Glark::TestCase
        [ '--label',   label ]
       ].each do |opt|
         run_test(opt | %w{ foo },
-                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
-          assert_output_options opts, { :label => label }
-        end
+                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+                 :output => { :label => label })
       end
     end
   end
@@ -493,9 +454,8 @@ class Glark::OptionsTestCase < Glark::TestCase
        [ '--match-limit=' +   num ],
       ].each do |args|
         run_test(args | %w{ foo },
-                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
-          assert_output_options opts, { :match_limit => num.to_i }
-        end
+                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+                 :output => { :match_limit => num.to_i })
       end
     end
   end
@@ -631,7 +591,6 @@ class Glark::OptionsTestCase < Glark::TestCase
         run_test(opt | [ 'foo' ],
                  :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
                  :match => { :text_highlights => [ Text::ANSIHighlighter.make(color) ] })
-        end
       end
     end
   end
@@ -646,7 +605,6 @@ class Glark::OptionsTestCase < Glark::TestCase
         run_test(opt | [ 'foo' ],
                  :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
                  :colors => { :file_highlight => Text::ANSIHighlighter.make(color) })
-        end
       end
     end
   end
