@@ -83,4 +83,12 @@ class Glark::Colors
       "line-number-color" => @line_number_highlight,
     }
   end
+
+  def dump_fields
+    fields = {
+      "file_highlight" => @file_highlight ? @file_highlight.highlight("filename") : "filename",
+      "highlight" => @text_color_style,
+      "line_number_highlight" => @line_number_highlight ? @line_number_highlight.highlight("12345") : "12345",
+    }
+  end
 end

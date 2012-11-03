@@ -362,9 +362,9 @@ class Glark::Options
       "split-as-path" => @split_as_path,
       "verbose" => Log.verbose,
     }
-    fields.merge! @outputopts.config_fields
-    fields.merge! @colors.config_fields
-    fields.merge! @matchopts.config_fields
+    [ @colors, @matchopts, @outputopts ].each do |opts|
+      fields.merge! opts.config_fields
+    end
     
     fields.keys.sort.each do |fname|
       puts "#{fname}: #{fields[fname]}"
@@ -373,43 +373,25 @@ class Glark::Options
 
   def dump_all_fields
     fields = {
-      "after" => @outputopts.context.after,
-      "before" => @outputopts.context.before,
       "binary_files" => @binary_files,
-      "count" => @outputopts.count,
       "directory" => @directory,
       "exclude_matching" => @exclude_matching,
-      "explain" => @infoopts.explain,
-      "expr" => @matchopts.expr,
       "extract_matches" => @extract_matches,
-      "file_highlight" => @colors.file_highlight ? @colors.file_highlight.highlight("filename") : "filename",
-      "file_names_only" => @outputopts.file_names_only,
-      "filter" => @outputopts.filter,
-      "highlight" => @colors.text_color_style,
-      "ignorecase" => @matchopts.ignorecase,
-      "invert_match" => @outputopts.invert_match,
       "known_nontext_files" => FileType.nontext_extensions.join(", "),
       "known_text_files" => FileType.text_extensions.join(", "),
-      "label" => @outputopts.label,
-      "line_number_highlight" => @colors.line_number_highlight ? @colors.line_number_highlight.highlight("12345") : "12345",
       "local_config_files" => @local_config_files,
-      "match_limit" => @outputopts.match_limit,
-      "output" => @outputopts.style,
       "quiet" => Log.quiet,
       "ruby version" => RUBY_VERSION,
-      "show_file_names" => @outputopts.show_file_names,
-      "show_line_numbers" => @outputopts.show_line_numbers,
-      "text_highlights" => @matchopts.text_highlights.compact.collect { |hl| hl.highlight("text") }.join(", "),
       "verbose" => Log.verbose,
       "version" => Glark::VERSION,
-      "whole_lines" => @matchopts.whole_lines,
-      "whole_words" => @matchopts.whole_words,
       "with-basename" => @with_basename,
       "with-fullname" => @with_fullname,
       "without-basename" => @without_basename,
       "without-fullname" => @without_fullname,
-      "write_null" => @outputopts.write_null,
     }
+    [ @colors, @matchopts, @outputopts, @infoopts ].each do |opts|
+      fields.merge! opts.dump_fields
+    end
 
     len = fields.keys.collect { |f| f.length }.max
     

@@ -23,6 +23,12 @@ class Glark::InfoOptions
     @explain = false      # display a legible version of the expression
   end
 
+  def dump_fields
+    fields = { 
+      "explain" => @explain 
+    }
+  end
+
   def add_as_options optdata
     optdata << version_option = {
       :tags => %w{ -V --version },

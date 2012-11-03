@@ -48,6 +48,16 @@ class MatchOptions
     }
   end
 
+  def dump_fields
+    fields = {
+      "expr" => @expr,
+      "ignorecase" => @ignorecase,
+      "text_highlights" => text_highlights.compact.collect { |hl| hl.highlight("text") }.join(", "),
+      "whole_lines" => @whole_lines,
+      "whole_words" => @whole_words,
+    }
+  end
+
   def add_as_options optdata
     optdata << whole_word_option = {
       :tags => %w{ -w --word },

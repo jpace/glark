@@ -90,6 +90,23 @@ class OutputOptions
     }
   end
 
+  def dump_fields
+    fields = {
+      "after" => @context.after,
+      "before" => @context.before,
+      "count" => @count,
+      "file_names_only" => @file_names_only,
+      "filter" => @filter,
+      "invert_match" => @invert_match,
+      "label" => @label,
+      "match_limit" => @match_limit,
+      "output" => @style,
+      "show_file_names" => @show_file_names,
+      "show_line_numbers" => @show_line_numbers,
+      "write_null" => @write_null
+    }
+  end
+
   def add_as_options optdata
     @context.add_as_option optdata
 
