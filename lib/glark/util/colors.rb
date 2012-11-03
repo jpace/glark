@@ -75,4 +75,12 @@ class Glark::Colors
   def highlight_multi? str
     %w{ multi on true yes }.detect { |x| str == x }
   end
+
+  def config_fields
+    fields = {
+      "file-color" => @file_highlight,
+      "highlight" => @text_color_style,
+      "line-number-color" => @line_number_highlight,
+    }
+  end
 end

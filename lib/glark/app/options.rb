@@ -353,24 +353,18 @@ class Glark::Options
 
   def write_configuration
     fields = {
-      "after-context" => @outputopts.context.after,
-      "before-context" => @outputopts.context.before,
       "binary-files" => @binary_files,
-      "file-color" => @colors.file_highlight,
-      "filter" => @outputopts.filter,
-      "highlight" => @colors.text_color_style,
-      "ignore-case" => @matchopts.ignorecase,
       "known-nontext-files" => FileType.nontext_extensions.sort.join(' '),
       "known-text-files" => FileType.text_extensions.sort.join(' '),
-      "line-number-color" => @colors.line_number_highlight,
       "local-config-files" => @local_config_files,
-      "output" => @outputopts.style,
       "quiet" => Log.quiet,
       "size-limit" => @size_limit,
       "split-as-path" => @split_as_path,
-      "text-color" => @matchopts.text_highlights.join(' '),
       "verbose" => Log.verbose,
     }
+    fields.merge! @outputopts.config_fields
+    fields.merge! @colors.config_fields
+    fields.merge! @matchopts.config_fields
     
     fields.keys.sort.each do |fname|
       puts "#{fname}: #{fields[fname]}"

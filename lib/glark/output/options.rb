@@ -81,6 +81,15 @@ class OutputOptions
     end
   end
 
+  def config_fields
+    fields = {
+      "after-context" => @context.after,
+      "before-context" => @context.before,
+      "filter" => @filter,
+      "output" => @style,
+    }
+  end
+
   def add_as_options optdata
     @context.add_as_option optdata
 

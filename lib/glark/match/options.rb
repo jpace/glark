@@ -41,6 +41,13 @@ class MatchOptions
     @colors.text_highlights[index] = text_color
   end
 
+  def config_fields
+    fields = {
+      "ignore-case" => @ignorecase,
+      "text-color" => text_highlights.join(' '),
+    }
+  end
+
   def add_as_options optdata
     optdata << whole_word_option = {
       :tags => %w{ -w --word },
