@@ -3,7 +3,8 @@
 # vim: set filetype=ruby : set sw=2
 
 class OutputOptions
-
+  include Loggable
+  
   attr_accessor :context         # lines before and after
   attr_accessor :count           # only count the matches
   attr_accessor :file_names_only # display only the file names

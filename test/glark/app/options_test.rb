@@ -30,6 +30,7 @@ class Glark::OptionsTestCase < Glark::TestCase
     assert_method_values gopt.match_options, expected[:match]
     assert_method_values gopt.colors, expected[:colors]
     assert_method_values gopt.output_options, expected[:output]
+    assert_method_values gopt.info_options, expected[:info]
     
     blk.call(gopt) if blk
   end
@@ -284,21 +285,26 @@ class Glark::OptionsTestCase < Glark::TestCase
   def test_explain
     %w{ --explain }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :explain => true, :expr => RegexpExpression.new(%r{foo}, 0) })
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :info => { :explain => true })
     end
   end
 
   def test_quiet
     %w{ -q -s --quiet --messages }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :quiet => true, :expr => RegexpExpression.new(%r{foo}, 0) })
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
+        assert Log.quiet
+      end
     end
   end
 
   def test_no_quiet
     %w{ -Q -S --no-quiet --no-messages }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :quiet => false, :expr => RegexpExpression.new(%r{foo}, 0) })
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
+        assert !Log.quiet
+      end
     end
   end
 

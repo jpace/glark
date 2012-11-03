@@ -3,6 +3,7 @@
 
 require 'rubygems'
 require 'riel'
+require 'glark/app/info/options'
 require 'glark/app/rcfile'
 require 'glark/match/factory'
 require 'glark/match/options'
@@ -26,14 +27,10 @@ class Glark::Options
   attr_accessor :binary_files
   attr_accessor :directory
   attr_accessor :exclude_matching
-  attr_accessor :explain
   attr_accessor :extract_matches
   attr_accessor :local_config_files
-  attr_accessor :quiet
-  attr_accessor :show_break
   attr_accessor :size_limit
   attr_accessor :split_as_path
-  attr_accessor :verbose
   attr_accessor :with_basename
   attr_accessor :with_fullname
   attr_accessor :without_basename
@@ -70,16 +67,12 @@ class Glark::Options
     @extract_matches       = false      # whether to show _only_ the part that matched
     @local_config_files    = false      # use local .glarkrc files
 
-    @quiet                 = false      # minimize warnings
-    @range.clear              # range to search; nil => the entire file
     @split_as_path         = true       # whether to split arguments that include the path separator
-    @verbose               = nil        # display debugging output
     @with_basename         = nil        # match files with this basename
     @with_fullname         = nil        # match files with this fullname
     @without_basename      = nil        # match files without this basename
     @without_fullname      = nil        # match files without this fullname
     
-    @outputopts.label = nil
     @size_limit = nil
 
     $/ = "\n"
@@ -183,40 +176,8 @@ class Glark::Options
   end
 
   def add_info_options optdata
-    optdata << version_option = {
-      :tags => %w{ -V --version },
-      :set  => Proc.new { show_version }
-    }
-
-    optdata << verbose_option = {
-      :tags => %w{ --verbose },
-      :set  => Proc.new { |val| Log.verbose = true }
-    }
-    
-    optdata << help_option = {
-      :tags => %w{ -? --help },
-      :set  => Proc.new { require 'glark/app/help';  GlarkHelp.new.show_usage; exit 0 }
-    }
-
-    optdata << man_option = {
-      :tags => %w{ --man },
-      :set  => Proc.new { require 'glark/app/help';  GlarkHelp.new.show_man; exit 0 }
-    }
-    
-    optdata << explain_option = {
-      :tags => %w{ --explain },
-      :set  => Proc.new { @explain = true }
-    }
-
-    optdata << quiet_option = {
-      :tags => %w{ -q -s --quiet --messages },
-      :set  => Proc.new { Log.quiet = @quiet = true }
-    }
-
-    optdata << noquiet_option = {
-      :tags => %w{ -Q -S --no-quiet --no-messages },
-      :set  => Proc.new { Log.quiet = @quiet = false }
-    }
+    @infoopts = Glark::InfoOptions.new @colors
+    @infoopts.add_as_options optdata
 
     optdata << config_option = {
       :tags => %w{ --conf },
@@ -229,10 +190,6 @@ class Glark::Options
     }
   end
   
-  def highlighter
-    @colors.highlighter 
-  end
-
   def run args
     @args = args
 
@@ -251,7 +208,7 @@ class Glark::Options
 
     read_options
 
-    validate
+    validate!
   end
 
   def read_home_rcfiles
@@ -323,15 +280,15 @@ class Glark::Options
       when "output"
         @outputsopts.style = value
       when "quiet"
-        Log.quiet = @quiet = to_boolean(value)
+        Log.quiet = to_boolean(value)
       when "text-color"
         @colors.text_highlights [ @colors.make_highlight name, value ]
       when %r{^text\-color\-(\d+)$}
         @colors.set_text_highlight $1.to_i, @colors.make_highlight(name, value)
       when "verbose"
-        Log.verbose = @verbose = to_boolean(value) ? 1 : nil
+        Log.verbose = to_boolean(value) ? 1 : nil
       when "verbosity"
-        Log.verbose = @verbose = value.to_i
+        Log.verbose = value.to_i
       when "split-as-path"
         @split_as_path = to_boolean value
       when "size-limit"
@@ -383,7 +340,7 @@ class Glark::Options
 
   def read_options
     # solitary "-v" means "--version", not --invert-match
-    show_version if @args.size == 1 && @args[0] == "-v"
+    @infoopts.show_version if @args.size == 1 && @args[0] == "-v"
     
     @matchopts.expr = nil
     
@@ -408,11 +365,11 @@ class Glark::Options
       "line-number-color" => @colors.line_number_highlight,
       "local-config-files" => @local_config_files,
       "output" => @outputopts.style,
-      "quiet" => @quiet,
+      "quiet" => Log.quiet,
       "size-limit" => @size_limit,
       "split-as-path" => @split_as_path,
       "text-color" => @matchopts.text_highlights.join(' '),
-      "verbose" => @verbose,
+      "verbose" => Log.verbose,
     }
     
     fields.keys.sort.each do |fname|
@@ -428,7 +385,7 @@ class Glark::Options
       "count" => @outputopts.count,
       "directory" => @directory,
       "exclude_matching" => @exclude_matching,
-      "explain" => @explain,
+      "explain" => @infoopts.explain,
       "expr" => @matchopts.expr,
       "extract_matches" => @extract_matches,
       "file_highlight" => @colors.file_highlight ? @colors.file_highlight.highlight("filename") : "filename",
@@ -444,12 +401,12 @@ class Glark::Options
       "local_config_files" => @local_config_files,
       "match_limit" => @outputopts.match_limit,
       "output" => @outputopts.style,
-      "quiet" => @quiet,
+      "quiet" => Log.quiet,
       "ruby version" => RUBY_VERSION,
       "show_file_names" => @outputopts.show_file_names,
       "show_line_numbers" => @outputopts.show_line_numbers,
       "text_highlights" => @matchopts.text_highlights.compact.collect { |hl| hl.highlight("text") }.join(", "),
-      "verbose" => @verbose,
+      "verbose" => Log.verbose,
       "version" => Glark::VERSION,
       "whole_lines" => @matchopts.whole_lines,
       "whole_words" => @matchopts.whole_words,
@@ -475,20 +432,17 @@ class Glark::Options
     @outputopts
   end
 
+  def info_options
+    @infoopts
+  end
+
   # check options for collisions/data validity
-  def validate
+  def validate!
     @range.validate!
   end
 
   def get_expression_factory
     # we'll be creating this each time, in case these options change
     ExpressionFactory.new match_options
-  end
-
-  def show_version
-    puts Glark::PACKAGE + ", version " + Glark::VERSION
-    puts "Written by Jeff Pace (jeugenepace@gmail.com)."
-    puts "Released under the Lesser GNU Public License."
-    exit 0
   end
 end

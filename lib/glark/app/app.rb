@@ -28,7 +28,7 @@ class Glark::App
       # To get rid of the annoying stack trace on ctrl-C:
       trap("INT") { abort }
       
-      if opts.explain
+      if opts.info_options.explain
         puts opts.expr.explain
       end
 
