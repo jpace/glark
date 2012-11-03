@@ -4,22 +4,22 @@
 
 class OutputOptions
 
-  attr_accessor :context        # lines before and after
+  attr_accessor :context         # lines before and after
   attr_accessor :file_names_only # display only the file names
-  attr_accessor :filter         # display only matches
-  attr_accessor :invert_match   # display non-matching lines
+  attr_accessor :filter          # display only matches
+  attr_accessor :invert_match    # display non-matching lines
   attr_accessor :label
-  attr_accessor :match_limit    # the maximum number of matches to display per file
+  attr_accessor :match_limit # the maximum number of matches to display per file
   attr_accessor :out
   attr_accessor :show_file_names   # display file names
   attr_accessor :show_line_numbers # display numbers of matching lines
   attr_accessor :write_null # in @file_names_only mode, write '\0' instead of '\n'
 
   attr_reader :colors
+  attr_reader :style            # grep, glark
 
   def initialize colors
     @colors = colors
-    
     @context = Glark::Context.new
     @file_highlight = nil
     @file_names_only = false
@@ -31,6 +31,7 @@ class OutputOptions
     @out = $stdout
     @show_file_names = nil
     @show_line_numbers = true
+    @style = nil
     @write_null = false
   end
 
@@ -62,6 +63,19 @@ class OutputOptions
 
   def before
     @context && @context.before
+  end
+
+  def style= style
+    @style = style
+    if @style == "glark"
+      @colors.text_color_style = "multi"
+    elsif @style == "grep"
+      @colors.text_color_style = false
+      @show_line_numbers = false
+      @context.clear
+    else
+      raise "error: unrecognized style '" + style + "'"
+    end
   end
 
   def add_as_options optdata

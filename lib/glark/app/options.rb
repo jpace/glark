@@ -29,7 +29,6 @@ class Glark::Options
   attr_accessor :explain
   attr_accessor :extract_matches
   attr_accessor :local_config_files
-  attr_accessor :output
   attr_accessor :quiet
   attr_accessor :show_break
   attr_accessor :show_file_names
@@ -284,21 +283,18 @@ class Glark::Options
   end
 
   def set_glark_output_style
-    @output = "glark"
-    @colors.text_color_style = "multi"
+    # @output = "glark"
+    @outputopts.style = "glark"
+    # @colors.text_color_style = "multi"
   end
 
   def set_grep_output_style
     @output = "grep"
-    @colors.text_color_style = false
-    @outputopts.show_line_numbers = false
-    @outputopts.context.clear
+    @outputopts.style = "grep"
   end
 
   def set_output_style output
-    @output = output
-
-    case @output
+    case output
     when "ansi", "xterm", "glark"
       set_glark_output_style
     when "grep"
@@ -480,7 +476,7 @@ class Glark::Options
       "known-text-files" => FileType.text_extensions.sort.join(' '),
       "line-number-color" => @colors.line_number_highlight,
       "local-config-files" => @local_config_files,
-      "output" => @output,
+      "output" => @outputopts.style,
       "quiet" => @quiet,
       "size-limit" => @size_limit,
       "split-as-path" => @split_as_path,
@@ -516,7 +512,7 @@ class Glark::Options
       "line_number_highlight" => @colors.line_number_highlight ? @colors.line_number_highlight.highlight("12345") : "12345",
       "local_config_files" => @local_config_files,
       "match_limit" => @outputopts.match_limit,
-      "output" => @output,
+      "output" => @outputopts.style,
       "quiet" => @quiet,
       "ruby version" => RUBY_VERSION,
       "show_file_names" => @show_file_names,

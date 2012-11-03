@@ -81,7 +81,7 @@ class Glark::Runner
     output_type = nil
     
     if @opts.count
-      if @opts.output == "grep" 
+      if output_opts.style == "grep" 
         output_type = GrepCount.new file, output_opts
       else
         output_type = GlarkCount.new file, output_opts
@@ -90,7 +90,7 @@ class Glark::Runner
       output_type = FileNames.new file, output_opts
     elsif !output_opts.filter
       output_type = UnfilteredLines.new file, output_opts
-    elsif @opts.output == "grep"
+    elsif output_opts.style == "grep"
       output_type = GrepLines.new file, output_opts
     else
       output_type = GlarkLines.new file, output_opts
