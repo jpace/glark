@@ -573,7 +573,8 @@ class Glark::OptionsTestCase < Glark::TestCase
        [ '--binary-files',    val ],
       ].each do |opt|
         run_test(opt + %w{ foo },
-                 :app => { :binary_files => val, :expr => RegexpExpression.new(%r{foo}, 0) })
+                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+                 :input => { :binary_files => val })
       end
     end
   end

@@ -12,12 +12,14 @@ require 'glark/util/optutil'
 class InputOptions
   include Loggable, Glark::OptionUtil  
 
+  attr_reader :binary_files
   attr_reader :range            # range to start and stop searching; nil => the entire file
   attr_reader :directory        # read, skip, or recurse, a la grep
 
   def initialize
     @range = Glark::Range.new 
     @directory = "read"
+    @binary_files = "binary"
   end
   
   def set_record_separator sep
@@ -39,11 +41,13 @@ class InputOptions
 
   def config_fields
     fields = {
+      "binary-files" => @binary_files,
     }
   end
 
   def dump_fields
     fields = {
+      "binary_files" => @binary_files,
       "directory" => @directory,
     }
   end
@@ -76,5 +80,11 @@ class InputOptions
       :set  => Proc.new { |val| @directory = val }
     }
 
+    optdata << binary_files_option = {
+      :tags    => %w{ --binary-files },
+      :arg     => [ :required, :regexp, %r{ ^ [\'\"]? (text|without\-match|binary) [\'\"]? $ }x ],
+      :set     => Proc.new { |md| @binary_files = md[1] },
+      :rc   => %w{ binary-files },
+    }
   end
 end

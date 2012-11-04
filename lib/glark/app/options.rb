@@ -25,7 +25,6 @@ end
 class Glark::Options
   include Loggable, Glark::OptionUtil
 
-  attr_accessor :binary_files
   attr_accessor :exclude_matching
   attr_accessor :local_config_files
   attr_accessor :size_limit
@@ -57,7 +56,6 @@ class Glark::Options
     
     @optset = OptProc::OptionSet.new optdata
     
-    @binary_files          = "binary"   # 
     @exclude_matching      = false      # exclude files whose names match the expression
     @explain               = false      # display a legible version of the expression
     @local_config_files    = false      # use local .glarkrc files
@@ -121,13 +119,6 @@ class Glark::Options
       :tags => %w{ --without-fullname --without-path },
       :arg  => [ :string ],
       :set  => Proc.new { |pat| @without_fullname = Regexp.create pat }
-    }
-
-    optdata << binary_files_option = {
-      :tags    => %w{ --binary-files },
-      :arg     => [ :required, :regexp, %r{ ^ [\'\"]? (text|without\-match|binary) [\'\"]? $ }x ],
-      :set     => Proc.new { |md| @binary_files = md[1] },
-      :rc   => %w{ binary-files },
     }
 
     optdata << size_limit_option = {
@@ -295,7 +286,6 @@ class Glark::Options
 
   def write_configuration
     fields = {
-      "binary-files" => @binary_files,
       "local-config-files" => @local_config_files,
       "size-limit" => @size_limit,
       "split-as-path" => @split_as_path,
@@ -311,7 +301,6 @@ class Glark::Options
 
   def dump_all_fields
     fields = {
-      "binary_files" => @binary_files,
       "exclude_matching" => @exclude_matching,
       "local_config_files" => @local_config_files,
       "with-basename" => @with_basename,

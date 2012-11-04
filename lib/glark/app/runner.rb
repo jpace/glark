@@ -118,7 +118,7 @@ class Glark::Runner
     else
       log { "handling binary" }
       
-      case @opts.binary_files
+      case @opts.input_options.binary_files
       when "without-match"
         log { "skipping binary file #{fname}" }
         
