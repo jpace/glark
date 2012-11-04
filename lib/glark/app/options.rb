@@ -26,7 +26,6 @@ class Glark::Options
   include Loggable, Glark::OptionUtil
 
   attr_accessor :binary_files
-  attr_accessor :directory
   attr_accessor :exclude_matching
   attr_accessor :local_config_files
   attr_accessor :size_limit
@@ -59,7 +58,6 @@ class Glark::Options
     @optset = OptProc::OptionSet.new optdata
     
     @binary_files          = "binary"   # 
-    @directory             = "read"     # read, skip, or recurse, a la grep
     @exclude_matching      = false      # exclude files whose names match the expression
     @explain               = false      # display a legible version of the expression
     @local_config_files    = false      # use local .glarkrc files
@@ -90,17 +88,6 @@ class Glark::Options
       :set  => Proc.new { @exclude_matching = true }
     }
 
-    optdata << directory_option = {
-      :tags => %w{ -d },
-      :arg  => [ :string ],
-      :set  => Proc.new { |val| @directory = val }
-    }
-
-    optdata << recurse_option = {
-      :tags => %w{ -r --recurse },
-      :set  => Proc.new { @directory = "recurse" }
-    }
-
     optdata << no_split_as_path_option = {
       :tags => %w{ --no-split-as-path },
       :set  => Proc.new { @split_as_path = false }
@@ -110,12 +97,6 @@ class Glark::Options
       :tags => %w{ --split-as-path },
       :arg  => [ :boolean, :optional ],
       :set  => Proc.new { |val| @split_as_path = val }
-    }
-
-    optdata << dir_option = {
-      :tags => %w{ --directories },
-      :arg  => [ :string ],
-      :set  => Proc.new { |val| @directory = val }
     }
 
     optdata << basename_option = {
@@ -241,12 +222,16 @@ class Glark::Options
     log { "record separator set to #{$/.inspect}" }
   end
 
+  def all_option_sets
+    [ @colors, @matchopts, @outputopts, @infoopts, @inputopts ]
+  end
+
   def read_rcfile rcfname
     rcfile = Glark::RCFile.new rcfname
 
     rcvalues = rcfile.names.collect { |name| [ name, rcfile.value(name) ] }
 
-    [ @colors, @matchopts, @outputopts, @infoopts ].each do |opts|
+    all_option_sets.each do |opts|
       opts.update_fields rcvalues
     end
     
@@ -315,7 +300,7 @@ class Glark::Options
       "size-limit" => @size_limit,
       "split-as-path" => @split_as_path,
     }
-    [ @colors, @matchopts, @outputopts, @infoopts ].each do |opts|
+    all_option_sets.each do |opts|
       fields.merge! opts.config_fields
     end
     
@@ -327,7 +312,6 @@ class Glark::Options
   def dump_all_fields
     fields = {
       "binary_files" => @binary_files,
-      "directory" => @directory,
       "exclude_matching" => @exclude_matching,
       "local_config_files" => @local_config_files,
       "with-basename" => @with_basename,
@@ -335,7 +319,7 @@ class Glark::Options
       "without-basename" => @without_basename,
       "without-fullname" => @without_fullname,
     }
-    [ @colors, @matchopts, @outputopts, @infoopts ].each do |opts|
+    all_option_sets.each do |opts|
       fields.merge! opts.dump_fields
     end
 
@@ -356,6 +340,10 @@ class Glark::Options
 
   def info_options
     @infoopts
+  end
+
+  def input_options
+    @inputopts
   end
 
   # check options for collisions/data validity

@@ -75,11 +75,11 @@ class Glark::OptionsTestCase < Glark::TestCase
     ].each do |args|
       run_test(args + %w{ foo },
                :app => { 
-                 :directory => "recurse",
                  :expr => RegexpExpression.new(%r{foo}i, 0),
                },
                :match => { :ignorecase => true },
-               :output => { :file_names_only => true })
+               :output => { :file_names_only => true },
+               :input => { :directory => "recurse" })
     end
   end
 
@@ -362,14 +362,16 @@ class Glark::OptionsTestCase < Glark::TestCase
   def test_directory_short
     %w{ read recurse skip }.each do |opt|
       run_test([ '-d', opt, 'foo' ],
-               :app => { :directory => opt, :expr => RegexpExpression.new(%r{foo}, 0) })
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :input => { :directory => opt })
     end
   end
   
   def test_recurse
     %w{ -r --recurse }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :directory => 'recurse', :expr => RegexpExpression.new(%r{foo}, 0) })
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :input => { :directory => 'recurse' })
     end
   end
 
@@ -415,7 +417,8 @@ class Glark::OptionsTestCase < Glark::TestCase
        [ '--directories',   val ]
       ].each do |args|
         run_test(args + %w{ foo },
-                 :app => { :directory => val, :expr => RegexpExpression.new(%r{foo}, 0) })
+                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+                 :input => { :directory => val })
       end
     end
   end

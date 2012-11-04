@@ -140,7 +140,7 @@ class Glark::Runner
 
   def search_directory fname
     log { "processing directory" }
-    case @opts.directory
+    case @opts.input_options.directory
     when "read"
       write "#{fname}: Is a directory"
     when "recurse"

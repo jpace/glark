@@ -9,7 +9,6 @@ require 'stringio'
 
 class Glark::MatchTestCase < Glark::TestCase
   def run_test expected, fname, exprargs
-    info "exprargs: #{exprargs}".yellow
     opts = Glark::Options.new
     
     # Egads, Ruby is fun. Converting a maybe-array into a definite one:
@@ -26,15 +25,6 @@ class Glark::MatchTestCase < Glark::TestCase
     
     result = sio.string
     assert_equal expected.collect { |line| "#{line}\n" }.join(''), result
-  end
-
-  def get_colors patterns
-    defcolors = Text::ANSIHighlighter::DEFAULT_COLORS
-
-    patterns.collect_with_index do |pat, pidx|
-      color = Text::ANSIHighlighter.make defcolors[pidx % defcolors.length]
-      [ pat, color ]
-    end
   end
 
   def run_abc_test expected, exprargs
@@ -134,14 +124,12 @@ class Glark::MatchTestCase < Glark::TestCase
                ]
 
     exprargs = patterns[0 ... -1].collect { '--or' } + patterns
-    info "exprargs: #{exprargs}".on_blue
     
     run_z_test expected, exprargs
   end
 
   def test_and_expression_2_lines_apart
     Log.level = Log::DEBUG
-    info "self: #{self}"
     
     # 'ea', 'ec' within 2 lines of each other:
     expected = [
