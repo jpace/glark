@@ -31,6 +31,7 @@ class Glark::OptionsTestCase < Glark::TestCase
     assert_method_values gopt.colors, expected[:colors]
     assert_method_values gopt.output_options, expected[:output]
     assert_method_values gopt.info_options, expected[:info]
+    assert_method_values gopt.input_options, expected[:input]
     
     blk.call(gopt) if blk
   end
@@ -472,14 +473,14 @@ class Glark::OptionsTestCase < Glark::TestCase
 
   def test_with_basename
     %w{ abc123 \w+\S* }.each do |pat|
-      %w{ --with-basename --basename --with-name --name }.each do |tag|
+      %w{ --with-basename --basename --with-name --name --match-name }.each do |tag|
         [
          [ tag, pat ],
          [ tag + '=' + pat ]
         ].each do |args|
           run_test(args + %w{ foo },
                    :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                   :input => { :with_basename => Regexp.new(pat) })
+                   :input => { :match_name => Regexp.new(pat) })
         end
       end
     end
@@ -487,44 +488,44 @@ class Glark::OptionsTestCase < Glark::TestCase
 
   def test_without_basename
     %w{ abc123 \w+\S* }.each do |pat|
-      %w{ --without-basename --without-name }.each do |tag|
+      %w{ --without-basename --without-name --not-name }.each do |tag|
         [
          [ tag, pat ],
          [ tag + '=' + pat ]
         ].each do |args|
           run_test(args + %w{ foo },
                    :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                   :input => { :without_basename => Regexp.new(pat) })
+                   :input => { :nomatch_name => Regexp.new(pat) })
         end
       end
     end
   end
 
-  def test_with_fullname
+  def test_match_path
     %w{ abc123 \w+\S* }.each do |pat|
-      %w{ --with-fullname --fullname --with-path --path }.each do |tag|
+      %w{ --with-fullname --fullname --with-path --path --match-path }.each do |tag|
         [
          [ tag, pat ],
          [ tag + '=' + pat ]
         ].each do |args|
           run_test(args + %w{ foo },
                    :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                   :input => { :with_fullname => Regexp.new(pat) })
+                   :input => { :match_path => Regexp.new(pat) })
         end
       end
     end
   end
 
-  def test_without_fullname
+  def test_nomatch_path
     %w{ abc123 \w+\S* }.each do |pat|
-      %w{ --without-fullname --without-path }.each do |tag|
+      %w{ --without-fullname --without-path --not-path }.each do |tag|
         [
          [ tag, pat ],
          [ tag + '=' + pat ]
         ].each do |args|
           run_test(args + %w{ foo },
                    :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                   :input => { :without_fullname => Regexp.new(pat) })
+                   :input => { :nomatch_path => Regexp.new(pat) })
         end
       end
     end

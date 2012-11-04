@@ -19,10 +19,10 @@ class InputOptions
   attr_reader :range            # range to start and stop searching; nil => the entire file
   attr_reader :size_limit       # maximum size of files to be searched
   attr_reader :split_as_path    # use file arguments as path elements
-  attr_reader :with_basename    # match files with this basename
-  attr_reader :with_fullname    # match files with this fullname
-  attr_reader :without_basename # match files without this basename
-  attr_reader :without_fullname # match files without this fullname
+  attr_reader :match_name       # match files with this basename
+  attr_reader :match_path       # match files with this fullname
+  attr_reader :nomatch_name     # match files without this basename
+  attr_reader :nomatch_path     # match files without this fullname
 
   def initialize
     @binary_files = "binary"
@@ -34,10 +34,10 @@ class InputOptions
     @size_limit = nil
     @skip_methods = nil
     @split_as_path = true
-    @with_basename = nil
-    @with_fullname = nil
-    @without_basename = nil
-    @without_fullname = nil
+    @match_name = nil
+    @match_path = nil
+    @nomatch_name = nil
+    @nomatch_path = nil
 
     $/ = "\n"
   end
@@ -74,10 +74,10 @@ class InputOptions
       "exclude_matching" => @exclude_matching,
       "size-limit" => @size_limit,
       "split-as-path" => @split_as_path,
-      "with-basename" => @with_basename,
-      "with-fullname" => @with_fullname,
-      "without-basename" => @without_basename,
-      "without-fullname" => @without_fullname,
+      "with-basename" => @match_name,
+      "with-fullname" => @match_path,
+      "without-basename" => @nomatch_name,
+      "without-fullname" => @nomatch_path,
     }
   end
 
@@ -97,20 +97,20 @@ class InputOptions
       @positive_filters = Array.new
       @negative_filters = Array.new
 
-      if @with_basename
-        @positive_filters << BaseNameFilter.new(@with_basename)
+      if @match_name
+        @positive_filters << BaseNameFilter.new(@match_name)
       end
 
-      if @with_fullname
-        @positive_filters << FullNameFilter.new(@with_fullname)
+      if @match_path
+        @positive_filters << FullNameFilter.new(@match_path)
       end
 
-      if @without_basename
-        @negative_filters << BaseNameFilter.new(@without_basename)
+      if @nomatch_name
+        @negative_filters << BaseNameFilter.new(@nomatch_name)
       end
 
-      if @without_fullname
-        @negative_filters << FullNameFilter.new(@without_fullname)
+      if @nomatch_path
+        @negative_filters << FullNameFilter.new(@nomatch_path)
       end
 
       if @size_limit
@@ -173,27 +173,27 @@ class InputOptions
     }
 
     optdata << basename_option = {
-      :tags => %w{ --basename --name --with-basename --with-name },
+      :tags => %w{ --basename --name --with-basename --with-name --match-name },
       :arg  => [ :string ],
-      :set  => Proc.new { |pat| @with_basename = Regexp.create pat }
+      :set  => Proc.new { |pat| @match_name = Regexp.create pat }
     }
 
-    optdata << without_basename_option = {
-      :tags => %w{ --without-basename --without-name },
+    optdata << nomatch_name_option = {
+      :tags => %w{ --without-basename --without-name --not-name },
       :arg  => [ :string ],
-      :set  => Proc.new { |pat| @without_basename = Regexp.create pat }
+      :set  => Proc.new { |pat| @nomatch_name = Regexp.create pat }
     }
 
     optdata << fullname_option = {
-      :tags => %w{ --fullname --path --with-fullname --with-path },
+      :tags => %w{ --fullname --path --with-fullname --with-path --match-path },
       :arg  => [ :string ],
-      :set  => Proc.new { |pat| @with_fullname = Regexp.create pat }
+      :set  => Proc.new { |pat| @match_path = Regexp.create pat }
     }
 
-    optdata << without_fullname_option = {
-      :tags => %w{ --without-fullname --without-path },
+    optdata << nomatch_path_option = {
+      :tags => %w{ --without-fullname --without-path --not-path },
       :arg  => [ :string ],
-      :set  => Proc.new { |pat| @without_fullname = Regexp.create pat }
+      :set  => Proc.new { |pat| @nomatch_path = Regexp.create pat }
     }
 
     optdata << exclude_matching_option = {

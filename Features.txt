@@ -24,3 +24,8 @@ Fri Nov  2 20:07:20 2012
 Sat Nov  3 14:25:54 2012
 
     help: improved comment for --null.
+
+Sun Nov  4 16:32:00 2012
+
+  help: added --split-as-path.
+  help: simplified --with[out]-[base|full]name to --[match|not]-[name|path].
