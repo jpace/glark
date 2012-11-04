@@ -14,12 +14,14 @@ class InputOptions
 
   attr_reader :binary_files
   attr_reader :range            # range to start and stop searching; nil => the entire file
+  attr_reader :size_limit
   attr_reader :directory        # read, skip, or recurse, a la grep
 
   def initialize
-    @range = Glark::Range.new 
-    @directory = "read"
     @binary_files = "binary"
+    @directory = "read"
+    @range = Glark::Range.new 
+    @size_limit = nil
   end
   
   def set_record_separator sep
@@ -42,6 +44,7 @@ class InputOptions
   def config_fields
     fields = {
       "binary-files" => @binary_files,
+      "size-limit" => @size_limit,
     }
   end
 
@@ -49,10 +52,17 @@ class InputOptions
     fields = {
       "binary_files" => @binary_files,
       "directory" => @directory,
+      "size-limit" => @size_limit,
     }
   end
 
   def update_fields fields
+    fields.each do |name, value|
+      case name
+      when "size-limit"
+        @size_limit = value.to_i
+      end
+    end
   end
 
   def add_as_options optdata    
@@ -85,6 +95,12 @@ class InputOptions
       :arg     => [ :required, :regexp, %r{ ^ [\'\"]? (text|without\-match|binary) [\'\"]? $ }x ],
       :set     => Proc.new { |md| @binary_files = md[1] },
       :rc   => %w{ binary-files },
+    }
+
+    optdata << size_limit_option = {
+      :tags => %w{ --size-limit },
+      :arg  => [ :integer ],
+      :set  => Proc.new { |val| @size_limit = val }
     }
   end
 end

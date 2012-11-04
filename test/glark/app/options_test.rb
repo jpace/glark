@@ -586,7 +586,8 @@ class Glark::OptionsTestCase < Glark::TestCase
        [ '--size-limit',   val.to_s ],
       ].each do |opt|
         run_test(opt + %w{ foo },
-                 :app => { :size_limit => val, :expr => RegexpExpression.new(%r{foo}, 0) })
+                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+                 :input => { :size_limit => val })
       end
     end
   end

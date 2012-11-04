@@ -51,8 +51,8 @@ class Glark::Runner
       @skip_methods << Proc.new { |fn| skip?(fn, @opts.with_fullname, @opts.without_fullname) }
     end
     
-    if @opts.size_limit
-      @skip_methods << Proc.new { |fn| File.size(fn) > @opts.size_limit }
+    if szlimit = @opts.input_options.size_limit
+      @skip_methods << Proc.new { |fn| File.size(fn) > szlimit }
     end    
   end
 

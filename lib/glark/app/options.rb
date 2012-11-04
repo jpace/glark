@@ -27,7 +27,6 @@ class Glark::Options
 
   attr_accessor :exclude_matching
   attr_accessor :local_config_files
-  attr_accessor :size_limit
   attr_accessor :split_as_path
   attr_accessor :with_basename
   attr_accessor :with_fullname
@@ -66,8 +65,6 @@ class Glark::Options
     @without_basename      = nil        # match files without this basename
     @without_fullname      = nil        # match files without this fullname
     
-    @size_limit = nil
-
     $/ = "\n"
 
     @outputopts.style = "glark"
@@ -119,12 +116,6 @@ class Glark::Options
       :tags => %w{ --without-fullname --without-path },
       :arg  => [ :string ],
       :set  => Proc.new { |pat| @without_fullname = Regexp.create pat }
-    }
-
-    optdata << size_limit_option = {
-      :tags => %w{ --size-limit },
-      :arg  => [ :integer ],
-      :set  => Proc.new { |val| @size_limit = val }
     }
   end
   
@@ -234,8 +225,6 @@ class Glark::Options
         @local_config_files = to_boolean value
       when "split-as-path"
         @split_as_path = to_boolean value
-      when "size-limit"
-        @size_limit = value.to_i
       end
     end
   end
@@ -287,7 +276,6 @@ class Glark::Options
   def write_configuration
     fields = {
       "local-config-files" => @local_config_files,
-      "size-limit" => @size_limit,
       "split-as-path" => @split_as_path,
     }
     all_option_sets.each do |opts|
