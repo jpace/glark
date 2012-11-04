@@ -588,7 +588,7 @@ class Glark::OptionsTestCase < Glark::TestCase
   end
 
   def test_size_limit
-    [ 0, 1, 2, 4, 8, 16, 32, 100, 1000, 10000, 100000 ].each do |val|
+    [ 0, 1, 10, 10000, 100000 ].each do |val|
       [
        [ '--size-limit=' + val.to_s ],
        [ '--size-limit',   val.to_s ],
