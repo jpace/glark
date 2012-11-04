@@ -5,9 +5,10 @@ require 'rubygems'
 require 'riel'
 require 'glark/match/factory'
 require 'tc'
+require 'stringio'
 
 class Glark::MatchTestCase < Glark::TestCase
-  def run_search_test expected, contents, exprargs
+  def run_test expected, fname, exprargs
     info "exprargs: #{exprargs}".yellow
     opts = Glark::Options.new
     
@@ -16,43 +17,15 @@ class Glark::MatchTestCase < Glark::TestCase
 
     expr = opts.match_options.read_expression args
     
-    outfname = infname = nil
+    sio = StringIO.new
+    opts.out = sio
 
-    begin
-      outfname = create_file do |outfile|
-        opts.out = outfile
-        infname = write_file contents
-
-        files = [ infname ]
-        glark = Glark::Runner.new opts, expr, files
-        glark.search infname
-      end
-
-      if false
-        puts "contents"
-        puts "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-        puts contents
-        puts "-------------------------------------------------------"
-        puts "expected"
-        puts expected
-        puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-        
-        info "IO::readlines(outfname): #{IO::readlines(outfname)}"
-
-        results = IO::readlines outfname
-        puts "results"
-        puts results
-        puts "*******************************************************" 
-      end
-
-      run_file_test outfname, expected
-    ensure
-      [ outfname, infname ].each do |fname|
-        if fname && File.exists?(fname)
-          File.delete fname
-        end
-      end
-    end
+    files = [ fname ]
+    glark = Glark::Runner.new opts, expr, files
+    glark.search fname
+    
+    result = sio.string
+    assert_equal expected.collect { |line| "#{line}\n" }.join(''), result
   end
 
   def get_colors patterns
@@ -65,17 +38,8 @@ class Glark::MatchTestCase < Glark::TestCase
   end
 
   def run_abc_test expected, exprargs
-    contents = [
-                "ABC",
-                "DEF",
-                "GHI",
-                "JKL",
-                "MNO",
-                "PQR",
-                "STU",
-               ]
-
-    run_search_test expected, contents, exprargs
+    fname = '/proj/org/incava/glark/test/resources/abcfile.txt'
+    run_test expected, fname, exprargs
   end
 
   def test_plain_old_match_first_line
@@ -104,26 +68,8 @@ class Glark::MatchTestCase < Glark::TestCase
   end
 
   def run_z_test expected, exprargs
-    contents = [
-                "zaffres",
-                "zoaea",
-                "zoaea's",
-                "zoea",
-                "zoeas",
-                "zonulae",
-                "zooea",
-                "zooeae",
-                "zooeal",
-                "zooeas",
-                "zooecia",
-                "zooecium",
-                "zoogloeae",
-                "zoogloeal",
-                "zoogloeas",
-                "zygaenid",
-               ]
-    
-    run_search_test expected, contents, exprargs
+    fname = '/proj/org/incava/glark/test/resources/zfile.txt'
+    run_test expected, fname, exprargs
   end
 
   def test_multicolor_alt_regexp_one_match

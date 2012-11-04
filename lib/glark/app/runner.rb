@@ -6,8 +6,8 @@ require 'English'
 require 'rubygems'
 require 'riel'
 require 'glark/app/options'
-require 'glark/input/binary_file'
 require 'glark/input/file'
+require 'glark/output/binary_file'
 require 'glark/output/file_names'
 require 'glark/output/glark_count'
 require 'glark/output/glark_lines'
@@ -104,6 +104,7 @@ class Glark::Runner
       log { "skipping file: #{fname}" }
     else
       log { "searching text #{fname} for #{@func}" }
+      # $stderr.puts "searching text #{fname} for #{@func}"
       io = fname == "-" ? $stdin : File.new(fname)
 
       file, output_type = create_file Glark::File, fname, io
@@ -125,11 +126,13 @@ class Glark::Runner
         log { "searching binary file #{fname} for #{@func}" }
         file = File.new fname
         file.binmode            # for MSDOS/WinWhatever
-        bf = BinaryFile.new fname, file
-        search_file bf
+        file = Glark::File.new fname, file, nil
+        output_opts = @opts.output_options
+        output_type = BinaryFile.new file, output_opts
+        search_file file, output_type
         
       when "text"
-        log { "processing binary file #{name} as text" }
+        log { "processing binary file #{fname} as text" }
         search_text fname
       end
     end
@@ -144,7 +147,7 @@ class Glark::Runner
       log { "recursing into directory #{fname}" }
       begin
         entries = Dir.entries(fname).reject { |x| x == "." || x == ".." }
-        entries.each do |e|
+        entries.sort.each do |e|
           entname = fname + "/" + e
           inode = File.exists?(entname) && File.stat(entname).ino
           if inode && @searched_files.include?(inode)

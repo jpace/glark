@@ -6,6 +6,7 @@ require 'riel'
 require 'glark/app/info/options'
 require 'glark/app/rcfile'
 require 'glark/match/options'
+require 'glark/input/options'
 require 'glark/input/range'
 require 'glark/output/options'
 require 'glark/output/context'
@@ -36,7 +37,6 @@ class Glark::Options
   attr_accessor :without_fullname
 
   attr_reader :colors
-  attr_reader :range
 
   def expr
     @matchopts.expr
@@ -77,14 +77,13 @@ class Glark::Options
     @outputopts.style = "glark"
   end
 
-  def add_input_options optdata
-    optdata << record_separator_option = {
-      :res => [ Regexp.new '^ -0 (\d{1,3})? $ ', Regexp::EXTENDED ],
-      :set => Proc.new { |md| rs = md ? md[1] : 0; set_record_separator rs }
-    }
+  def range
+    @inputopts.range
+  end
 
-    @range = Glark::Range.new # range to start and stop searching; nil => the entire file
-    @range.add_as_option optdata
+  def add_input_options optdata
+    @inputopts = InputOptions.new
+    @inputopts.add_as_options optdata
     
     optdata << exclude_matching_option = {
       :tags => %w{ -M --exclude-matching },
@@ -361,6 +360,6 @@ class Glark::Options
 
   # check options for collisions/data validity
   def validate!
-    @range.validate!
+    @inputopts.range.validate!
   end
 end
