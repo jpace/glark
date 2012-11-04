@@ -120,6 +120,28 @@ class OutputOptions
     end
   end
 
+  def create_output_type file
+    output_type_cls.new file, self
+  end
+
+  def output_type_cls
+    if @count
+      if @style == "grep" 
+        return GrepCount
+      else
+        return GlarkCount
+      end
+    elsif @file_names_only
+      return FileNames
+    elsif !@filter
+      return UnfilteredLines
+    elsif @style == "grep"
+      return GrepLines
+    else
+      return GlarkLines
+    end
+  end
+
   def add_as_options optdata
     @context.add_as_option optdata
 

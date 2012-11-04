@@ -54,31 +54,10 @@ class Glark::Runner
     @opts.input_options.skipped? fname
   end
 
-  def get_output_type 
-    output_opts = @opts.output_options
-    
-    if output_opts.count
-      if output_opts.style == "grep" 
-        return GrepCount
-      else
-        return GlarkCount
-      end
-    elsif output_opts.file_names_only
-      return FileNames
-    elsif !output_opts.filter
-      return UnfilteredLines
-    elsif output_opts.style == "grep"
-      return GrepLines
-    else
-      return GlarkLines
-    end
-  end
-
   def create_file filecls, name, io
     file = filecls.new name, io, @opts.range
     output_opts = @opts.output_options
-
-    output_type = get_output_type.new file, output_opts
+    output_type = output_opts.create_output_type file
 
     [ file, output_type ]
   end
