@@ -27,7 +27,6 @@ class Glark::Options
   attr_accessor :binary_files
   attr_accessor :directory
   attr_accessor :exclude_matching
-  attr_accessor :extract_matches
   attr_accessor :local_config_files
   attr_accessor :size_limit
   attr_accessor :split_as_path
@@ -63,7 +62,6 @@ class Glark::Options
     @directory             = "read"     # read, skip, or recurse, a la grep
     @exclude_matching      = false      # exclude files whose names match the expression
     @explain               = false      # display a legible version of the expression
-    @extract_matches       = false      # whether to show _only_ the part that matched
     @local_config_files    = false      # use local .glarkrc files
 
     @split_as_path         = true       # whether to split arguments that include the path separator
@@ -332,7 +330,6 @@ class Glark::Options
       "binary_files" => @binary_files,
       "directory" => @directory,
       "exclude_matching" => @exclude_matching,
-      "extract_matches" => @extract_matches,
       "local_config_files" => @local_config_files,
       "with-basename" => @with_basename,
       "with-fullname" => @with_fullname,

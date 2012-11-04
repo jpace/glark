@@ -23,7 +23,7 @@ class GlarkHelp
     puts "      --without-fullname, "
     puts "      --without-path EXPR        Ignore files with full names matching EXPR"
     puts "  -M, --exclude-matching         Ignore files with names matching the expression"
-    puts "  -R, --range NUM[%],NUM[%]      Restrict the search to the given range of lines"
+    puts "  -R, --range NUM[%],NUM[%]      Restrict the search to the given range of lines per file."
     puts "  -r, --recurse                  Recurse through directories"
     puts "      --size-limit=SIZE          Search only files no larger than SIZE"
     puts ""

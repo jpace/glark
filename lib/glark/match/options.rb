@@ -56,6 +56,7 @@ class MatchOptions
   def dump_fields
     fields = {
       "expr" => @expr,
+      "extract_matches" => @extract_matches,
       "ignorecase" => @ignorecase,
       "text_highlights" => text_highlights.compact.collect { |hl| hl.highlight("text") }.join(", "),
       "whole_lines" => @whole_lines,
