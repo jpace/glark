@@ -93,13 +93,13 @@ class Glark::Options
       :set  => Proc.new { @exclude_matching = true }
     }
 
-    optdata << exclude_matching_option = {
+    optdata << directory_option = {
       :tags => %w{ -d },
       :arg  => [ :string ],
       :set  => Proc.new { |val| @directory = val }
     }
 
-    optdata << exclude_matching_option = {
+    optdata << recurse_option = {
       :tags => %w{ -r --recurse },
       :set  => Proc.new { @directory = "recurse" }
     }
