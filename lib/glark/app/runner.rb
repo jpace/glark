@@ -54,27 +54,31 @@ class Glark::Runner
     @opts.input_options.skipped? fname
   end
 
+  def get_output_type 
+    output_opts = @opts.output_options
+    
+    if output_opts.count
+      if output_opts.style == "grep" 
+        return GrepCount
+      else
+        return GlarkCount
+      end
+    elsif output_opts.file_names_only
+      return FileNames
+    elsif !output_opts.filter
+      return UnfilteredLines
+    elsif output_opts.style == "grep"
+      return GrepLines
+    else
+      return GlarkLines
+    end
+  end
+
   def create_file filecls, name, io
     file = filecls.new name, io, @opts.range
     output_opts = @opts.output_options
 
-    output_type = nil
-    
-    if output_opts.count
-      if output_opts.style == "grep" 
-        output_type = GrepCount.new file, output_opts
-      else
-        output_type = GlarkCount.new file, output_opts
-      end
-    elsif output_opts.file_names_only
-      output_type = FileNames.new file, output_opts
-    elsif !output_opts.filter
-      output_type = UnfilteredLines.new file, output_opts
-    elsif output_opts.style == "grep"
-      output_type = GrepLines.new file, output_opts
-    else
-      output_type = GlarkLines.new file, output_opts
-    end
+    output_type = get_output_type.new file, output_opts
 
     [ file, output_type ]
   end
@@ -100,6 +104,7 @@ class Glark::Runner
       file.binmode            # for MSDOS/WinWhatever
       file = Glark::File.new fname, file, nil
       output_opts = @opts.output_options
+      # yes, BinaryFile is an output type.
       output_type = BinaryFile.new file, output_opts
       search_file file, output_type
       
