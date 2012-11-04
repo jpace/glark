@@ -32,7 +32,7 @@ class Glark::Runner
     @func = func
     @searched_files = Array.new          # files searched, so we don't cycle through links
     
-    if @opts.split_as_path
+    if @opts.input_options.split_as_path
       files = files.collect { |f| f.split File::PATH_SEPARATOR  }.flatten
     end
     

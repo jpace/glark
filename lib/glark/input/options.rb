@@ -14,10 +14,11 @@ class InputOptions
   include Loggable, Glark::OptionUtil  
 
   attr_reader :binary_files     # how to process binary (non-text) files
+  attr_reader :directory        # read, skip, or recurse, a la grep
   attr_reader :exclude_matching # exclude files whose names match the expression
   attr_reader :range            # range to start and stop searching; nil => the entire file
   attr_reader :size_limit       # maximum size of files to be searched
-  attr_reader :directory        # read, skip, or recurse, a la grep
+  attr_reader :split_as_path    # use file arguments as path elements
   attr_reader :with_basename    # match files with this basename
   attr_reader :with_fullname    # match files with this fullname
   attr_reader :without_basename # match files without this basename
@@ -27,15 +28,16 @@ class InputOptions
     @binary_files = "binary"
     @directory = "read"
     @exclude_matching = false      # exclude files whose names match the expression
+    @negative_filters = nil
+    @positive_filters = nil
     @range = Glark::Range.new 
     @size_limit = nil
+    @skip_methods = nil
+    @split_as_path = true
     @with_basename = nil
     @with_fullname = nil
     @without_basename = nil
     @without_fullname = nil
-    @skip_methods = nil
-    @positive_filters = nil
-    @negative_filters = nil
 
     $/ = "\n"
   end
@@ -61,6 +63,7 @@ class InputOptions
     fields = {
       "binary-files" => @binary_files,
       "size-limit" => @size_limit,
+      "split-as-path" => @split_as_path,
     }
   end
 
@@ -70,6 +73,7 @@ class InputOptions
       "directory" => @directory,
       "exclude_matching" => @exclude_matching,
       "size-limit" => @size_limit,
+      "split-as-path" => @split_as_path,
       "with-basename" => @with_basename,
       "with-fullname" => @with_fullname,
       "without-basename" => @without_basename,
@@ -82,6 +86,8 @@ class InputOptions
       case name
       when "size-limit"
         @size_limit = value.to_i
+      when "split-as-path"
+        @split_as_path = to_boolean value
       end
     end
   end
@@ -193,6 +199,17 @@ class InputOptions
     optdata << exclude_matching_option = {
       :tags => %w{ -M --exclude-matching },
       :set  => Proc.new { @exclude_matching = true }
+    }
+    
+    optdata << no_split_as_path_option = {
+      :tags => %w{ --no-split-as-path },
+      :set  => Proc.new { @split_as_path = false }
+    }
+
+    optdata << split_as_path_option = {
+      :tags => %w{ --split-as-path },
+      :arg  => [ :boolean, :optional ],
+      :set  => Proc.new { |val| @split_as_path = val }
     }
   end
 end

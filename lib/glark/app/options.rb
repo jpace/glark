@@ -26,7 +26,6 @@ class Glark::Options
   include Loggable, Glark::OptionUtil
 
   attr_accessor :local_config_files
-  attr_accessor :split_as_path
 
   attr_reader :colors
 
@@ -50,10 +49,7 @@ class Glark::Options
     
     @optset = OptProc::OptionSet.new optdata
     
-    @explain               = false      # display a legible version of the expression
-    @local_config_files    = false      # use local .glarkrc files
-
-    @split_as_path         = true       # whether to split arguments that include the path separator
+    @local_config_files = false      # use local .glarkrc files
     
     @outputopts.style = "glark"
   end
@@ -65,17 +61,6 @@ class Glark::Options
   def add_input_options optdata
     @inputopts = InputOptions.new
     @inputopts.add_as_options optdata
-    
-    optdata << no_split_as_path_option = {
-      :tags => %w{ --no-split-as-path },
-      :set  => Proc.new { @split_as_path = false }
-    }
-
-    optdata << split_as_path_option = {
-      :tags => %w{ --split-as-path },
-      :arg  => [ :boolean, :optional ],
-      :set  => Proc.new { |val| @split_as_path = val }
-    }
   end
   
   def add_match_options optdata
@@ -182,8 +167,6 @@ class Glark::Options
       case name
       when "local-config-files"
         @local_config_files = to_boolean value
-      when "split-as-path"
-        @split_as_path = to_boolean value
       end
     end
   end
@@ -235,7 +218,6 @@ class Glark::Options
   def write_configuration
     fields = {
       "local-config-files" => @local_config_files,
-      "split-as-path" => @split_as_path,
     }
     all_option_sets.each do |opts|
       fields.merge! opts.config_fields

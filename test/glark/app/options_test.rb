@@ -387,7 +387,8 @@ class Glark::OptionsTestCase < Glark::TestCase
   def test_no_split_as_path
     %w{ --no-split-as-path }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :split_as_path => false, :expr => RegexpExpression.new(%r{foo}, 0) })
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :input => { :split_as_path => false })
     end
   end
 
@@ -398,14 +399,16 @@ class Glark::OptionsTestCase < Glark::TestCase
        [ '--split-as-path=' + val ]
       ].each do |opt|
         run_test(opt + [ 'foo' ],
-                 :app => { :split_as_path => exp, :expr => RegexpExpression.new(%r{foo}, 0) })
+                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+                 :input => { :split_as_path => exp })
       end
     end
   end
 
   def test_split_as_path
     run_test([ '--split-as-path', 'foo' ],
-             :app => { :split_as_path => true, :expr => RegexpExpression.new(%r{foo}, 0) })
+             :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+             :input => { :split_as_path => true })
     
     run_split_as_path_test(true,  %w{ true  on  yes })
     run_split_as_path_test(false, %w{ false off no  })
