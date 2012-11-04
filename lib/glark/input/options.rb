@@ -7,6 +7,7 @@
 require 'rubygems'
 require 'riel/log'
 require 'glark/input/range'
+require 'glark/input/filter'
 require 'glark/util/optutil'
 
 class InputOptions
@@ -33,6 +34,8 @@ class InputOptions
     @without_basename = nil
     @without_fullname = nil
     @skip_methods = nil
+    @positive_filters = nil
+    @negative_filters = nil
 
     $/ = "\n"
   end
@@ -83,32 +86,48 @@ class InputOptions
     end
   end
 
-  def skip? name, opts_with, opts_without
-    inc = opts_with    && !opts_with.match(name)
-    exc = opts_without &&  opts_without.match(name)
-    inc || exc
-  end
-
   def skipped? fname
-    unless @skip_methods
-      @skip_methods = Array.new
+    unless @positive_filters
+      @positive_filters = Array.new
+      @negative_filters = Array.new
 
-      if @with_basename || @without_basename
-        @skip_methods << Proc.new { |fn| skip?(File.basename(fn), @with_basename, @without_basename) }
+      if @with_basename
+        @positive_filters << BaseNameFilter.new(@with_basename)
       end
-      
-      if @with_fullname || @without_fullname
-        @skip_methods << Proc.new { |fn| skip?(fn, @with_fullname, @without_fullname) }
+
+      if @with_fullname
+        @positive_filters << FullNameFilter.new(@with_fullname)
       end
-      
+
+      if @without_basename
+        @negative_filters << BaseNameFilter.new(@without_basename)
+      end
+
+      if @without_fullname
+        @negative_filters << FullNameFilter.new(@without_fullname)
+      end
+
       if @size_limit
-        @skip_methods << Proc.new { |fn| File.size(fn) > @size_limit }
+        @negative_filters << SizeLimitFilter.new(@size_limit)
+      end
+    end
+      
+    pn = Pathname.new fname
+    @positive_filters.each do |filter|
+      unless filter.match? pn
+        return true
       end
     end
 
-    @skip_methods.detect { |meth| meth.call fname }
-  end
+    @negative_filters.each do |filter|
+      if filter.match? pn
+        return true
+      end
+    end
 
+    false
+  end
+  
   def add_as_options optdata    
     optdata << record_separator_option = {
       :res => [ Regexp.new '^ -0 (\d{1,3})? $ ', Regexp::EXTENDED ],

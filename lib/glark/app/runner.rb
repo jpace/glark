@@ -80,70 +80,53 @@ class Glark::Runner
   end
 
   def search_text fname
-    if skipped? fname
-      log { "skipping file: #{fname}" }
-    else
-      log { "searching text #{fname} for #{@func}" }
-      # $stderr.puts "searching text #{fname} for #{@func}"
-      io = fname == "-" ? $stdin : File.new(fname)
+    return if skipped? fname
 
-      file, output_type = create_file Glark::File, fname, io
-      search_file file, output_type
-    end
+    io = fname == "-" ? $stdin : File.new(fname)
+
+    file, output_type = create_file Glark::File, fname, io
+    search_file file, output_type
   end
 
   def search_binary fname
-    if skipped? fname
-      log { "skipping file: #{fname}" }
-    else
-      log { "handling binary" }
+    return if skipped? fname
+
+    case @opts.input_options.binary_files
+    when "without-match"
+      nil
       
-      case @opts.input_options.binary_files
-      when "without-match"
-        log { "skipping binary file #{fname}" }
-        
-      when "binary"
-        log { "searching binary file #{fname} for #{@func}" }
-        file = File.new fname
-        file.binmode            # for MSDOS/WinWhatever
-        file = Glark::File.new fname, file, nil
-        output_opts = @opts.output_options
-        output_type = BinaryFile.new file, output_opts
-        search_file file, output_type
-        
-      when "text"
-        log { "processing binary file #{fname} as text" }
-        search_text fname
-      end
+    when "binary"
+      file = File.new fname
+      file.binmode            # for MSDOS/WinWhatever
+      file = Glark::File.new fname, file, nil
+      output_opts = @opts.output_options
+      output_type = BinaryFile.new file, output_opts
+      search_file file, output_type
+      
+    when "text"
+      search_text fname
     end
   end
 
   def search_directory fname
-    log { "processing directory" }
     case @opts.input_options.directory
     when "read"
       write "#{fname}: Is a directory"
     when "recurse"
-      log { "recursing into directory #{fname}" }
       begin
         entries = Dir.entries(fname).reject { |x| x == "." || x == ".." }
         entries.sort.each do |e|
           entname = fname + "/" + e
           inode = File.exists?(entname) && File.stat(entname).ino
-          if inode && @searched_files.include?(inode)
-            Log.verbose && log("file already processed: #{entname}")
-          else
-            @searched_files << inode
-            search entname 
-          end
+          next if inode && @searched_files.include?(inode)
+          @searched_files << inode
+          search entname 
         end
       rescue Errno::EACCES => e
         write "directory not readable: #{fname}"
       end
     when "skip"
-      log { "skipping directory #{fname}" }
-    else
-      log { "directory: #{@opts.directory}" }
+      nil
     end
   end
 
@@ -162,12 +145,7 @@ class Glark::Runner
   def search name
     if @opts.input_options.exclude_matching
       expr = @opts.expr
-      if expr.respond_to?(:re) && expr.re.match(name)
-        log { "skipping file #{name} with matching name" }
-        return
-      else
-        log { "not skipping file #{name}" }
-      end
+      return if expr.respond_to?(:re) && expr.re.match(name)
     end
     
     if name == "-" 
