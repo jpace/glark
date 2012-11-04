@@ -355,7 +355,8 @@ class Glark::OptionsTestCase < Glark::TestCase
   def test_exclude_matching
     %w{ -M --exclude-matching }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :exclude_matching  => true, :expr => RegexpExpression.new(%r{foo}, 0) })
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :input => { :exclude_matching => true })
     end
   end
 

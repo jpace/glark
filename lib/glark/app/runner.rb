@@ -182,7 +182,7 @@ class Glark::Runner
   end
 
   def search name
-    if @opts.exclude_matching
+    if @opts.input_options.exclude_matching
       expr = @opts.expr
       if expr.respond_to?(:re) && expr.re.match(name)
         log { "skipping file #{name} with matching name" }

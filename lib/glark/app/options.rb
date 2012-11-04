@@ -25,7 +25,6 @@ end
 class Glark::Options
   include Loggable, Glark::OptionUtil
 
-  attr_accessor :exclude_matching
   attr_accessor :local_config_files
   attr_accessor :split_as_path
 
@@ -51,7 +50,6 @@ class Glark::Options
     
     @optset = OptProc::OptionSet.new optdata
     
-    @exclude_matching      = false      # exclude files whose names match the expression
     @explain               = false      # display a legible version of the expression
     @local_config_files    = false      # use local .glarkrc files
 
@@ -68,11 +66,6 @@ class Glark::Options
     @inputopts = InputOptions.new
     @inputopts.add_as_options optdata
     
-    optdata << exclude_matching_option = {
-      :tags => %w{ -M --exclude-matching },
-      :set  => Proc.new { @exclude_matching = true }
-    }
-
     optdata << no_split_as_path_option = {
       :tags => %w{ --no-split-as-path },
       :set  => Proc.new { @split_as_path = false }
@@ -255,7 +248,6 @@ class Glark::Options
 
   def dump_all_fields
     fields = {
-      "exclude_matching" => @exclude_matching,
       "local_config_files" => @local_config_files,
     }
     all_option_sets.each do |opts|

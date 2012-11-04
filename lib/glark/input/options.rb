@@ -12,7 +12,8 @@ require 'glark/util/optutil'
 class InputOptions
   include Loggable, Glark::OptionUtil  
 
-  attr_reader :binary_files
+  attr_reader :binary_files     # how to process binary (non-text) files
+  attr_reader :exclude_matching # exclude files whose names match the expression
   attr_reader :range            # range to start and stop searching; nil => the entire file
   attr_reader :size_limit       # maximum size of files to be searched
   attr_reader :directory        # read, skip, or recurse, a la grep
@@ -24,6 +25,7 @@ class InputOptions
   def initialize
     @binary_files = "binary"
     @directory = "read"
+    @exclude_matching = false      # exclude files whose names match the expression
     @range = Glark::Range.new 
     @size_limit = nil
     @with_basename = nil
@@ -62,6 +64,7 @@ class InputOptions
     fields = {
       "binary_files" => @binary_files,
       "directory" => @directory,
+      "exclude_matching" => @exclude_matching,
       "size-limit" => @size_limit,
       "with-basename" => @with_basename,
       "with-fullname" => @with_fullname,
@@ -139,6 +142,11 @@ class InputOptions
       :tags => %w{ --without-fullname --without-path },
       :arg  => [ :string ],
       :set  => Proc.new { |pat| @without_fullname = Regexp.create pat }
+    }
+
+    optdata << exclude_matching_option = {
+      :tags => %w{ -M --exclude-matching },
+      :set  => Proc.new { @exclude_matching = true }
     }
   end
 end
