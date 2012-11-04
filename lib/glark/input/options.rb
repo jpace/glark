@@ -32,6 +32,7 @@ class InputOptions
     @with_fullname = nil
     @without_basename = nil
     @without_fullname = nil
+    @skip_methods = nil
 
     $/ = "\n"
   end
@@ -80,6 +81,32 @@ class InputOptions
         @size_limit = value.to_i
       end
     end
+  end
+
+  def skip? name, opts_with, opts_without
+    inc = opts_with    && !opts_with.match(name)
+    exc = opts_without &&  opts_without.match(name)
+    inc || exc
+  end
+
+  def skipped? fname
+    unless @skip_methods
+      @skip_methods = Array.new
+
+      if @with_basename || @without_basename
+        @skip_methods << Proc.new { |fn| skip?(File.basename(fn), @with_basename, @without_basename) }
+      end
+      
+      if @with_fullname || @without_fullname
+        @skip_methods << Proc.new { |fn| skip?(fn, @with_fullname, @without_fullname) }
+      end
+      
+      if @size_limit
+        @skip_methods << Proc.new { |fn| File.size(fn) > @size_limit }
+      end
+    end
+
+    @skip_methods.detect { |meth| meth.call fname }
   end
 
   def add_as_options optdata    

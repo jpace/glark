@@ -40,22 +40,6 @@ class Glark::Runner
 
     # 0 == matches, 1 == no matches, 2 == error
     @exit_status = @invert_match ? 0 : 1
-
-    @skip_methods = Array.new
-
-    inputopts = @opts.input_options
-
-    if inputopts.with_basename || inputopts.without_basename
-      @skip_methods << Proc.new { |fn| skip?(File.basename(fn), inputopts.with_basename, inputopts.without_basename) }
-    end
-
-    if inputopts.with_fullname || inputopts.without_fullname
-      @skip_methods << Proc.new { |fn| skip?(fn, inputopts.with_fullname, inputopts.without_fullname) }
-    end
-    
-    if szlimit = inputopts.size_limit
-      @skip_methods << Proc.new { |fn| File.size(fn) > szlimit }
-    end    
   end
 
   def search_file file, output_type
@@ -66,14 +50,8 @@ class Glark::Runner
     end
   end
 
-  def skip? name, opts_with, opts_without
-    inc = opts_with    && !opts_with.match(name)
-    exc = opts_without &&  opts_without.match(name)
-    inc || exc
-  end
-
   def skipped? fname
-    @skip_methods.detect { |meth| meth.call fname }
+    @opts.input_options.skipped? fname
   end
 
   def create_file filecls, name, io
