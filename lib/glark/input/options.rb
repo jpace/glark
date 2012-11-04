@@ -14,14 +14,24 @@ class InputOptions
 
   attr_reader :binary_files
   attr_reader :range            # range to start and stop searching; nil => the entire file
-  attr_reader :size_limit
+  attr_reader :size_limit       # maximum size of files to be searched
   attr_reader :directory        # read, skip, or recurse, a la grep
+  attr_reader :with_basename    # match files with this basename
+  attr_reader :with_fullname    # match files with this fullname
+  attr_reader :without_basename # match files without this basename
+  attr_reader :without_fullname # match files without this fullname
 
   def initialize
     @binary_files = "binary"
     @directory = "read"
     @range = Glark::Range.new 
     @size_limit = nil
+    @with_basename = nil
+    @with_fullname = nil
+    @without_basename = nil
+    @without_fullname = nil
+
+    $/ = "\n"
   end
   
   def set_record_separator sep
@@ -53,6 +63,10 @@ class InputOptions
       "binary_files" => @binary_files,
       "directory" => @directory,
       "size-limit" => @size_limit,
+      "with-basename" => @with_basename,
+      "with-fullname" => @with_fullname,
+      "without-basename" => @without_basename,
+      "without-fullname" => @without_fullname,
     }
   end
 
@@ -101,6 +115,30 @@ class InputOptions
       :tags => %w{ --size-limit },
       :arg  => [ :integer ],
       :set  => Proc.new { |val| @size_limit = val }
+    }
+
+    optdata << basename_option = {
+      :tags => %w{ --basename --name --with-basename --with-name },
+      :arg  => [ :string ],
+      :set  => Proc.new { |pat| @with_basename = Regexp.create pat }
+    }
+
+    optdata << without_basename_option = {
+      :tags => %w{ --without-basename --without-name },
+      :arg  => [ :string ],
+      :set  => Proc.new { |pat| @without_basename = Regexp.create pat }
+    }
+
+    optdata << fullname_option = {
+      :tags => %w{ --fullname --path --with-fullname --with-path },
+      :arg  => [ :string ],
+      :set  => Proc.new { |pat| @with_fullname = Regexp.create pat }
+    }
+
+    optdata << without_fullname_option = {
+      :tags => %w{ --without-fullname --without-path },
+      :arg  => [ :string ],
+      :set  => Proc.new { |pat| @without_fullname = Regexp.create pat }
     }
   end
 end

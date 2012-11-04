@@ -474,7 +474,8 @@ class Glark::OptionsTestCase < Glark::TestCase
          [ tag + '=' + pat ]
         ].each do |args|
           run_test(args + %w{ foo },
-                   :app => { :with_basename => Regexp.new(pat), :expr => RegexpExpression.new(%r{foo}, 0) })
+                   :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+                   :input => { :with_basename => Regexp.new(pat) })
         end
       end
     end
@@ -488,7 +489,8 @@ class Glark::OptionsTestCase < Glark::TestCase
          [ tag + '=' + pat ]
         ].each do |args|
           run_test(args + %w{ foo },
-                   :app => { :without_basename => Regexp.new(pat), :expr => RegexpExpression.new(%r{foo}, 0) })
+                   :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+                   :input => { :without_basename => Regexp.new(pat) })
         end
       end
     end
@@ -502,7 +504,8 @@ class Glark::OptionsTestCase < Glark::TestCase
          [ tag + '=' + pat ]
         ].each do |args|
           run_test(args + %w{ foo },
-                   :app => { :with_fullname => Regexp.new(pat), :expr => RegexpExpression.new(%r{foo}, 0) })
+                   :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+                   :input => { :with_fullname => Regexp.new(pat) })
         end
       end
     end
@@ -516,7 +519,8 @@ class Glark::OptionsTestCase < Glark::TestCase
          [ tag + '=' + pat ]
         ].each do |args|
           run_test(args + %w{ foo },
-                   :app => { :without_fullname => Regexp.new(pat), :expr => RegexpExpression.new(%r{foo}, 0) })
+                   :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+                   :input => { :without_fullname => Regexp.new(pat) })
         end
       end
     end

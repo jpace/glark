@@ -28,10 +28,6 @@ class Glark::Options
   attr_accessor :exclude_matching
   attr_accessor :local_config_files
   attr_accessor :split_as_path
-  attr_accessor :with_basename
-  attr_accessor :with_fullname
-  attr_accessor :without_basename
-  attr_accessor :without_fullname
 
   attr_reader :colors
 
@@ -60,13 +56,7 @@ class Glark::Options
     @local_config_files    = false      # use local .glarkrc files
 
     @split_as_path         = true       # whether to split arguments that include the path separator
-    @with_basename         = nil        # match files with this basename
-    @with_fullname         = nil        # match files with this fullname
-    @without_basename      = nil        # match files without this basename
-    @without_fullname      = nil        # match files without this fullname
     
-    $/ = "\n"
-
     @outputopts.style = "glark"
   end
 
@@ -92,30 +82,6 @@ class Glark::Options
       :tags => %w{ --split-as-path },
       :arg  => [ :boolean, :optional ],
       :set  => Proc.new { |val| @split_as_path = val }
-    }
-
-    optdata << basename_option = {
-      :tags => %w{ --basename --name --with-basename --with-name },
-      :arg  => [ :string ],
-      :set  => Proc.new { |pat| @with_basename = Regexp.create pat }
-    }
-
-    optdata << without_basename_option = {
-      :tags => %w{ --without-basename --without-name },
-      :arg  => [ :string ],
-      :set  => Proc.new { |pat| @without_basename = Regexp.create pat }
-    }
-
-    optdata << fullname_option = {
-      :tags => %w{ --fullname --path --with-fullname --with-path },
-      :arg  => [ :string ],
-      :set  => Proc.new { |pat| @with_fullname = Regexp.create pat }
-    }
-
-    optdata << without_fullname_option = {
-      :tags => %w{ --without-fullname --without-path },
-      :arg  => [ :string ],
-      :set  => Proc.new { |pat| @without_fullname = Regexp.create pat }
     }
   end
   
@@ -291,10 +257,6 @@ class Glark::Options
     fields = {
       "exclude_matching" => @exclude_matching,
       "local_config_files" => @local_config_files,
-      "with-basename" => @with_basename,
-      "with-fullname" => @with_fullname,
-      "without-basename" => @without_basename,
-      "without-fullname" => @without_fullname,
     }
     all_option_sets.each do |opts|
       fields.merge! opts.dump_fields

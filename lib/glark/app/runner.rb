@@ -43,15 +43,17 @@ class Glark::Runner
 
     @skip_methods = Array.new
 
-    if @opts.with_basename || @opts.without_basename
-      @skip_methods << Proc.new { |fn| skip?(File.basename(fn), @opts.with_basename, @opts.without_basename) }
+    inputopts = @opts.input_options
+
+    if inputopts.with_basename || inputopts.without_basename
+      @skip_methods << Proc.new { |fn| skip?(File.basename(fn), inputopts.with_basename, inputopts.without_basename) }
     end
 
-    if @opts.with_fullname || @opts.without_fullname
-      @skip_methods << Proc.new { |fn| skip?(fn, @opts.with_fullname, @opts.without_fullname) }
+    if inputopts.with_fullname || inputopts.without_fullname
+      @skip_methods << Proc.new { |fn| skip?(fn, inputopts.with_fullname, inputopts.without_fullname) }
     end
     
-    if szlimit = @opts.input_options.size_limit
+    if szlimit = inputopts.size_limit
       @skip_methods << Proc.new { |fn| File.size(fn) > szlimit }
     end    
   end
