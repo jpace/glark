@@ -42,10 +42,8 @@ class Glark::OptionsTestCase < Glark::TestCase
 
   def test_extract_match
     run_test(%w{ --extract-matches foo file1 file2 },
-             :app => { 
-               :extract_matches => true,
-               :expr => RegexpExpression.new(%r{foo}, 0)
-             })
+             :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+             :match => { :extract_matches => true })
   end
 
   def test_extract_match_incomplete
@@ -53,10 +51,8 @@ class Glark::OptionsTestCase < Glark::TestCase
     (5 ... str.length - 1).each do |idx|
       tag = str[0 .. idx]
       run_test([ tag ] + %w{ foo file1 file2 },
-               :app => { 
-                 :extract_matches => true,
-                 :expr => RegexpExpression.new(%r{foo}, 0)
-               })
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :match => { :extract_matches => true })
     end
   end
 
@@ -380,7 +376,8 @@ class Glark::OptionsTestCase < Glark::TestCase
   def test_extract_matches
     %w{ -y --extract-matches }.each do |opt|
       run_test([ opt, 'foo' ],
-               :app => { :extract_matches => true, :expr => RegexpExpression.new(%r{foo}, 0) })
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+               :match => { :extract_matches => true })
     end
   end
 

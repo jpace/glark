@@ -112,5 +112,10 @@ class MatchOptions
       :arg  => [ :string ],
       :set  => Proc.new { |val| @colors.text_highlights = [ @colors.make_highlight "text-color", val ] }
     }
+
+    optdata << extract_matches_option = {
+      :tags => %w{ -y --extract-matches },
+      :set  => Proc.new { @extract_matches = true }
+    }
   end
 end

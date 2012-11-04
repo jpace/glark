@@ -104,11 +104,6 @@ class Glark::Options
       :set  => Proc.new { @directory = "recurse" }
     }
 
-    optdata << extract_matches_option = {
-      :tags => %w{ -y --extract-matches },
-      :set  => Proc.new { @extract_matches = true }
-    }
-
     optdata << no_split_as_path_option = {
       :tags => %w{ --no-split-as-path },
       :set  => Proc.new { @split_as_path = false }
