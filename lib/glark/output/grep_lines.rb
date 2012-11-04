@@ -14,9 +14,7 @@ class GrepLines < Lines
   # prints the line, and adjusts for the fact that in our world, lines are
   # 0-indexed, whereas they are displayed as if 1-indexed.
   def print_line lnum, ch = nil
-    info "lnum: #{lnum}"
     ln = get_line_to_print lnum
-    info "ln: #{ln}"
     next unless ln
 
     print_file_name

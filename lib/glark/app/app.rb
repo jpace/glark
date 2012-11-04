@@ -19,11 +19,8 @@ class Glark::App
     begin
       Log.set_widths(-15, -40, -40)
       
-      Log.log { "loading options" }
-      opts = Glark::Options.new
-      
+      opts = Glark::Options.new      
       opts.run ARGV 
-      Log.log { "done loading options" }
 
       # To get rid of the annoying stack trace on ctrl-C:
       trap("INT") { abort }
@@ -32,32 +29,16 @@ class Glark::App
         puts opts.expr.explain
       end
 
-      files = if ARGV.size > 0 then
-                if opts.split_as_path
-                  ARGV.collect { |f| f.split File::PATH_SEPARATOR  }.flatten
-                else
-                  ARGV
-                end
-              else 
-                [ '-' ]
-              end
+      files = ARGV.size > 0 ? ARGV : [ '-' ]
+      runner = Glark::Runner.new opts, opts.expr, files 
 
-      opts.output_options.set_files files
+      runner.end_processing
 
-      glark = Glark::Runner.new opts, opts.expr, files 
-
-      files.each do |f|
-        glark.search f  
-      end
-
-      glark.end_processing
-
-      exit glark.exit_status
+      exit runner.exit_status
     rescue => e
       # show the message, and the stack trace only if verbose:
       $stderr.puts "error: #{e}"
-      ### $$$ production code shouldn't have the backtrace:
-      if Log.verbose || true
+      if Log.verbose
         $stderr.puts e.backtrace
         raise
       else

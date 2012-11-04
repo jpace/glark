@@ -21,7 +21,6 @@ class Glark::MatchTestCase < Glark::TestCase
 
     files = [ fname ]
     glark = Glark::Runner.new opts, expr, files
-    glark.search fname
     
     result = sio.string
     assert_equal expected.collect { |line| "#{line}\n" }.join(''), result

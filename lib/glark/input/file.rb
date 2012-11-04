@@ -22,7 +22,6 @@ class Glark::File
       @lines = Glark::LinesCR.new fname, io
     else
       @lines = Glark::LinesNonCR.new fname, io
-      info "@lines: #{@lines}".on_cyan
     end
   end
   

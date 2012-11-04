@@ -22,16 +22,11 @@ class Glark::AppTestCase < Glark::TestCase
     Log.verbose = true
 
     glark = Glark::Runner.new gopt, gopt.expr, files
-    files.each do |file|
-      info "file: #{file}".red
-      glark.search file
-      info "file: #{file}".on_red
-    end
     
     sio.close
-    puts ">>>>>".yellow
+    puts ">>>>>"
     puts sio.string
-    puts "<<<<<".yellow
+    puts "<<<<<"
     
     sio.string
   end

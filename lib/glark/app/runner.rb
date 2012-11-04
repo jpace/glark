@@ -32,6 +32,10 @@ class Glark::Runner
     @func = func
     @searched_files = Array.new          # files searched, so we don't cycle through links
     
+    if @opts.split_as_path
+      files = files.collect { |f| f.split File::PATH_SEPARATOR  }.flatten
+    end
+    
     @files = files
 
     @opts.output_options.set_files @files
@@ -40,6 +44,10 @@ class Glark::Runner
 
     # 0 == matches, 1 == no matches, 2 == error
     @exit_status = @invert_match ? 0 : 1
+    
+    @files.each do |file|
+      search file
+    end
   end
 
   def search_file file, output_type
@@ -95,7 +103,7 @@ class Glark::Runner
   def search_directory fname
     case @opts.input_options.directory
     when "read"
-      write "#{fname}: Is a directory"
+      write "#{fname}: is a directory"
     when "recurse"
       begin
         entries = Dir.entries(fname).reject { |x| x == "." || x == ".." }

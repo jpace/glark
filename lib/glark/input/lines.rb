@@ -83,13 +83,9 @@ class Glark::LinesNonCR < Glark::Lines
       srclines  = @lines
       reallines = @lines.join("").split ANY_END_OF_LINE
 
-      reallines.each { |line| info "line: #{line}".cyan }
-      
       # "\n" after all but the last line
       @extracted = (0 ... (reallines.length - 1)).collect { |lnum| reallines[lnum] + eoline }
       @extracted << reallines[-1]
-
-      @extracted.each { |line| info "line: #{line}".yellow }
 
       if Log.verbose
         @extracted.each_with_index { |line, idx| puts "@extracted[#{idx}]: #{@extracted[idx]}" }
@@ -116,9 +112,6 @@ class Glark::LinesNonCR < Glark::Lines
         lstart = lend
       end
     end
-
-    info "rnum: #{rnum}".on_red
-    info "@regions[rnum]: #{@regions[rnum]}".red
 
     @regions[rnum]
   end

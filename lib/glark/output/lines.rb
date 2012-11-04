@@ -59,7 +59,6 @@ class Lines < Common
   def write_nonmatching from, to
     (from .. to).each do |ln|
       next if @stati.is_written?(ln) || @stati.char(ln) == ":"
-      # log { "printing #{ln}" }
       print_line ln 
       @stati.set_as_written ln
     end
