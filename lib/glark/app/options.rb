@@ -78,7 +78,7 @@ class Glark::Options
     @infoopts.add_as_options optdata
 
     optdata << config_option = {
-      :tags => %w{ --conf },
+      :tags => %w{ --config },
       :set  => Proc.new { write_configuration; exit }
     }
 
