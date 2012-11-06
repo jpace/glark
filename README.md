@@ -164,9 +164,10 @@ used.
     non-matching lines.
 
   * `-g`, `--grep`:
-    Produce output like the grep default: file names, no line numbers, and a single
-    line of the match, which will be the first line for matches that span multiple
-    lines. If the EMACS environment variable is set, this value is set to true.
+    Produce output like the (legacy) grep default: file names, no line numbers,
+    and a single line of the match, which will be the first line for matches
+    that span multiple lines. If the EMACS environment variable is set, this
+    value is set to true.
 
   * `-h`, `--no-filename`:
     Do not display the names of the files that matched.
@@ -506,33 +507,218 @@ used.
     See the `local-config-files` field below.
 
 ### FIELDS
-   
-        
-  * `-m`, `--man`:
-    Don't generate files, display <file>s as if man(1) were invoked on the roff
-    output file. This simulates default man behavior by piping the roff output
-    through groff(1) and the paging program specified by the `MANPAGER`
-    environment variable.
+    
+  * `after-context`:
+    See the `--after-context` option. For example, for 3 lines of context after the
+    match:
+    
+        after-context: 3
+    
+  * `basename`:
+    See the `--basename` option. For example, to omit Subversion directories:
+    
+        basename: !/\.svn/
+    
+  * `before-context`:
+    See the `--before-context` option. For example, for 7 lines of context before
+    the match:
+    
+        before-context: 7
+    
+  * `binary-files`:
+    See the `--binary-files` option. For example, to skip binary files:
+    
+        binary-files: without-match
+    
+  * `context`:
+    See the `--context` option. For example, for 2 lines before and after matches:
+    
+        context: 2
+    
+  * `expression`:
+    See the `EXPRESSION` section. Example:
+        expression: --or '^\s*public\s+class\s+\w+' '^\s*\w+\(
+    
+  * `file-color`:
+    See the `--file-color` option. For example, for white on black:
+        file-color: white on black
+    
+  * `filter`:
+    See the `--filter` option. For example, to show the entire file:
+    
+        filter: false
+    
+  * `fullname`:
+    See the `--fullname` and `--basename` options. For example, to omit CVS files:
+    
+        fullname: !/\bCVS\b/
 
-  * `-S`, `--server`:
-    Don't generate files, start an HTTP server at <http://localhost:1207/> and
-    serve dynamically generated HTML for the set of input <file>s. A file named
-    *example.2.ronn* is served as */example.2.html*. There's also an index page
-    at the root with links to each <file>.
+  * `grep`:
+    See the `--grep` option. For example, to always run in grep mode:
+    
+        grep: true
+    
+  * `highlight`:
+    See the `--highlight` option. To turn off highlighting:
+    
+        highlight: false
+    
+  * `ignore-case`:
+    See the `--ignore-case` option. To make matching case-insensitive:
+    
+        ignore-case: true
+    
+  * `known-nontext-files`:
+    The extensions of files that should be considered to always be nontext (binary).
+    If a file extension is not known, the file contents are examined for nontext
+    characters. Thus, setting this field can result in faster searches. Example:
+    
+        known-nontext-files: class exe dll com
+    
+    See the `Exclusion of Non-Text Files` section in `NOTES` for the default
+    settings.
+    
+  * `known-text-files`:
+    The extensions of files that should be considered to always be text. See above
+    for more. Example:
+    
+        known-text-files: ini bat xsl xml
+    
+    See the `Exclusion of Non-Text Files` section in `NOTES` for the default
+    settings.
+    
+  * `local-config-files`:
+    By default, glark uses only the configuration file ~/.glarkrc. Enabling this
+    makes glark search upward from the current directory for the first .glarkrc
+    file.
+    
+    This can be used, for example, in a Java project, where .class files are binary,
+    versus a PHP project, where .class files are text:
+    
+        /home/me/.glarkrc
+    
+            local-config-files: true
+    
+        /home/me/projects/java/.glarkrc
+    
+            known-nontext-files: class
+    
+        /home/me/projects/php/.glarkrc
+    
+            known-text-files: class
+    
+    With this configuration, .class files will automatically be treated as binary
+    file in Java projects, and .class files will be treated as text. This can speed
+    up searches.
+    
+    Note that the configuration file ~/.glarkrc is read first, so the local
+    configuration file can override those settings.
+    
+  * `quiet`:
+    See the `--quiet` option.
+    
+  * `show-break`:
+    Whether to display breaks between sections, when displaying context. Example:
+    
+        show-break: true
+    
+    By default, this is false.
+    
+  * `text-color`:
+    See the `--text-color` option. Example:
+    
+        text-color: bold blue on white
+    
+  * `verbose`:
+    See the `--verbose` option. Example:
+    
+        verbose: true
 
-    The server respects the `--style` and document attribute options
-    (`--manual`, `--date`, etc.). These same options can be varied at request
-    time by giving them as query parameters: `?manual=FOO&style=dark,toc`
+### Exclusion of Non-Text Files
 
-    *NOTE: The builtin server is designed to assist in the process of writing
-    and styling manuals. It is in no way recommended as a general purpose web
-    server.*
+Non-text files are automatically skipped, by taking a sample of the file and
+checking for an excessive number of non-ASCII characters. For speed purposes,
+this test is skipped for files whose suffixes are associated with text files:
+    
+        c
+        cpp
+        css
+        h
+        f
+        for
+        fpp
+        hpp
+        html
+        java
+        mk
+        php
+        pl
+        pm
+        rb
+        rbw
+        txt
+    
+Similarly, this test is also skipped for files whose suffixes are associated
+with non-text (binary) files:
+    
+        Z
+        a
+        bz2
+        elc
+        gif
+        gz
+        jar
+        jpeg
+        jpg
+        o
+        obj
+        pdf
+        png
+        ps
+        tar
+        zip
+    
+See the `known-text-files` and `known-nontext-files` fields for denoting file
+name suffixes to associate as text or nontext.
+    
+### Exit Status
+    
+The exit status is 0 if matches were found; 1 if no matches were found, and 2 if
+there was an error. An inverted match (the -v/--invert-match option) will result
+in 1 for matches found, 0 for none found.
 
-  * `--pipe`:
-    Don't generate files, write generated output to standard output. This is the
-    default behavior when ronn source text is piped in on standard input and no
-    <file> arguments are provided.
+## SEE ALSO
 
-Format options control the files `ronn` generates, or the output format when the
-`--pipe` argument is specified. When no format options are given, both `--roff`
-and `--html` are assumed.
+For regular expressions, the `perlre` man page.
+
+Mastering Regular Expressions, by Jeffrey Friedl, published by O'Reilly.
+
+## CAVEATS
+
+"Unbalanced" leading and trailing slashes will result in those slashes being
+included as characters in the regular expression. Thus, the following pairs are
+equivalent:
+
+    /foo        "/foo"
+    /foo\/      "/foo/"
+    /foo\/i     "/foo/i"
+    foo/        "foo/"
+    foo/        "foo/"
+
+The code to detect nontext files assumes ASCII, not Unicode.
+
+## AUTHOR
+
+Jeff Pace (jeugenepace at gmail dot com)
+
+www.incava.org/projects/glark
+
+https://github.com/jeugenepace/glark
+
+## COPYRIGHT
+
+Copyright (c) 2006-2012, Jeff Pace.
+
+All Rights Reserved. This module is free software. It may be used, redistributed
+and/or modified under the terms of the Lesser GNU Public License. See
+http://www.gnu.org/licenses/lgpl.html for more information.
