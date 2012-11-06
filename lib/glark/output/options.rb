@@ -118,6 +118,7 @@ class OutputOptions
         self.style = value
       end
     end
+    @context.update_fields fields
   end
 
   def create_output_type file

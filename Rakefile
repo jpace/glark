@@ -16,6 +16,11 @@ Rake::TestTask.new('test') do |t|
   t.verbose = true
 end
 
+desc "generate man page"
+task :generate_manpage do 
+  sh "ronn -r --pipe README.md > glark.1"
+end
+
 spec = Gem::Specification.new do |s| 
   s.name               = "glark"
   s.version            = "1.9.1"
@@ -28,8 +33,8 @@ spec = Gem::Specification.new do |s|
   s.require_path       = "lib"
   s.test_files         = FileList["{test}/**/*test.rb"].to_a
   s.has_rdoc           = false
-  s.extra_rdoc_files   = ["README"]
-  s.add_dependency("riel", ">= 1.1.6")
+  # s.extra_rdoc_files   = [""]
+  s.add_dependency("riel", ">= 1.1.10")
   s.bindir             = 'bin'
   # s.bindir = Config::CONFIG['bindir']
   s.executables        = %w{ glark }

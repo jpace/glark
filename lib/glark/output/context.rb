@@ -17,6 +17,19 @@ class Glark::Context
     @before = 0
   end
 
+  def update_fields fields
+    fields.each do |name, value|
+      case name
+      when "context"
+        @after = @before = value.to_i
+      when "after"
+        @after = value.to_i
+      when "before"
+        @before = value.to_i 
+      end
+    end
+  end
+
   def add_as_option optdata
     optdata << context_option = {
       :tags => %w{ -C --context },
