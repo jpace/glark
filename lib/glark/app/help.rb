@@ -79,13 +79,13 @@ class GlarkHelp
     pn = Pathname.new __FILE__
 
     dir = pn
-    0.upto(2) do
+    0.upto(3) do
       break unless dir
       dir = dir.parent
     end
 
     if dir
-      manfile = dir + "doc/glark.man"
+      manfile = dir + "doc/glark.1"
       cmd     = "man #{manfile.to_s}"
       IO.popen(cmd) do |io|
         puts io.readlines

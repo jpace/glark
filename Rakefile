@@ -18,7 +18,7 @@ end
 
 desc "generate man page"
 task :generate_manpage do 
-  sh "ronn -r --pipe README.md > glark.1"
+  sh "ronn -r --pipe README.md > doc/glark.1"
 end
 
 spec = Gem::Specification.new do |s| 

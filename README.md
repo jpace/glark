@@ -3,21 +3,22 @@ glark(1) - Search text files for complex regular expressions
 
 ## SYNOPSIS
 
-`glark` [options] expression <file> ... <br>
+`glark` [options] expression <file> ...
 
 ## DESCRIPTION
 
-Similar to `grep`, `glark` support: Perl-compatible regular expressions, color
+Similar to `grep`, `glark` supports: Perl-compatible regular expressions, color
 highlighting of matches, context around matches, complex expressions ("and" and
 "or") and automatic exclusion of non-text files. Its regular expressions should
 be familiar to those experienced in Perl, Python or Ruby.
 
 ## OPTIONS
 
-Options are in the categories of matching, input, output and information.
+Options are in the categories of `input`, `matching`, `output` and
+`information`.
 
 For each option of the type `--option=ARG`, the equivalent `--option ARG` can be
-used.
+used instead.
 
 ### INPUT
 
@@ -282,25 +283,24 @@ used.
     notations are supported.
 
   * `-a` NUM expr1 expr2, `--and=NUM` expr1 expr2, `--end-of-and`, `( expr1 --and NUM expr2 )`:
-    Match both of the two expressions, within <number> lines of each other. The
-    forms `-aNUM` and `--and=NUM` are also supported. In the latter syntax,
+    Match both of the two expressions, within `NUM` lines of each other. The
+    forms `-aNUM` and `--and=NUM` are also supported. In the infix syntax,
     `--end-of-and` is optional.
 
-    If the number provided is -1 (negative one), the distance is considered to
-    be "infinite", and thus, the condition is satisfied if both expressions
-    match within the same file.
+    If `NUM` is -1 (negative one), the distance is considered "infinite", so the
+    condition is satisfied if both expressions match within the same file.
 
-    If the number provided is 0 (zero), the condition is satisfied if both
-    expressions match on the same line.
+    If `NUM` is 0 (zero), the condition is satisfied if both expressions match
+    on the same line.
 
-    If the --and option is used, and the follow argument is not numeric, then
+    If the `--and` option is used and the follow argument is not numeric, then
     the value defaults to zero.
 
     A warning will result if the value given in the number position does not
     appear to be numeric.
 
   * `-o` expr1 expr2, `--or` expr1 expr2 `--end-of-or`, `( expr1 --or expr2 )`:
-    Match either of the two expressions. As with the -`-and` option, the two
+    Match either of the two expressions. As with the `--and` option, the two
     forms are equivalent, and `--end-of-or` is optional.
 
   * `--xor` expr1 expr2 `--end-of-xor`, `( expr1 B<--xor> expr2 )`:
@@ -320,7 +320,7 @@ used.
 
         --and 0 this '!/that/'
 
-    which means "match and line that has "this", but not "that".
+    which means "match a line that has "this", but not "that".
 
 ## HIGHLIGHTING
 
@@ -614,6 +614,10 @@ used.
     Note that the configuration file ~/.glarkrc is read first, so the local
     configuration file can override those settings.
     
+  * `man`:
+    Display the man page. This option exists so that the man page can be
+    displayed even when glark is installed as a Ruby gem.
+    
   * `quiet`:
     See the `--quiet` option.
     
@@ -637,8 +641,8 @@ used.
 ### Exclusion of Non-Text Files
 
 Non-text files are automatically skipped, by taking a sample of the file and
-checking for an excessive number of non-ASCII characters. For speed purposes,
-this test is skipped for files whose suffixes are associated with text files:
+checking for an excessive number of non-ASCII characters. This test is skipped
+for files with suffixes associated with text files:
     
         c
         cpp
@@ -658,8 +662,8 @@ this test is skipped for files whose suffixes are associated with text files:
         rbw
         txt
     
-Similarly, this test is also skipped for files whose suffixes are associated
-with non-text (binary) files:
+This test is also skipped for files with suffixes associated with non-text
+(binary) files:
     
         Z
         a
@@ -677,7 +681,7 @@ with non-text (binary) files:
         ps
         tar
         zip
-    
+
 See the `known-text-files` and `known-nontext-files` fields for denoting file
 name suffixes to associate as text or nontext.
     
@@ -711,9 +715,9 @@ The code to detect nontext files assumes ASCII, not Unicode.
 
 Jeff Pace (jeugenepace at gmail dot com)
 
-www.incava.org/projects/glark
+incava.org/projects/glark
 
-https://github.com/jeugenepace/glark
+github.com/jeugenepace/glark
 
 ## COPYRIGHT
 
