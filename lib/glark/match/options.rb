@@ -8,11 +8,9 @@ require 'rubygems'
 require 'riel/log'
 require 'glark/match/factory'
 require 'glark/util/colors'
-require 'glark/util/optutil'
+require 'glark/util/options'
 
-class MatchOptions
-  include Loggable, Glark::OptionUtil
-  
+class MatchOptions < Glark::Options
   attr_accessor :expr           # the expression to be evaluated
   attr_accessor :extended       # whether to use extended regular expressions
   attr_accessor :extract_matches
@@ -20,7 +18,7 @@ class MatchOptions
   attr_accessor :whole_lines    # true means patterns must match the entire line
   attr_accessor :whole_words    # true means all patterns are '\b'ed front and back
 
-  def initialize colors
+  def initialize colors, optdata
     @colors = colors
     @expr = nil
     @extended = false
@@ -28,6 +26,8 @@ class MatchOptions
     @ignorecase = false
     @whole_lines = false
     @whole_words = false
+
+    add_as_options optdata
   end
 
   def read_expression args, warn_option = false
@@ -76,22 +76,22 @@ class MatchOptions
   def add_as_options optdata
     optdata << whole_word_option = {
       :tags => %w{ -w --word },
-      :set  => Proc.new { @whole_words = true }
+      :set  => set(:whole_words, true)
     }
     
     optdata << ignore_case_option = {
       :tags => %w{ -i --ignore-case },
-      :set  => Proc.new { @ignorecase = true }
+      :set  => set(:ignorecase, true)
     }
 
     optdata << whole_line_option = {
       :tags => %w{ -x --line-regexp },
-      :set  => Proc.new { @whole_lines = true }
+      :set  => set(:whole_lines, true)
     }
 
     optdata << extended_option = {
       :tags => %w{ --extended },
-      :set  => Proc.new { @extended = true }
+      :set  => set(:extended, true)
     }
 
     optdata << expr_file_option = {
@@ -116,7 +116,7 @@ class MatchOptions
 
     optdata << extract_matches_option = {
       :tags => %w{ -y --extract-matches },
-      :set  => Proc.new { @extract_matches = true }
+      :set  => set(:extract_matches, true)
     }
   end
 end

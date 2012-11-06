@@ -721,7 +721,7 @@ github.com/jeugenepace/glark
 
 ## COPYRIGHT
 
-Copyright (c) 2006-2012, Jeff Pace.
+Copyright (c) 2006, Jeff Pace.
 
 All Rights Reserved. This module is free software. It may be used, redistributed
 and/or modified under the terms of the Lesser GNU Public License. See

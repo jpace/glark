@@ -8,10 +8,9 @@ require 'rubygems'
 require 'riel/log'
 require 'glark/input/range'
 require 'glark/input/filter'
-require 'glark/util/optutil'
+require 'glark/util/options'
 
-class InputOptions
-  include Loggable, Glark::OptionUtil  
+class InputOptions < Glark::Options
 
   attr_reader :binary_files     # how to process binary (non-text) files
   attr_reader :directory        # read, skip, or recurse, a la grep
@@ -24,7 +23,7 @@ class InputOptions
   attr_reader :nomatch_name     # match files without this basename
   attr_reader :nomatch_path     # match files without this fullname
 
-  def initialize
+  def initialize optdata
     @binary_files = "binary"
     @directory = "read"
     @exclude_matching = false      # exclude files whose names match the expression
@@ -40,6 +39,8 @@ class InputOptions
     @nomatch_path = nil
 
     $/ = "\n"
+
+    add_as_options optdata
   end
   
   def set_record_separator sep
@@ -142,21 +143,15 @@ class InputOptions
 
     @range.add_as_option optdata
 
-    optdata << directory_option = {
-      :tags => %w{ -d },
-      :arg  => [ :string ],
-      :set  => Proc.new { |val| @directory = val }
-    }
-
     optdata << recurse_option = {
       :tags => %w{ -r --recurse },
-      :set  => Proc.new { @directory = "recurse" }
+      :set  => set(:directory, "recurse")
     }
 
     optdata << dir_option = {
-      :tags => %w{ --directories },
+      :tags => %w{ -d --directories },
       :arg  => [ :string ],
-      :set  => Proc.new { |val| @directory = val }
+      :set  => set(:directory)
     }
 
     optdata << binary_files_option = {
@@ -169,7 +164,7 @@ class InputOptions
     optdata << size_limit_option = {
       :tags => %w{ --size-limit },
       :arg  => [ :integer ],
-      :set  => Proc.new { |val| @size_limit = val }
+      :set  => set(:size_limit)
     }
 
     optdata << basename_option = {
@@ -198,18 +193,18 @@ class InputOptions
 
     optdata << exclude_matching_option = {
       :tags => %w{ -M --exclude-matching },
-      :set  => Proc.new { @exclude_matching = true }
+      :set  => set(:exclude_matching, true)
     }
     
     optdata << no_split_as_path_option = {
       :tags => %w{ --no-split-as-path },
-      :set  => Proc.new { @split_as_path = false }
+      :set  => set(:split_as_path, false)
     }
 
     optdata << split_as_path_option = {
       :tags => %w{ --split-as-path },
       :arg  => [ :boolean, :optional ],
-      :set  => Proc.new { |val| @split_as_path = val }
+      :set  => set(:split_as_path)
     }
   end
 end

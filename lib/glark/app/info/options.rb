@@ -18,10 +18,12 @@ class Glark::InfoOptions
   attr_reader :colors
   attr_reader :explain
 
-  def initialize colors
+  def initialize colors, optdata
     @colors = colors
 
     @explain = false      # display a legible version of the expression
+
+    add_as_options optdata
   end
 
   def config_fields

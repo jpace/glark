@@ -29,9 +29,9 @@ spec = Gem::Specification.new do |s|
   s.homepage           = "http://www.incava.org/projects/glark"
   s.platform           = Gem::Platform::RUBY
   s.summary            = "Extended searching of text files."
-  s.files              = FileList["{bin,doc,lib}/**/*"].to_a.delete_if { |f| f.include?('.svn') }
+  s.files              = FileList["{bin,doc,lib}/**/*"].to_a
   s.require_path       = "lib"
-  s.test_files         = FileList["{test}/**/*test.rb"].to_a
+  s.test_files         = FileList["{test}/**/*.rb"].to_a
   s.has_rdoc           = false
   # s.extra_rdoc_files   = [""]
   s.add_dependency("riel", ">= 1.1.10")
@@ -45,7 +45,3 @@ Gem::PackageTask.new(spec) do |pkg|
   pkg.need_zip = true 
   pkg.need_tar_gz = true 
 end 
-
-task :man do
-  IO.popen("pod2man doc/glark.pod > doc/glark.man")
-end

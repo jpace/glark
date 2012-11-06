@@ -28,13 +28,17 @@ class Glark::Options
   attr_accessor :local_config_files
 
   attr_reader :colors
+  attr_reader :info_options
+  attr_reader :input_options
+  attr_reader :match_options
+  attr_reader :output_options
 
   def expr
-    @matchopts.expr
+    @match_options.expr
   end
 
   def out= io
-    @outputopts.out = io
+    @output_options.out = io
   end
   
   def initialize
@@ -51,32 +55,28 @@ class Glark::Options
     
     @local_config_files = false      # use local .glarkrc files
     
-    @outputopts.style = "glark"
+    @output_options.style = "glark"
   end
 
   def range
-    @inputopts.range
+    @input_options.range
   end
 
   def add_input_options optdata
-    @inputopts = InputOptions.new
-    @inputopts.add_as_options optdata
+    @input_options = InputOptions.new optdata
   end
   
   def add_match_options optdata
-    @matchopts = MatchOptions.new @colors
-    @matchopts.add_as_options optdata
+    @match_options = MatchOptions.new @colors, optdata
   end
 
   def add_output_options optdata
-    @outputopts = OutputOptions.new @colors
-    @outputopts.add_as_options optdata
+    @output_options = OutputOptions.new @colors, optdata
   end
 
   def add_info_options optdata
-    @infoopts = Glark::InfoOptions.new @colors
-    @infoopts.add_as_options optdata
-
+    @info_options = Glark::InfoOptions.new @colors, optdata
+    
     optdata << config_option = {
       :tags => %w{ --config },
       :set  => Proc.new { write_configuration; exit }
@@ -101,7 +101,7 @@ class Glark::Options
 
     # honor thy EMACS; go to grep mode
     if ENV["EMACS"]
-      @outputopts.style = "grep"
+      @output_options.style = "grep"
     end
 
     read_options
@@ -131,25 +131,8 @@ class Glark::Options
     end
   end
 
-  def set_record_separator sep
-    log { "sep: #{sep}" }
-    $/ = if sep && sep.to_i > 0
-           begin
-             sep.oct.chr
-           rescue RangeError => e
-             # out of range (e.g., 777) means nil:
-             nil
-           end
-         else
-           log { "setting to paragraph" }
-           "\n\n"
-         end
-    
-    log { "record separator set to #{$/.inspect}" }
-  end
-
   def all_option_sets
-    [ @colors, @matchopts, @outputopts, @infoopts, @inputopts ]
+    [ @colors, @match_options, @output_options, @info_options, @input_options ]
   end
 
   def read_rcfile rcfname
@@ -182,13 +165,12 @@ class Glark::Options
     if @args.size > 0
       known_end = false
       if @args[0] == "--"
-        log { "end of options" }
         @args.shift
         known_end = true
       end
       
       if @args && @args.size > 0
-        @matchopts.read_expression @args, !known_end
+        @match_options.read_expression @args, !known_end
         return
       end
     end
@@ -204,13 +186,13 @@ class Glark::Options
 
   def read_options
     # solitary "-v" means "--version", not --invert-match
-    @infoopts.show_version if @args.size == 1 && @args[0] == "-v"
+    @info_options.show_version if @args.size == 1 && @args.first == "-v"
     
-    @matchopts.expr = nil
+    @match_options.expr = nil
     
     nil while @args.size > 0 && @optset.process_option(@args)
 
-    unless @matchopts.expr
+    unless @match_options.expr
       read_expression
     end
   end
@@ -243,24 +225,8 @@ class Glark::Options
     end
   end
 
-  def match_options
-    @matchopts
-  end
-
-  def output_options
-    @outputopts
-  end
-
-  def info_options
-    @infoopts
-  end
-
-  def input_options
-    @inputopts
-  end
-
   # check options for collisions/data validity
   def validate!
-    @inputopts.range.validate!
+    @input_options.range.validate!
   end
 end
