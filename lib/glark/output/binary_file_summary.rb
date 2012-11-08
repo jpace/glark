@@ -4,7 +4,7 @@
 
 require 'glark/output/common'
 
-class BinaryFile < Common
+class BinaryFileSummary < Common
   def display_matches?
     false
   end

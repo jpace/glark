@@ -2,8 +2,8 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/output/binary_file'
-require 'glark/output/file_names'
+require 'glark/output/binary_file_summary'
+require 'glark/output/file_name_only'
 require 'glark/output/glark_count'
 require 'glark/output/glark_lines'
 require 'glark/output/grep_count'
@@ -140,7 +140,7 @@ class OutputOptions < Glark::Options
         return GlarkCount
       end
     elsif @file_names_only
-      return FileNames
+      return FileNameOnly
     elsif !@filter
       return UnfilteredLines
     elsif @style == "grep"
@@ -148,6 +148,11 @@ class OutputOptions < Glark::Options
     else
       return GlarkLines
     end
+  end
+
+  def set_file_names_only invert_match
+    @file_names_only = true
+    @invert_match = invert_match
   end
 
   def add_as_options optdata
@@ -161,16 +166,9 @@ class OutputOptions < Glark::Options
     add_opt_true optdata, :show_line_numbers, %w{ -n --line-number }
     add_opt_false optdata, :show_line_numbers, %w{ -N --no-line-number }
 
-    add_opt_blk(optdata, %w{ -l --files-with-matches }) do
-      @file_names_only = true
-      @invert_match = false
-    end
-
-    add_opt_blk(optdata, %w{ -L --files-without-match }) do
-      @file_names_only = true
-      @invert_match = true
-    end
-
+    add_opt_blk(optdata, %w{ -l --files-with-matches }) { set_file_names_only false }
+    add_opt_blk(optdata, %w{ -L --files-without-match }) { set_file_names_only true }
+    
     add_opt_true optdata, :write_null, %w{ -Z --null }
 
     add_opt_str optdata, :label, %w{ --label }

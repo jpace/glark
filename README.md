@@ -145,7 +145,7 @@ used instead.
   * `-A` NUM, `--after-context`=NUM:
     Print `NUM` lines after a matched expression.
 
-  * `-B NUM, `--before-context`=NUM:
+  * `-B` NUM, `--before-context`=NUM:
     Print `NUM` lines before a matched expression.
 
   * `-C` [NUM], `-NUM`, `--context[=NUM]`:
@@ -153,7 +153,7 @@ used instead.
     context. If no `NUM` is given for this option, the number of lines of
     context is 2.
 
-  * `-c, `--count`:
+  * `-c`, `--count`:
     Instead of normal output, display only the number of matches in each file.
 
   * `-F`, `--file-color`=COLOR:
@@ -161,8 +161,9 @@ used instead.
     the values that can be used.
 
   * `--no-filter`:
-    Display the entire file(s). Useful to see highlighted matches as well as
-    non-matching lines.
+    Display all lines, after highlighting matching expressions. This is useful
+    to see highlighted matches as well as non-matching lines, essentially a
+    `--context` of the entire file.
 
   * `-g`, `--grep`:
     Produce output like the (legacy) grep default: file names, no line numbers,
@@ -190,7 +191,7 @@ used instead.
   * `-n`, `--line-number`:
     Display the line numbers. This is the default behavior.
 
-  * `-N`, `--no-line-number:
+  * `-N`, `--no-line-number`:
     Do not display the line numbers.
 
   * `--line-number-color`=COLOR:
@@ -218,7 +219,7 @@ used instead.
 
   * `-Z`, `--null`:
     When in `-l` mode, write file names followed by the ASCII NUL character ('\0')
-    instead of '\n'. This is line `find ... -print0`, for piping into another
+    instead of '\n'. This is like **find ... -print0**, for piping into another
     command.
 
 ### INFORMATION
@@ -249,38 +250,38 @@ used instead.
 
 ## EXPRESSIONS
 
-    Regular expressions are expected to be in the Perl/Ruby format. `perldoc
-    perlre` has more general information. The expression may be of either form:
+Regular expressions are expected to be in the Perl/Ruby format. `perldoc
+perlre` has more general information. The expression may be of either form:
 
-        something
-        /something/
+    something
+    /something/
 
-    There is no difference between the two forms, except that with the latter, one
-    can provide the "ignore case" modifier, thus matching "someThing" and
-    "SoMeThInG":
+There is no difference between the two forms, except that with the latter, one
+can provide the "ignore case" modifier, thus matching "someThing" and
+"SoMeThInG":
 
-        % glark /something/i
+    % glark /something/i
 
-    This is redundant with the `-i` (`--ignore-case`) option.
+This is redundant with the `-i` (`--ignore-case`) option.
 
-    All regular expression characters and options are available, such as "\w"
-    and ".*?". For example:
+All regular expression characters and options are available, such as "\w" and
+".*?". For example:
 
-        % glark '\b[a-z][^\d]\d{1,3}.*\s*>>\s*\d+\s*.*& +\d{3}'
+    % glark '\b[a-z][^\d]\d{1,3}.*\s*>>\s*\d+\s*.*& +\d{3}'
 
-    If the `and` and `or` options are not used, the last non-option is
-    considered to be the expression to be matched. In the following, "printf" is
-    used as the expression.
+If the `--and` and `--or` options are not used, the last non-option is
+considered to be the expression to be matched. In the following, "printf" is
+used as the expression.
 
-        % glark -w printf *.c
+    % glark -w printf *.c
 
-    POSIX character classes (e.g., [[:alpha:]]) are also supported.
+POSIX character classes (e.g., [[:alpha:]]) are also supported.
 
 ### COMPLEX EXPRESSIONS
 
-    Complex expressions combine regular expressions (and complex expressions
-    themselves) with logical AND, OR, and XOR operators. Both prefix and infix
-    notations are supported.
+Complex expressions combine regular expressions (and complex expressions
+themselves) with logical AND, OR, and XOR operators. Both prefix and infix
+notations are supported.
 
   * `-a` NUM expr1 expr2, `--and=NUM` expr1 expr2, `--end-of-and`, `( expr1 --and NUM expr2 )`:
     Match both of the two expressions, within `NUM` lines of each other. The
@@ -309,171 +310,168 @@ used instead.
 
 ### NEGATED EXPRESSIONS
 
-    Regular expressions can be negated, by being prefixed with '!', and using
-    the '/' quote characters around the expression, such as:
+Regular expressions can be negated, by being prefixed with '!', and using the
+'/' quote characters around the expression, such as:
 
-        !/this/
+    !/this/
 
-    This has the effect of "match anything other than `this`". For a single
-    expression, this is no different than the `-v` (`--invert-match`) option,
-    but it can be useful in complex expressions, such as:
+This has the effect of "match anything other than 'this'". For a single
+expression, this is no different than the `-v` (`--invert-match`)
+option, but it can be useful in complex expressions, such as:
 
-        --and 0 this '!/that/'
+    --and 0 this '!/that/'
 
-    which means "match a line that has "this", but not "that".
+which means "match a line that has "this", but not "that".
 
 ## HIGHLIGHTING
 
-    Matching patterns and file names can be highlighted using ANSI escape
-    sequences. Both the foreground and the background colors may be specified,
-    from the following:
+Matching patterns and file names can be highlighted using ANSI escape sequences.
+Both the foreground and the background colors may be specified, from the
+following:
 
-        black
-        blue
-        cyan
-        green
-        magenta
-        red
-        white
-        yellow
-    
-    The foreground may have any number of the following modifiers applied:
-    
-        blink
-        bold
-        concealed
-        reverse
-        underline
-        underscore
-    
-    The format is "MODIFIERS FOREGROUND on BACKGROUND". For example:
-    
-        red
-        black on yellow                    (the default for patterns)
-        reverse bold                       (the default for file names)
-        green on white
-        bold underline red on cyan
-    
-    By default text is highlighted as black on yellow. File names are written in
-    reversed bold text.
+    black
+    blue
+    cyan
+    green
+    magenta
+    red
+    white
+    yellow
+
+The foreground may have any number of the following modifiers applied:
+
+    blink
+    bold
+    concealed
+    reverse
+    underline
+    underscore
+
+The format is "MODIFIERS FOREGROUND on BACKGROUND". For example:
+
+    red
+    black on yellow                    (the default for patterns)
+    reverse bold                       (the default for file names)
+    green on white
+    bold underline red on cyan
+
+By default text is highlighted as black on yellow. File names are written in
+reversed bold text.
 
 ## EXAMPLES
 
 ### BASIC USAGE
     
-  * `% glark format *.h`:
+  * `glark format *.h`:
     Searches for "format" in the local .h files.
 
-  * `% glark --ignore-case format *.h`:
+  * `glark --ignore-case format *.h`:
     Searches for "format" without regard to case. Short form:
 
-    % glark -i format *.h
+    glark -i format *.h
     
-  * `% glark --context=6 format *.h`:
+  * `glark --context=6 format *.h`:
     Produces 6 lines of context around any match for "format". Short forms:
 
-    % glark -C 6 format *.h
-    % glark -6 format *.h
+    glark -C 6 format *.h
+    glark -6 format *.h
     
-  * `% glark --exclude-matching Object *.java`:
+  * `glark --exclude-matching Object *.java`:
     Find references to "Object", excluding the files whose names match "Object".
     Thus, SessionBean.java would be searched; EJBObject.java would not. Short
     form:
 
-    % glark -M Object *.java
+    glark -M Object *.java
     
-  * `% glark --grep --extract-matches '(\w+)\.printStackTrace\(.*\)' *.java`:
+  * `glark --grep --extract-matches '(\w+)\.printStackTrace\(.*\)' *.java`:
     Show only the variable name of exceptions that are dumped. Short form:
 
-    % glark -gy '(\w+)\.printStackTrace\(.*\)' *.java
+    glark -gy '(\w+)\.printStackTrace\\(.\*\\)' *.java
     
   * `% who| glark -gy '^(\S+)\s+\S+\s*May 15'`:
     Display only the names of users who logged in today.
     
-  * `% glark -l '\b\w{25,}\b' *.txt`:
+  * `glark -l '\b\w{25,}\b' *.txt`:
     Display (only) the names of the text files that contain "words" at least 25
     characters long.
     
-  * `% glark --files-without-match '"\w+"'`:
+  * `glark --files-without-match '"\w+"'`:
     Display (only) the names of the files that do not contain strings consisting of
     a single word. Short form:
 
-    % glark -L '"\w+"'
+    glark -L '"\w+"'
     
   * `% for i in *.jar; do jar tvf $i | glark --LABEL=$i Exception; done`:
     Search the files for 'Exception', displaying the jar file name instead of the
     standard input marker ('-').
 
-  * `% glark --text-color "red on white" '\b[[:digit:]]{5}\b' *.c`:
+  * `glark --text-color "red on white" '\b[[:digit:]]{5}\b' *.c`:
     Display (in red text on a white background) occurrences of exactly 5 digits.
-    Short form:
-
-    % glark -T "red on white" '\b\d{5}\b' *.c
 
     See the HIGHLIGHTING section for valid colors and modifiers.
 
 ### COMPLEX EXPRESSIONS
     
-  * `% glark --or format print *.h"`:
+  * `glark --or format print *.h"`:
     Searches for either "printf" or "format". Short form:
 
-    % glark -o format print *.h
+    glark -o format print *.h
     
-  * `% glark --and 4 printf format *.c *.h`:
+  * `glark --and 4 printf format *.c *.h`:
     Searches for both "printf" or "format" within 4 lines of each other. Short
     form:
 
-    % glark -a 4 printf format *.c *.h
+    glark -a 4 printf format *.c *.h
     
-  * `% glark --context=3 --and 0 printf format *.c"`:
+  * `glark --context=3 --and 0 printf format *.c"`:
     Searches for both "printf" or "format" on the same line ("within 0 lines of each
     other"). Three lines of context are displayed around any matches. Short
     form:
 
-    % glark -3 -a 0 printf format *.c
+    glark -3 -a 0 printf format *.c
     
-  * `% glark -8 -i -a 15 -a 2 pthx '\.\.\.' -o 'va_\w+t' die *.c`:
+  * `glark -8 -i -a 15 -a 2 pthx '\.\.\.' -o 'va_\w+t' die *.c`:
     (In order of the options:) Produces 8 lines of context around case insensitive
     matches of ("phtx" within 2 lines of '...' (literal)) within 15 lines of (either
     "va_\w+t" or "die").
     
-  * `% glark --and -1 '#define\s+YIELD' '#define\s+dTHR' *.h`:
+  * `glark --and -1 '#define\s+YIELD' '#define\s+dTHR' *.h`:
      Looks for "#define\s+YIELD" within the same file (-1 == "infinite distance") of
     "#define\s+dTHR". Short form:
 
-    % glark -a -1 '#define\s+YIELD' '#define\s+dTHR' *.h
+    glark -a -1 '#define\s+YIELD' '#define\s+dTHR' *.h
 
 ### RANGE LIMITING
 
-  * `% glark --before 50% cout *.cpp`:
+  * `glark --before 50% cout *.cpp`:
     Find references to "cout", within the first half of the file. Short form:
 
-    % glark -b 50% cout *.cpp
+    glark -b 50% cout *.cpp
 
-  * `% glark --after 20 cout *.cpp`:
+  * `glark --after 20 cout *.cpp`:
     Find references to "cout", starting at the 20th line in the file. Short
     form:
 
-    % glark -b 50% cout *.cpp
+    glark -b 50% cout *.cpp
 
-  * `% glark --range 20,50% cout *.cpp`:
+  * `glark --range 20,50% cout *.cpp`:
     Find references to "cout", in the first half of the file, after the 20th line.
     Short form:
 
-    % glark -R 20,50% cout *.cpp
+    glark -R 20,50% cout *.cpp
 
 ### FILE PROCESSING
 
-  * `% glark -r print .`:
+  * `glark -r print .`:
     Search for "print" in all files at and below the current directory.
 
-  * `% glark --fullname='/\.java$/' -r println org`:
+  * `glark --fullname='/\.java$/' -r println org`:
     Search for "println" in all Java files at and below the "org" directory.
 
-  * `% glark --basename='!/CVS/' -r '\b\d\d:\d\d:\d\d\b' .`:
+  * `glark --basename='!/CVS/' -r '\b\d\d:\d\d:\d\d\b' .`:
     Search for a time pattern in all files without "CVS" in their basenames.
 
-  * `% glark --size-limit=1024 -r main -r .`:
+  * `glark --size-limit=1024 -r main -r .`:
     Search for "main" in files no larger than 1024 bytes.
 
 ## ENVIRONMENT
@@ -542,11 +540,6 @@ used instead.
   * `file-color`:
     See the `--file-color` option. For example, for white on black:
         file-color: white on black
-    
-  * `filter`:
-    See the `--filter` option. For example, to show the entire file:
-    
-        filter: false
     
   * `fullname`:
     See the `--fullname` and `--basename` options. For example, to omit CVS files:
@@ -644,43 +637,43 @@ Non-text files are automatically skipped, by taking a sample of the file and
 checking for an excessive number of non-ASCII characters. This test is skipped
 for files with suffixes associated with text files:
     
-        c
-        cpp
-        css
-        h
-        f
-        for
-        fpp
-        hpp
-        html
-        java
-        mk
-        php
-        pl
-        pm
-        rb
-        rbw
-        txt
-    
+    c
+    cpp
+    css
+    h
+    f
+    for
+    fpp
+    hpp
+    html
+    java
+    mk
+    php
+    pl
+    pm
+    rb
+    rbw
+    txt
+
 This test is also skipped for files with suffixes associated with non-text
 (binary) files:
-    
-        Z
-        a
-        bz2
-        elc
-        gif
-        gz
-        jar
-        jpeg
-        jpg
-        o
-        obj
-        pdf
-        png
-        ps
-        tar
-        zip
+
+    Z
+    a
+    bz2
+    elc
+    gif
+    gz
+    jar
+    jpeg
+    jpg
+    o
+    obj
+    pdf
+    png
+    ps
+    tar
+    zip
 
 See the `known-text-files` and `known-nontext-files` fields for denoting file
 name suffixes to associate as text or nontext.

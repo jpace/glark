@@ -4,7 +4,7 @@
 
 require 'glark/output/common'
 
-class FileNames < Common
+class FileNameOnly < Common
   def initialize fname, opts
     super
     @write_null = opts.write_null

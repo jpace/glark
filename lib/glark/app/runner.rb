@@ -82,8 +82,7 @@ class Glark::Runner
       file.binmode            # for MSDOS/WinWhatever
       file = Glark::File.new fname, file, nil
       output_opts = @opts.output_options
-      # yes, BinaryFile is an output type.
-      output_type = BinaryFile.new file, output_opts
+      output_type = BinaryFileSummary.new file, output_opts
       search_file file, output_type
       
     when "text"
