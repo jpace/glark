@@ -6,14 +6,6 @@ require 'rubygems'
 require 'riel'
 require 'glark/app/options'
 require 'glark/input/file'
-require 'glark/output/binary_file'
-require 'glark/output/file_names'
-require 'glark/output/glark_count'
-require 'glark/output/glark_lines'
-require 'glark/output/grep_count'
-require 'glark/output/grep_lines'
-require 'glark/output/options'
-require 'glark/output/unfiltered_lines'
 
 $stdout.sync = true             # unbuffer
 $stderr.sync = true             # unbuffer

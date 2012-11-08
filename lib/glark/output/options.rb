@@ -2,6 +2,13 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
+require 'glark/output/binary_file'
+require 'glark/output/file_names'
+require 'glark/output/glark_count'
+require 'glark/output/glark_lines'
+require 'glark/output/grep_count'
+require 'glark/output/grep_lines'
+require 'glark/output/unfiltered_lines'
 require 'glark/util/options'
 
 class OutputOptions < Glark::Options
