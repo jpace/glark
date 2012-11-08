@@ -9,7 +9,7 @@ require 'stringio'
 
 class Glark::MatchTestCase < Glark::TestCase
   def run_test expected, fname, exprargs
-    opts = Glark::Options.new
+    opts = Glark::AppOptions.new
     
     # Egads, Ruby is fun. Converting a maybe-array into a definite one:
     args = [ exprargs ].flatten

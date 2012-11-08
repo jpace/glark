@@ -22,7 +22,7 @@ module Glark
     end
 
     def run_test args, expected, &blk
-      gopt = Glark::Options.new
+      gopt = Glark::AppOptions.new
       gopt.run args
       outputopts = gopt.output_options
       outputopts.set_files Array.new

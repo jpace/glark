@@ -74,25 +74,10 @@ class MatchOptions < Glark::Options
   end
 
   def add_as_options optdata
-    optdata << whole_word_option = {
-      :tags => %w{ -w --word },
-      :set  => set(:whole_words, true)
-    }
-    
-    optdata << ignore_case_option = {
-      :tags => %w{ -i --ignore-case },
-      :set  => set(:ignorecase, true)
-    }
-
-    optdata << whole_line_option = {
-      :tags => %w{ -x --line-regexp },
-      :set  => set(:whole_lines, true)
-    }
-
-    optdata << extended_option = {
-      :tags => %w{ --extended },
-      :set  => set(:extended, true)
-    }
+    add_opt_true optdata, :whole_words, %w{ -w --word }
+    add_opt_true optdata, :ignorecase, %w{ -i --ignore-case }
+    add_opt_true optdata, :whole_lines, %w{ -x --line-regexp }
+    add_opt_true optdata, :extended, %w{ --extended }
 
     optdata << expr_file_option = {
       :tags => %w{ -f --file },
@@ -114,9 +99,6 @@ class MatchOptions < Glark::Options
       :set  => Proc.new { |val| @colors.text_highlights = [ @colors.make_highlight "text-color", val ] }
     }
 
-    optdata << extract_matches_option = {
-      :tags => %w{ -y --extract-matches },
-      :set  => set(:extract_matches, true)
-    }
+    add_opt_true optdata, :extract_matches, %w{ -y --extract-matches }
   end
 end

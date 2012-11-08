@@ -13,7 +13,7 @@ class Glark::RcfileTestCase < Glark::TestCase
   end
 
   def run_option_test args, exp, &blk
-    gopt = Glark::Options.new
+    gopt = Glark::AppOptions.new
     gopt.run args
 
     exp.each do |name, expval|

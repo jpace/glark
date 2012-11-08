@@ -8,13 +8,11 @@
 require 'rubygems'
 require 'riel'
 require 'glark/app/help'
-require 'glark/util/optutil'
+require 'glark/util/options'
 
 module Glark; end
 
-class Glark::InfoOptions
-  include Loggable, Glark::OptionUtil
-
+class Glark::InfoOptions < Glark::Options
   attr_reader :colors
   attr_reader :explain
 
@@ -88,11 +86,8 @@ class Glark::InfoOptions
       :tags => %w{ --man },
       :set  => Proc.new { GlarkHelp.new.show_man; exit 0 }
     }
-    
-    optdata << explain_option = {
-      :tags => %w{ --explain },
-      :set  => Proc.new { @explain = true }
-    }
+
+    add_opt_true optdata, :explain, %w{ --explain }
     
     optdata << quiet_option = {
       :tags => %w{ -q -s --quiet --messages },

@@ -14,7 +14,7 @@ class Glark::AppTestCase < Glark::TestCase
 
   def run_glark args, *files
     info "files: #{files}"
-    gopt = Glark::Options.new
+    gopt = Glark::AppOptions.new
     sio = StringIO.new
     gopt.run args
     gopt.out = sio

@@ -19,7 +19,7 @@ class Glark::App
     begin
       Log.set_widths(-15, -40, -40)
       
-      opts = Glark::Options.new      
+      opts = Glark::AppOptions.new      
       opts.run ARGV 
 
       # To get rid of the annoying stack trace on ctrl-C:

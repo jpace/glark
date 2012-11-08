@@ -7,7 +7,6 @@ require 'glark/app/info/options'
 require 'glark/app/rcfile'
 require 'glark/match/options'
 require 'glark/input/options'
-require 'glark/input/range'
 require 'glark/output/options'
 require 'glark/output/context'
 require 'glark/util/colors'
@@ -22,7 +21,7 @@ end
 # Options
 # -------------------------------------------------------
 
-class Glark::Options
+class Glark::AppOptions
   include Loggable, Glark::OptionUtil
 
   attr_accessor :local_config_files
@@ -91,7 +90,7 @@ class Glark::Options
   def run args
     @args = args
 
-    read_home_rcfiles
+    read_home_rcfile
 
     if @local_config_files
       read_local_rcfiles
@@ -109,7 +108,7 @@ class Glark::Options
     validate!
   end
 
-  def read_home_rcfiles
+  def read_home_rcfile
     if hdir = Env.home_directory
       hdpn = Pathname.new hdir
       homerc = hdpn + ".glarkrc"

@@ -146,30 +146,13 @@ class OutputOptions < Glark::Options
   def add_as_options optdata
     @context.add_as_option optdata
 
-    optdata << invert_match_option = {
-      :tags => %w{ -v --invert-match },
-      :set  => set(:invert_match, true)
-    }
+    add_opt_true optdata, :invert_match, %w{ -v --invert-match }
 
-    optdata << filter_option = {
-      :tags => %w{ --filter },
-      :set  => set(:filter, true)
-    }
-
-    optdata << nofilter_option = {
-      :tags => %w{ --no-filter --nofilter },
-      :set  => set(:filter, false)
-    }
-
-    optdata << show_lnums_option = {
-      :tags => %w{ -n --line-number },
-      :set  => set(:show_line_numbers, true)
-    }
-
-    optdata << no_show_lnums_option = {
-      :tags => %w{ -N --no-line-number },
-      :set  => set(:show_line_numbers, false)
-    }
+    add_opt_true optdata, :filter, %w{ --filter }
+    add_opt_false optdata, :filter, %w{ --no-filter --nofilter }
+    
+    add_opt_true optdata, :show_line_numbers, %w{ -n --line-number }
+    add_opt_false optdata, :show_line_numbers, %w{ -N --no-line-number }
 
     optdata << matching_fnames_option = {
       :tags => %w{ -l --files-with-matches },
@@ -181,22 +164,11 @@ class OutputOptions < Glark::Options
       :set  => Proc.new { @file_names_only = true; @invert_match = true }
     }
 
-    optdata << write_null_option = {
-      :tags => %w{ -Z --null },
-      :set  => set(:write_null, true)
-    }
+    add_opt_true optdata, :write_null, %w{ -Z --null }
 
-    optdata << label_option = { 
-      :tags => %w{ --label },
-      :arg  => [ :string ],
-      :set  => set(:label)
-    }
-
-    optdata << match_limit_option = { 
-      :tags => %w{ -m --match-limit },
-      :arg  => [ :integer ],
-      :set  => set(:match_limit)
-    }
+    add_opt_str optdata, :label, %w{ --label }
+    
+    add_opt_int optdata, :match_limit, %w{ -m --match-limit }
 
     optdata << nohighlight_option = {
       :tags => %w{ -U --no-highlight },
@@ -214,20 +186,10 @@ class OutputOptions < Glark::Options
       :set  => Proc.new { |val| @colors.line_number_highlight = @colors.make_highlight "line-number-color", val },
     }
 
-    optdata << count_option = {
-      :tags => %w{ -c --count },
-      :set  => set(:count, true)
-    }
-    
-    optdata << show_fname_option = {
-      :tags => %w{ -H --with-filename },
-      :set  => set(:show_file_names, true)
-    }
+    add_opt_true optdata, :count, %w{ -c --count }
 
-    optdata << no_show_fname_option = {
-      :tags => %w{ -h --no-filename },
-      :set  => set(:show_file_names, false)
-    }
+    add_opt_true optdata, :show_file_names, %w{ -H --with-filename }
+    add_opt_false optdata, :show_file_names, %w{ -h --no-filename }
 
     optdata << highlight_option = { 
       :tags => %w{ -u --highlight },
