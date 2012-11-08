@@ -6,6 +6,7 @@ require 'rubygems'
 require 'riel'
 require 'glark/app/options'
 require 'glark/input/file'
+require 'glark/input/file_set'
 
 $stdout.sync = true             # unbuffer
 $stderr.sync = true             # unbuffer
@@ -23,11 +24,7 @@ class Glark::Runner
     @func = func
     @searched_files = Array.new          # files searched, so we don't cycle through links
     
-    if @opts.input_options.split_as_path
-      files = files.collect { |f| f.split File::PATH_SEPARATOR  }.flatten
-    end
-    
-    @files = files
+    @files = Glark::FileSet.new files, @opts.input_options
 
     @opts.output_options.set_files @files
 

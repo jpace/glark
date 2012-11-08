@@ -17,12 +17,9 @@ class Glark::File
   def initialize fname, io, range
     @fname = fname
     @range = range
-    
-    if $/ == "\n"
-      @lines = Glark::LinesCR.new fname, io
-    else
-      @lines = Glark::LinesNonCR.new fname, io
-    end
+
+    linescls = $/ == "\n" ? Glark::LinesCR : Glark::LinesNonCR
+    @lines = linescls.new fname, io
   end
   
   def linecount
@@ -50,11 +47,11 @@ class Glark::File
   end
 
   def get_range_start
-    st = @range && @range.to_line(@range.from, linecount)
+    st = @range && @range.from && @range.to_line(@range.from, linecount)
     st
   end
 
   def get_range_end
-    @range && @range.to_line(@range.to, linecount)
+    @range && @range.to && @range.to_line(@range.to, linecount)
   end
 end

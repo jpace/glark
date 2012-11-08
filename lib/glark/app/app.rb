@@ -33,7 +33,7 @@ class Glark::App
     rescue => e
       # show the message, and the stack trace only if verbose:
       $stderr.puts "error: #{e}"
-      if Log.verbose
+      if Log.verbose || true
         $stderr.puts e.backtrace
         raise
       else

@@ -11,7 +11,6 @@ require 'glark/input/filter'
 require 'glark/util/options'
 
 class InputOptions < Glark::Options
-
   attr_reader :binary_files     # how to process binary (non-text) files
   attr_reader :directory        # read, skip, or recurse, a la grep
   attr_reader :exclude_matching # exclude files whose names match the expression

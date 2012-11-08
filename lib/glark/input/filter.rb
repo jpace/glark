@@ -22,7 +22,7 @@ end
 
 class BaseNameFilter < PatternFilter
   def match? pn
-    @pattern.match pn.basename.to_s
+    @pattern.match(pn.basename.to_s)
   end
 end
 
