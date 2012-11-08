@@ -35,13 +35,14 @@ class AndDistance
       end
     elsif md = AND_EQ_NUM_RE.match(arg)
       @distance = md[1]
+    else
+      raise "invalid 'and' option: '#{arg}'"
     end
 
     # check to ensure that this is numeric
     if !numeric? @distance
-      error "invalid distance for 'and' expression: '#{@distance}'\n" +
+      raise "invalid distance for 'and' expression: '#{@distance}'\n" +
         "    expecting an integer, or #{INFINITE_DISTANCE} for 'infinite'" 
-      exit 2
     end
     
     if @distance.to_i == INFINITE_DISTANCE

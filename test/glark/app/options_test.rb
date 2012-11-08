@@ -394,26 +394,12 @@ module Glark
       end
     end
 
-    def run_split_as_path_test exp, args
-      args.each do |val|
-        [ 
-         [ '--split-as-path',   val ],
-         [ '--split-as-path=' + val ]
-        ].each do |opt|
-          run_test(opt + [ 'foo' ],
-                   :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                   :input => { :split_as_path => exp })
-        end
-      end
-    end
-
     def test_split_as_path
-      run_test([ '--split-as-path', 'foo' ],
-               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-               :input => { :split_as_path => true })
-      
-      run_split_as_path_test(true,  %w{ true  on  yes })
-      run_split_as_path_test(false, %w{ false off no  })
+      %w{ --split-as-path }.each do |opt|
+        run_test([ opt, 'foo' ],
+                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+                 :input => { :split_as_path => true })
+      end
     end
 
     def test_directory_long

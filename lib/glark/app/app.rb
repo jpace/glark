@@ -11,10 +11,7 @@ require 'riel'
 require 'glark/app/options'
 require 'glark/app/runner'
 
-# The app.
 class Glark::App
-  include Loggable
-
   def initialize
     begin
       Log.set_widths(-15, -40, -40)
@@ -31,9 +28,7 @@ class Glark::App
 
       files = ARGV.size > 0 ? ARGV : [ '-' ]
       runner = Glark::Runner.new opts, opts.expr, files 
-
-      runner.end_processing
-
+      
       exit runner.exit_status
     rescue => e
       # show the message, and the stack trace only if verbose:

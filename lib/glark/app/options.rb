@@ -10,7 +10,7 @@ require 'glark/input/options'
 require 'glark/output/options'
 require 'glark/output/context'
 require 'glark/util/colors'
-require 'glark/util/optutil'
+require 'glark/util/options'
 
 module Glark
   PACKAGE = 'glark'
@@ -21,9 +21,7 @@ end
 # Options
 # -------------------------------------------------------
 
-class Glark::AppOptions
-  include Loggable, Glark::OptionUtil
-
+class Glark::AppOptions < Glark::Options
   attr_accessor :local_config_files
 
   attr_reader :colors
@@ -75,16 +73,9 @@ class Glark::AppOptions
 
   def add_info_options optdata
     @info_options = Glark::InfoOptions.new @colors, optdata
-    
-    optdata << config_option = {
-      :tags => %w{ --config },
-      :set  => Proc.new { write_configuration; exit }
-    }
 
-    optdata << dump_option = {
-      :tags => %w{ --dump },
-      :set  => Proc.new { dump_all_fields; exit 0 }
-    }
+    add_opt_blk(optdata, %w{ --config }) { write_configuration; exit }
+    add_opt_blk(optdata, %w{ --dump }) { dump_all_fields; exit 0 }
   end
   
   def run args
@@ -175,7 +166,7 @@ class Glark::AppOptions
     end
     
     if @args.size > 0
-      error "No expression provided."
+      raise "No expression provided."
     end
     
     $stderr.puts "Usage: glark [options] expression file..."

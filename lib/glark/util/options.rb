@@ -48,5 +48,12 @@ module Glark
     def add_opt_int optdata, varname, tags, val = NONE
       add_opt_arg optdata, varname, :integer, tags, val
     end
+
+    def add_opt_blk optdata, tags, &blk
+      optdata << {
+        :tags => tags,
+        :set  => blk
+      }
+    end
   end
 end

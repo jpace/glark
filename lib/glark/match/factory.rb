@@ -63,8 +63,7 @@ class ExpressionFactory
   def make_not_expression args
     expr = make_regular_expression args, true
     unless expr
-      error "'not' expression takes one argument"
-      exit 2
+      raise "'not' expression takes one argument"
     end
 
     # explicit end tag is optional:
@@ -75,8 +74,7 @@ class ExpressionFactory
   def make_two_expressions args, type
     a1, a2 = make_expressions args
     unless a1 && a2
-      error "'" + type + "' expression takes two arguments"
-      exit 2
+      raise "'" + type + "' expression takes two arguments"
     end
 
     shift_end_tag type, args
@@ -129,7 +127,6 @@ class ExpressionFactory
       when ')'
         break
       else
-        # blather "assuming the last argument #{arg} is a pattern"
         expr = make_regular_expression arg
         break
       end
@@ -137,8 +134,7 @@ class ExpressionFactory
     end
 
     if !expr
-      puts "arg: #{arg}; args: #{args.inspect}"
-      error "No expression provided."
+      raise "No expression provided."
     end
 
     expr
@@ -163,11 +159,9 @@ class ExpressionFactory
         make_infix_expression arg, args
       else
         if warn_option && arg.index(/^\-{1,2}\w/)
-          warn "option not understood: #{arg}"
-          exit 2
+          raise "option not understood: #{arg}"
         end
 
-        # blather "assuming the last argument #{arg} is a pattern"
         args.shift
         make_regular_expression arg
       end

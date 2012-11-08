@@ -2,9 +2,6 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-#!/usr/bin/ruby -w
-# -*- ruby -*-
-
 require 'rubygems'
 require 'riel'
 require 'glark/app/help'
@@ -65,39 +62,17 @@ class Glark::InfoOptions < Glark::Options
       end
     end
   end
-
+  
   def add_as_options optdata
-    optdata << version_option = {
-      :tags => %w{ -V --version },
-      :set  => Proc.new { show_version }
-    }
-
-    optdata << verbose_option = {
-      :tags => %w{ --verbose },
-      :set  => Proc.new { |val| Log.verbose = true }
-    }
+    add_opt_blk(optdata, %w{ -V --version }) { show_version }
+    add_opt_blk(optdata, %w{ --verbose }) { Log.verbose = true }
+    add_opt_blk(optdata, %w{ -? --help }) { GlarkHelp.new.show_usage; exit 0 }
+    add_opt_blk(optdata, %w{ --man }) { GlarkHelp.new.show_man; exit 0 }
     
-    optdata << help_option = {
-      :tags => %w{ -? --help },
-      :set  => Proc.new { GlarkHelp.new.show_usage; exit 0 }
-    }
-
-    optdata << man_option = {
-      :tags => %w{ --man },
-      :set  => Proc.new { GlarkHelp.new.show_man; exit 0 }
-    }
-
     add_opt_true optdata, :explain, %w{ --explain }
-    
-    optdata << quiet_option = {
-      :tags => %w{ -q -s --quiet --messages },
-      :set  => Proc.new { Log.quiet = true }
-    }
 
-    optdata << noquiet_option = {
-      :tags => %w{ -Q -S --no-quiet --no-messages },
-      :set  => Proc.new { Log.quiet = false }
-    }
+    add_opt_blk(optdata, %w{ -q -s --quiet --messages }) { Log.quiet = true }
+    add_opt_blk(optdata, %w{ -Q -S --no-quiet --no-messages }) { Log.quiet = false }
   end
 
   def show_version

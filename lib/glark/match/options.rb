@@ -85,13 +85,10 @@ class MatchOptions < Glark::Options
       :set  => Proc.new { |fname| @expr = ExpressionFactory.new(self).read_file fname }
     }
 
-    optdata << orand_expr_option = {
-      :tags => %w{ -o -a },
-      :set  => Proc.new do |md, opt, args|
-        args.unshift opt
-        @expr = ExpressionFactory.new(self).make_expression args
-      end
-    }
+    add_opt_blk(optdata, %w{ -o -a }) do |md, opt, args|
+      args.unshift opt
+      @expr = ExpressionFactory.new(self).make_expression args
+    end
 
     optdata << text_color_option = {
       :tags => %w{ --text-color },

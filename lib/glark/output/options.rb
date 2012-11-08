@@ -154,15 +154,15 @@ class OutputOptions < Glark::Options
     add_opt_true optdata, :show_line_numbers, %w{ -n --line-number }
     add_opt_false optdata, :show_line_numbers, %w{ -N --no-line-number }
 
-    optdata << matching_fnames_option = {
-      :tags => %w{ -l --files-with-matches },
-      :set  => Proc.new { @file_names_only = true; @invert_match = false }
-    }
+    add_opt_blk(optdata, %w{ -l --files-with-matches }) do
+      @file_names_only = true
+      @invert_match = false
+    end
 
-    optdata << nonmatching_fnames_option = {
-      :tags => %w{ -L --files-without-match },
-      :set  => Proc.new { @file_names_only = true; @invert_match = true }
-    }
+    add_opt_blk(optdata, %w{ -L --files-without-match }) do
+      @file_names_only = true
+      @invert_match = true
+    end
 
     add_opt_true optdata, :write_null, %w{ -Z --null }
 
@@ -170,16 +170,9 @@ class OutputOptions < Glark::Options
     
     add_opt_int optdata, :match_limit, %w{ -m --match-limit }
 
-    optdata << nohighlight_option = {
-      :tags => %w{ -U --no-highlight },
-      :set  => Proc.new { @colors.text_color_style =  nil }
-    }
-
-    optdata << grep_output_option = {
-      :tags => %w{ -g --grep },
-      :set  => Proc.new { self.style = "grep" }
-    }
-
+    add_opt_blk(optdata, %w{ -U --no-highlight }) { @colors.text_color_style =  nil }
+    add_opt_blk(optdata, %w{ -g --grep }) { self.style = "grep" }
+    
     optdata << lnum_color_option = {
       :tags => %w{ --line-number-color },
       :arg  => [ :string ],

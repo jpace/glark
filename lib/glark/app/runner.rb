@@ -2,7 +2,6 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'English'
 require 'rubygems'
 require 'riel'
 require 'glark/app/options'
@@ -121,7 +120,7 @@ class Glark::Runner
       nil
     end
   end
-
+  
   def search_unknown fname
     warn "unknown file type: #{fname}"
   end
@@ -160,12 +159,8 @@ class Glark::Runner
       when FileType::UNREADABLE
         search_unreadable name 
       else
-        error "type unknown: file: #{name}; type: #{type}"
-        exit(-2)
+        raise "type unknown: file: #{name}; type: #{type}"
       end
     end
-  end
-
-  def end_processing
   end
 end

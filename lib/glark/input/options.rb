@@ -148,12 +148,8 @@ class InputOptions < Glark::Options
       :set  => set(:directory, "recurse")
     }
 
-    optdata << dir_option = {
-      :tags => %w{ -d --directories },
-      :arg  => [ :string ],
-      :set  => set(:directory)
-    }
-
+    add_opt_str optdata, :directory, %w{ -d --directories }
+    
     optdata << binary_files_option = {
       :tags    => %w{ --binary-files },
       :arg     => [ :required, :regexp, %r{ ^ [\'\"]? (text|without\-match|binary) [\'\"]? $ }x ],
@@ -161,11 +157,7 @@ class InputOptions < Glark::Options
       :rc   => %w{ binary-files },
     }
 
-    optdata << size_limit_option = {
-      :tags => %w{ --size-limit },
-      :arg  => [ :integer ],
-      :set  => set(:size_limit)
-    }
+    add_opt_int optdata, :size_limit, %w{ --size-limit }
 
     optdata << basename_option = {
       :tags => %w{ --basename --name --with-basename --with-name --match-name },
@@ -191,20 +183,9 @@ class InputOptions < Glark::Options
       :set  => Proc.new { |pat| @nomatch_path = Regexp.create pat }
     }
 
-    optdata << exclude_matching_option = {
-      :tags => %w{ -M --exclude-matching },
-      :set  => set(:exclude_matching, true)
-    }
-    
-    optdata << no_split_as_path_option = {
-      :tags => %w{ --no-split-as-path },
-      :set  => set(:split_as_path, false)
-    }
+    add_opt_true optdata, :exclude_matching, %w{ -M --exclude-matching }
 
-    optdata << split_as_path_option = {
-      :tags => %w{ --split-as-path },
-      :arg  => [ :boolean, :optional ],
-      :set  => set(:split_as_path)
-    }
+    add_opt_false optdata, :split_as_path, %w{ --no-split-as-path }
+    add_opt_true optdata, :split_as_path, %w{ --split-as-path }
   end
 end
