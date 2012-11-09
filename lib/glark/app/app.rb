@@ -27,8 +27,6 @@ class Glark::App
       end
 
       files = ARGV.size > 0 ? ARGV : [ '-' ]
-      puts "files: #{files}".yellow
-      puts "ARGV: #{ARGV}".cyan
       runner = Glark::Runner.new opts, opts.expr, opts.args
       
       exit runner.exit_status
