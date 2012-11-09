@@ -19,9 +19,9 @@ class Glark::Runner
 
   attr_reader :exit_status
   
-  def initialize opts, func, files
+  def initialize opts, files
     @opts = opts
-    @func = func
+    @expr = opts.expr
     @searched_files = Array.new          # files searched, so we don't cycle through links
 
     @invert_match = @opts.output_options.invert_match
@@ -29,19 +29,13 @@ class Glark::Runner
     # 0 == matches, 1 == no matches, 2 == error
     @exit_status = @invert_match ? 0 : 1
     
-    @files = Glark::FileSet.new files, @opts.input_options do |fd|
-      info "fd: #{fd}".red
-    end
-    
-    @opts.output_options.set_files @files
-    
-    @files.each do |file|
+    @opts.files.each do |file|
       search file
     end
   end
 
   def search_file file, output_type
-    @func.process file, output_type
+    @expr.process file, output_type
 
     if output_type.matched?
       @exit_status = @invert_match ? 1 : 0

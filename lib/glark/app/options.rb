@@ -24,8 +24,8 @@ end
 class Glark::AppOptions < Glark::Options
   attr_accessor :local_config_files
 
-  attr_reader :args
   attr_reader :colors
+  attr_reader :files
   attr_reader :info_options
   attr_reader :input_options
   attr_reader :match_options
@@ -98,6 +98,13 @@ class Glark::AppOptions < Glark::Options
     read_options
 
     validate!
+
+    if @args.size == 0
+      @args = %w{ - }
+    end
+
+    @files = Glark::FileSet.new @args, @input_options
+    @output_options.set_files @files
   end
 
   def read_home_rcfile

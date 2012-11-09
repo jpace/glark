@@ -27,7 +27,7 @@ class Glark::App
       end
 
       files = ARGV.size > 0 ? ARGV : [ '-' ]
-      runner = Glark::Runner.new opts, opts.expr, opts.args
+      runner = Glark::Runner.new opts, files
       
       exit runner.exit_status
     rescue => e

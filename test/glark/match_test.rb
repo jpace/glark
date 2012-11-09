@@ -14,13 +14,13 @@ class Glark::MatchTestCase < Glark::TestCase
     # Egads, Ruby is fun. Converting a maybe-array into a definite one:
     args = [ exprargs ].flatten
 
-    expr = opts.match_options.read_expression args
-    
+    opts.run args + [ fname ]
+
     sio = StringIO.new
     opts.out = sio
 
-    files = [ fname ]
-    glark = Glark::Runner.new opts, expr, files
+    files = opts.files
+    glark = Glark::Runner.new opts, files
     
     result = sio.string
     assert_equal expected.collect { |line| "#{line}\n" }.join(''), result

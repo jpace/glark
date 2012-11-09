@@ -16,12 +16,12 @@ class Glark::AppTestCase < Glark::TestCase
     info "files: #{files}"
     gopt = Glark::AppOptions.new
     sio = StringIO.new
-    gopt.run args
+    gopt.run(args + files)
     gopt.out = sio
 
     Log.verbose = true
 
-    glark = Glark::Runner.new gopt, gopt.expr, files
+    glark = Glark::Runner.new gopt, gopt.files
     
     sio.close
     puts ">>>>>"
