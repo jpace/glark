@@ -8,6 +8,7 @@ require 'rubygems'
 require 'riel/log'
 require 'glark/input/range'
 require 'glark/input/filter'
+require 'glark/input/filterset'
 require 'glark/util/options'
 
 class InputOptions < Glark::Options
@@ -26,8 +27,7 @@ class InputOptions < Glark::Options
     @binary_files = "binary"
     @directory = "read"
     @exclude_matching = false      # exclude files whose names match the expression
-    @negative_filters = nil
-    @positive_filters = nil
+    @filterset = nil
     @range = Glark::Range.new 
     @size_limit = nil
     @skip_methods = nil
@@ -93,45 +93,31 @@ class InputOptions < Glark::Options
   end
 
   def skipped? fname
-    unless @positive_filters
-      @positive_filters = Array.new
-      @negative_filters = Array.new
-
+    unless @filterset
+      @filterset = Glark::FilterSet.new
+      
       if @match_name
-        @positive_filters << BaseNameFilter.new(@match_name)
+        @filterset.add_positive_filter BaseNameFilter.new(@match_name)
       end
 
       if @match_path
-        @positive_filters << FullNameFilter.new(@match_path)
+        @filterset.add_positive_filter FullNameFilter.new(@match_path)
       end
 
       if @nomatch_name
-        @negative_filters << BaseNameFilter.new(@nomatch_name)
+        @filterset.add_negative_filter BaseNameFilter.new(@nomatch_name)
       end
 
       if @nomatch_path
-        @negative_filters << FullNameFilter.new(@nomatch_path)
+        @filterset.add_negative_filter FullNameFilter.new(@nomatch_path)
       end
 
       if @size_limit
-        @negative_filters << SizeLimitFilter.new(@size_limit)
-      end
-    end
-      
-    pn = Pathname.new fname
-    @positive_filters.each do |filter|
-      unless filter.match? pn
-        return true
+        @filterset.add_negative_filter SizeLimitFilter.new(@size_limit)
       end
     end
 
-    @negative_filters.each do |filter|
-      if filter.match? pn
-        return true
-      end
-    end
-
-    false
+    @filterset.skipped? fname
   end
   
   def add_as_options optdata    

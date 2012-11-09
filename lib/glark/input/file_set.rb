@@ -8,7 +8,7 @@ require 'glark/input/options'
 
 module Glark; end
 
-# A set of files and directories.
+# Files and directories. And standard output, just for fun.
 
 class Glark::FileSet < Array
   include Loggable
@@ -23,16 +23,15 @@ class Glark::FileSet < Array
     @all = Array.new
 
     fnames.each do |fname|
-      # pn = Pathname.new fname
-      # if pn.file?
-      # next if skipped? fname
+      pn = Pathname.new fname
+      next if pn.file? && skipped?(fname)
       @all << fname
     end
 
     super @all
   end
 
-  def skipped_file? fname
+  def skipped? fname
     @input_options.skipped? fname
   end
 end
