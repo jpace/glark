@@ -2,9 +2,6 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-# Options for input.
-
-require 'rubygems'
 require 'glark/input/filter'
 
 module Glark; end

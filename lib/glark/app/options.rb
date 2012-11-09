@@ -24,6 +24,7 @@ end
 class Glark::AppOptions < Glark::Options
   attr_accessor :local_config_files
 
+  attr_reader :args
   attr_reader :colors
   attr_reader :info_options
   attr_reader :input_options

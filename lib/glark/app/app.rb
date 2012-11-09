@@ -17,7 +17,7 @@ class Glark::App
       Log.set_widths(-15, -40, -40)
       
       opts = Glark::AppOptions.new      
-      opts.run ARGV 
+      opts.run ARGV
 
       # To get rid of the annoying stack trace on ctrl-C:
       trap("INT") { abort }
@@ -27,7 +27,9 @@ class Glark::App
       end
 
       files = ARGV.size > 0 ? ARGV : [ '-' ]
-      runner = Glark::Runner.new opts, opts.expr, files 
+      puts "files: #{files}".yellow
+      puts "ARGV: #{ARGV}".cyan
+      runner = Glark::Runner.new opts, opts.expr, opts.args
       
       exit runner.exit_status
     rescue => e

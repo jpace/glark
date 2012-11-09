@@ -6,7 +6,7 @@ require 'rubygems'
 require 'riel'
 require 'glark/app/options'
 require 'glark/input/file'
-require 'glark/input/file_set'
+require 'glark/input/fileset'
 
 $stdout.sync = true             # unbuffer
 $stderr.sync = true             # unbuffer
@@ -23,15 +23,17 @@ class Glark::Runner
     @opts = opts
     @func = func
     @searched_files = Array.new          # files searched, so we don't cycle through links
-    
-    @files = Glark::FileSet.new files, @opts.input_options
-
-    @opts.output_options.set_files @files
 
     @invert_match = @opts.output_options.invert_match
 
     # 0 == matches, 1 == no matches, 2 == error
     @exit_status = @invert_match ? 0 : 1
+    
+    @files = Glark::FileSet.new files, @opts.input_options do |fd|
+      info "fd: #{fd}".red
+    end
+    
+    @opts.output_options.set_files @files
     
     @files.each do |file|
       search file
