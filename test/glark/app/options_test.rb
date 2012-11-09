@@ -23,10 +23,9 @@ module Glark
 
     def run_test args, expected, &blk
       gopt = Glark::AppOptions.new
-      gopt.run args
+      gopt.run args + Array.new
       outputopts = gopt.output_options
-      outputopts.set_files Array.new
-
+      
       assert_method_values gopt, expected[:app]
       assert_method_values gopt.match_options, expected[:match]
       assert_method_values gopt.colors, expected[:colors]

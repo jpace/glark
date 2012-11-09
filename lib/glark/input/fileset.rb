@@ -34,4 +34,13 @@ class Glark::FileSet < Array
   def skipped? fname
     @input_options.skipped? fname
   end
+
+  def stdout?
+    size == 1 && self[0] == '-'
+  end
+
+  def directory? idx
+    fd = self[idx]
+    fd && FileType.type(fd) == FileType::DIRECTORY
+  end
 end

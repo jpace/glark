@@ -47,16 +47,6 @@ class OutputOptions < Glark::Options
     add_as_options optdata
   end
 
-  def set_files files
-    if @show_file_names.nil?
-      @show_file_names = files.size > 1 || @label || (files.size == 1 && directory?(files[0]))
-    end
-  end
-
-  def directory? file
-    file != "-" && FileType.type(file) == FileType::DIRECTORY
-  end
-
   def line_number_highlight
     @colors.line_number_highlight
   end

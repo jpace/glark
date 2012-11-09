@@ -104,7 +104,10 @@ class Glark::AppOptions < Glark::Options
     end
 
     @files = Glark::FileSet.new @args, @input_options
-    @output_options.set_files @files
+
+    if @output_options.show_file_names.nil?
+      @output_options.show_file_names = @output_options.label || @files.size > 1 || @files.directory?(0)
+    end
   end
 
   def read_home_rcfile
