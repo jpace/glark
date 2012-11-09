@@ -99,10 +99,6 @@ class Glark::AppOptions < Glark::Options
 
     validate!
 
-    if @args.size == 0
-      @args = %w{ - }
-    end
-
     @files = Glark::FileSet.new @args, @input_options
 
     if @output_options.show_file_names.nil?
