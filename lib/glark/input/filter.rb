@@ -18,17 +18,51 @@ class PatternFilter
   def initialize pattern
     @pattern = pattern
   end
+
+  def pattern_match? str
+    @pattern.match str
+  end
+end
+
+module FileFilter
+  def match? pn
+    pn.file?
+  end
+end
+
+module DirectoryFilter
+  def match? pn
+    pn.file?
+  end
+end
+
+class DirectoryPatternFilter < PatternFilter
+  def match? pn
+    pn.directory?
+  end
+end
+
+class FilePatternFilter < PatternFilter
+  def match? pn
+    pn.file?
+  end
 end
 
 class BaseNameFilter < PatternFilter
   def match? pn
-    @pattern.match(pn.basename.to_s)
+    pattern_match? pn.basename.to_s
+  end
+end
+
+class DirectoryBaseNameFilter < DirectoryPatternFilter
+  def match? pn
+    super && pattern_match?(pn.basename.to_s)
   end
 end
 
 class FullNameFilter < PatternFilter
   def match? pn
-    @pattern.match pn.to_s
+    pattern_match? pn.to_s
   end
 end
 

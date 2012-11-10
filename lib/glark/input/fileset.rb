@@ -17,14 +17,14 @@ class Glark::FileSet
   INFINITY = Object.new
   
   def initialize fnames, input_options, &blk
-    @input_options = input_options
-    @maxdepth = @input_options.directory == "list" ? 0 : nil
-    @bin_as_text = @input_options.binary_files == "binary"
-    @split_as_path = @input_options.split_as_path
-    @skip_dirs = @input_options.directory == "skip"
+    @maxdepth = input_options.directory == "list" ? 0 : nil
+    @bin_as_text = input_options.binary_files == "binary"
+    @split_as_path = input_options.split_as_path
+    @skip_dirs = input_options.directory == "skip"
     @dir_to_maxdepth = Hash.new
-
     @files = Array.new
+    @file_filterset = input_options.file_filters
+    @directory_filterset = input_options.directory_filters
     
     if fnames.size == 0
       @files << '-'
@@ -74,7 +74,7 @@ class Glark::FileSet
   end
 
   def skipped? pn
-    @input_options.skipped? pn
+    @file_filterset.skipped? pn
   end
 
   def stdin?
@@ -116,8 +116,13 @@ class Glark::FileSet
     end
   end
 
+  def directory_skipped? pn
+    @directory_filterset.skipped? pn
+  end
+
   def handle_directory pn, depth, &blk
     return if @skip_dirs
+    return if directory_skipped? pn
 
     unless pn.readable?
       write "directory not readable: #{pn}"

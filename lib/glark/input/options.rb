@@ -26,16 +26,23 @@ class InputOptions < Glark::Options
   def initialize optdata
     @binary_files = "binary"
     @directory = "list"
+    @directory_filterset = nil
     @exclude_matching = false      # exclude files whose names match the expression
-    @filterset = nil
+    @file_filterset = nil
     @range = Glark::Range.new 
     @size_limit = nil
     @skip_methods = nil
     @split_as_path = true
+
     @match_name = nil
     @match_path = nil
     @nomatch_name = nil
     @nomatch_path = nil
+
+    @match_dirname = nil
+    @match_dirpath = nil
+    @nomatch_dirname = '.svn'
+    @nomatch_dirpath = nil
 
     $/ = "\n"
 
@@ -92,32 +99,58 @@ class InputOptions < Glark::Options
     end
   end
 
-  def skipped? pn
-    unless @filterset
-      @filterset = Glark::FilterSet.new
-      
-      if @match_name
-        @filterset.add_positive_filter BaseNameFilter.new(@match_name)
+  def file_filters
+    unless @file_filterset
+      @file_filterset = Glark::FilterSet.new
+
+      pos_filters = Array.new
+      pos_filters << [ BaseNameFilter, @match_name ]
+      pos_filters << [ FullNameFilter, @match_path ]
+
+      pos_filters.each do |cls, var|
+        add_filter :file, :positive, cls, var
       end
 
-      if @match_path
-        @filterset.add_positive_filter FullNameFilter.new(@match_path)
-      end
+      neg_filters = Array.new
+      neg_filters << [ BaseNameFilter, @nomatch_name ]
+      neg_filters << [ FullNameFilter, @nomatch_path ]
+      neg_filters << [ SizeLimitFilter, @size_limit ]
 
-      if @nomatch_name
-        @filterset.add_negative_filter BaseNameFilter.new(@nomatch_name)
-      end
-
-      if @nomatch_path
-        @filterset.add_negative_filter FullNameFilter.new(@nomatch_path)
-      end
-
-      if @size_limit
-        @filterset.add_negative_filter SizeLimitFilter.new(@size_limit)
+      neg_filters.each do |cls, var|
+        add_filter :file, :negative, cls, var
       end
     end
+    @file_filterset
+  end
 
-    @filterset.skipped? pn
+  def directory_filters
+    unless @directory_filterset
+      @directory_filterset = Glark::FilterSet.new
+
+      pos_filters = Array.new
+      pos_filters << [ BaseNameFilter, @match_dirname ]
+      pos_filters << [ FullNameFilter, @match_dirpath ]
+
+      pos_filters.each do |cls, var|
+        add_filter :directory, :positive, cls, var
+      end
+
+      neg_filters = Array.new
+      neg_filters << [ BaseNameFilter, @nomatch_dirname ]
+      neg_filters << [ FullNameFilter, @nomatch_dirpath ]
+      
+      neg_filters.each do |cls, var|
+        add_filter :directory, :negative, cls, var
+      end
+    end
+    @directory_filterset
+  end
+
+  def add_filter type, posneg, cls, field
+    return unless field
+    meth = 'add_' + posneg.to_s + '_filter'
+    var = instance_variable_get '@' + type.to_s + '_filterset'
+    var.send meth.to_sym, cls.new(field)
   end
   
   def add_as_options optdata    

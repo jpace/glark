@@ -50,3 +50,7 @@ Fri Nov  9 14:02:25 2012
   find), for simplicity and for integration with planned functionality.
 
   Added file patterns of the form /path/..., for recursive searching.
+
+Sat Nov 10 18:02:05 2012
+
+  Added skipping of .svn directories.
