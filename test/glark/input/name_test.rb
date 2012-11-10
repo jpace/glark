@@ -20,7 +20,7 @@ class Glark::NameTestCase < Glark::AppTestCase
                 '   14   -rw-r--r--   1 jpace jpace   15615 2010-12-04 15:24 13-TheDoc[30m[43mtorsTale[0m.txt',
                 '   21   -rw-r--r--   1 jpace jpace   45326 2010-12-04 15:24 20-TheNunsPries[30m[43mtsTale[0m.txt',
                ]
-    run_app_test expected, [ '-r', '--match-name', '^\w+e.txt$', 't.*e' ], dirname
+    run_app_test expected, [ '-r', '--match-name', '^\w+ile.txt$', 't.*e' ], dirname
   end
 
   def test_without

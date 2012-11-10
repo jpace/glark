@@ -7,14 +7,6 @@ class Glark::PathTestCase < Glark::AppTestCase
   def test_with
     dirname = '/proj/org/incava/glark/test/resources'
     expected = [
-                "[1m/proj/org/incava/glark/test/resources/04-TheCooksTale.txt[0m",
-                "    1 Of many a pilgrim has[30m[43mt thou Christe's curse[0m,",
-                "    2 For of [30m[43mthy parsley yet fare they the worse[0m.",
-                "    4 Tha[30m[43mt they have eaten in thy stubble goose[0m:",
-                "    5 For in [30m[43mthy shop doth many a fly go loose[0m.",
-                "    7 Now [30m[43mtell on, gentle Roger, by thy name[0m,",
-                "    8 Bu[30m[43mt yet I pray thee be not wroth for game[0m;",
-                "    9 A man may say full soo[30m[43mth in game[0m and play.",
                 "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
                 "    1 # commen[30m[43mt here[0m",
                 "    2 highligh[30m[43mt: single[0m",
@@ -28,7 +20,7 @@ class Glark::PathTestCase < Glark::AppTestCase
                 "   14   -rw-r--r--   1 jpace jpace   15615 2010-12-04 15:24 13-TheDoc[30m[43mtorsTale[0m.txt",
                 "   21   -rw-r--r--   1 jpace jpace   45326 2010-12-04 15:24 20-TheNunsPries[30m[43mtsTale[0m.txt",
                ]
-    run_app_test expected, [ '-r', '--match-path', 'test/resources/.*e.txt$', 't.*e' ], dirname
+    run_app_test expected, [ '-r', '--match-path', 'test/resources/.*ile.txt$', 't.*e' ], dirname
   end
 
   def test_without
