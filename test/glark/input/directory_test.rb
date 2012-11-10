@@ -76,7 +76,7 @@ class Glark::DirectoryTestCase < Glark::AppTestCase
     run_app_test expected, [ '--directories=skip', 'The.*Tale' ], dirname
   end
 
-  def test_list_no_files_in_directoriy
+  def test_list_no_files_in_directory
     dirname = '/proj/org/incava/glark/test'
     expected = [ ]
     run_app_test expected, [ '--directories=list', 'The.*Tale' ], dirname
