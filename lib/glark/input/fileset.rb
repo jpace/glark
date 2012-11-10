@@ -69,7 +69,7 @@ class Glark::FileSet
       pn = Pathname.new fname
     end
 
-    next if pn.file? && skipped?(pn)
+    return if pn.file? && skipped?(pn)
     @files << pn
   end
 

@@ -3,13 +3,16 @@
 # vim: set filetype=ruby : set sw=2
 
 require 'glark/input/filter'
+require 'glark/input/filters'
 
 module Glark; end
 
 class Glark::FilterSet
+  include Loggable
+  
   def initialize
-    @positive_filters = Array.new
-    @negative_filters = Array.new
+    @positive_filters = Glark::Filters.new
+    @negative_filters = Glark::Filters.new
   end
 
   def add_positive_filter filter
@@ -21,18 +24,7 @@ class Glark::FilterSet
   end
 
   def skipped? pn
-    @positive_filters.each do |filter|
-      unless filter.match? pn
-        return true
-      end
-    end
-
-    @negative_filters.each do |filter|
-      if filter.match? pn
-        return true
-      end
-    end
-
-    false
+    return true if !@positive_filters.empty? && !@positive_filters.match?(pn)
+    @negative_filters.match? pn
   end
 end
