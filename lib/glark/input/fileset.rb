@@ -17,8 +17,6 @@ class Glark::FileSet
   INFINITY = Object.new
   
   def initialize fnames, input_options, &blk
-    super()
-
     @input_options = input_options
     @maxdepth = @input_options.directory == "list" ? 0 : nil
     @bin_as_text = @input_options.binary_files == "binary"
@@ -33,10 +31,6 @@ class Glark::FileSet
     else
       add_files fnames
     end    
-  end
-
-  def size
-    @files.size
   end
 
   def one_file?
@@ -84,7 +78,7 @@ class Glark::FileSet
   end
 
   def stdin?
-    size == 1 && @files[0] == '-'
+    @files.size == 1 && @files[0] == '-'
   end
 
   def directory? idx
