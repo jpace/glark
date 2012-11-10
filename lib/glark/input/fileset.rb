@@ -10,8 +10,8 @@ module Glark; end
 
 # Files and directories. And standard output, just for fun.
 
-class Glark::FileSet < Array
-  include Loggable
+class Glark::FileSet
+  include Loggable, Enumerable
   
   def initialize fnames, input_options, &blk
     super()
@@ -19,47 +19,71 @@ class Glark::FileSet < Array
     info "fnames: #{fnames}".yellow
 
     @input_options = input_options
+    @maxdepth = @input_options.directory == "list" ? 1 : nil
+    @bin_as_text = @input_options.binary_files == "binary"
+    @split_as_path = @input_options.split_as_path
+    @skip_dirs = @input_options.directory == "skip"
 
+    @files = Array.new
+    
     if fnames.size == 0
-      self << '-'
+      @files << '-'
     else
-      fnames.each do |fname|
-        info "fname: #{fname}".yellow
-        if @input_options.split_as_path
-          info "fname: #{fname}".on_yellow
-          fname.split(File::PATH_SEPARATOR).each do |path|
-            pn = Pathname.new path
-            info "pn: #{pn}"
-            pn = Pathname.new path
-            next if pn.file? && skipped?(pn)
-            self << pn
-          end
-        else
-          pn = Pathname.new fname
-          info "pn: #{pn}"
-          next if pn.file? && skipped?(pn)
-          self << pn
-        end
-      end      
+      add_files fnames
     end
-
-    info "self: #{self.inspect}"
+    
+    info "@files: #{@files.inspect}"
 
     # to keep from cycling through links:
     @yielded_files = nil
   end
 
-  def skipped? fd
-    @input_options.skipped? fd
+  def size
+    @files.size
+  end
+
+  def one_file?
+    return false if @files.size > 1
+    first = @files.first
+    first.to_s != '-' && first.file?
+  end
+
+  def add_files fnames
+    fnames.each do |fname|
+      info "fname: #{fname}".yellow
+      if @split_as_path
+        add_as_path fname
+      else
+        add_fd fname
+      end
+    end      
+  end
+
+  def add_as_path path
+    path.to_s.split(File::PATH_SEPARATOR).each do |element|
+      info "element: #{element}"
+      add_fd element
+    end
+  end
+
+  def add_fd fname
+    pn = Pathname.new fname
+    info "pn: #{pn}"
+    next if pn.file? && skipped?(pn)
+    @files << pn
+  end
+
+  def skipped? pn
+    @input_options.skipped? pn
   end
 
   def stdin?
-    size == 1 && self[0] == '-'
+    size == 1 && @files[0] == '-'
   end
 
   def directory? idx
-    fd = self[idx]
-    fd && FileType.type(fd) == FileType::DIRECTORY
+    pn = @files[idx]
+    pn && FileType.type(pn) == FileType::DIRECTORY
   end
 
   def each &blk
@@ -68,10 +92,10 @@ class Glark::FileSet < Array
     depth = 0
 
     info "blk: #{blk}".on_red
-    (0 ... size).each do |idx|
-      fd = self[idx]
-      info "fd: #{fd}".yellow
-      type = FileType.type fd.to_s
+    (0 ... @files.size).each do |idx|
+      pn = @files[idx]
+      info "pn: #{pn}".yellow
+      type = FileType.type pn.to_s
       info "type: #{type}".yellow
 
       if stdin?
@@ -79,65 +103,72 @@ class Glark::FileSet < Array
         next
       end
 
-      handle_fd fd, depth, &blk
+      handle_pathname pn, depth, &blk
     end
   end
 
-  def handle_fd fd, depth, &blk
-    info "fd: #{fd}".red
-    type = FileType.type fd.to_s
-    info "type: #{type}".red
+  def handle_pathname pn, depth, &blk
+    info "pn: #{pn}".red
 
-    case type
-    when FileType::TEXT
-      unless skipped? fd
-        blk.call [ FileType::TEXT, fd ]
-      end
-    when FileType::DIRECTORY
-      handle_directory fd, depth, &blk
-    when FileType::BINARY
-      handle_binary fd, &blk
-    when FileType::NONE
-      write "no such file: #{fd}"
-    when FileType::UNKNOWN
-      write "unknown file type: #{fd}"
-    when FileType::UNREADABLE
-      log { "skipping unreadable: #{fd}" }
+    if pn.directory?
+      handle_directory pn, depth, &blk
+    elsif pn.file?
+      handle_file pn, &blk
+    else
+      write "unknown file type: #{pn}"
     end
   end
 
-  def handle_directory fd, depth, &blk
-    info "fd: #{fd}".cyan
+  def handle_directory pn, depth, &blk
+    info "pn: #{pn}".cyan
 
-    return if @input_options.directory == "skip"
+    return if @skip_dirs
 
-    info "@input_options.directory: #{@input_options.directory}".green
-
-    maxdepth = @input_options.directory == "list" ? 1 : nil
-
-    info "maxdepth: #{maxdepth}".blue
-
-    if maxdepth.nil? || depth < maxdepth
+    if @maxdepth.nil? || depth < @maxdepth
       begin
-        fd.children.sort.each do |entry|
+        pn.children.sort.each do |entry|
           next if @yielded_files.include?(entry)
           @yielded_files << entry
-          handle_fd entry, depth + 1, &blk
+          handle_pathname entry, depth + 1, &blk
         end
       rescue Errno::EACCES => e
-        write "directory not readable: #{fd}"
+        write "directory not readable: #{pn}"
       end
     end
   end
 
-  def handle_binary fd, &blk
-    return if skipped? fd
+  def handle_file pn, &blk
+    return if skipped? pn
 
-    case @input_options.binary_files
-    when "binary"
-      blk.call [ FileType::BINARY, fd ]
-    when "text"
-      blk.call [ FileType::TEXT, fd ]
+    unless pn.readable?
+      log { "skipping unreadable: #{pn}" }
+      return
     end
+
+    type = FileType.type pn.to_s
+    info "type: #{type}".red
+    case type
+    when FileType::TEXT
+      handle_text pn, &blk
+    when FileType::BINARY
+      handle_binary pn, &blk
+    when FileType::NONE
+      write "no such file: #{pn}"
+    when FileType::UNKNOWN
+      write "unknown file type: #{pn}"
+    end
+  end
+
+  def handle_text pn, &blk
+    return if skipped? pn
+
+    blk.call [ FileType::TEXT, pn ]
+  end
+
+  def handle_binary pn, &blk
+    return if skipped? pn
+
+    type = @bin_as_text ? FileType::BINARY : FileType::TEXT
+    blk.call [ type, pn ]
   end
 end

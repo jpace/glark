@@ -102,7 +102,7 @@ class Glark::AppOptions < Glark::Options
     @files = Glark::FileSet.new @args, @input_options
 
     if @output_options.show_file_names.nil?
-      @output_options.show_file_names = @output_options.label || @files.size > 1 || @files.directory?(0)
+      @output_options.show_file_names = @output_options.label || !@files.one_file?
     end
   end
 
