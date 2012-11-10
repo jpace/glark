@@ -12,17 +12,19 @@ module Glark; end
 
 class Glark::FileSet
   include Loggable, Enumerable
+
+  DEPTH_RE = Regexp.new '\.\.\.(\d*)$'
+  INFINITY = Object.new
   
   def initialize fnames, input_options, &blk
     super()
 
-    info "fnames: #{fnames}".yellow
-
     @input_options = input_options
-    @maxdepth = @input_options.directory == "list" ? 1 : nil
+    @maxdepth = @input_options.directory == "list" ? 0 : nil
     @bin_as_text = @input_options.binary_files == "binary"
     @split_as_path = @input_options.split_as_path
     @skip_dirs = @input_options.directory == "skip"
+    @dir_to_maxdepth = Hash.new
 
     @files = Array.new
     
@@ -30,12 +32,7 @@ class Glark::FileSet
       @files << '-'
     else
       add_files fnames
-    end
-    
-    info "@files: #{@files.inspect}"
-
-    # to keep from cycling through links:
-    @yielded_files = nil
+    end    
   end
 
   def size
@@ -50,7 +47,6 @@ class Glark::FileSet
 
   def add_files fnames
     fnames.each do |fname|
-      info "fname: #{fname}".yellow
       if @split_as_path
         add_as_path fname
       else
@@ -59,16 +55,26 @@ class Glark::FileSet
     end      
   end
 
+  # this is a path in the form /usr/bin:/home/me/projects
   def add_as_path path
     path.to_s.split(File::PATH_SEPARATOR).each do |element|
-      info "element: #{element}"
       add_fd element
     end
   end
 
   def add_fd fname
-    pn = Pathname.new fname
-    info "pn: #{pn}"
+    pn = nil
+
+    if md = DEPTH_RE.match(fname)
+      depth = md[1].empty? ? INFINITY : md[1].to_i
+      fname.sub! DEPTH_RE, ''
+      fname = '.' if fname.empty?
+      pn = Pathname.new fname
+      @dir_to_maxdepth[pn] = depth
+    else
+      pn = Pathname.new fname
+    end
+
     next if pn.file? && skipped?(pn)
     @files << pn
   end
@@ -87,29 +93,26 @@ class Glark::FileSet
   end
 
   def each &blk
+    # to keep from cycling through links:
     @yielded_files = Array.new
 
     depth = 0
 
-    info "blk: #{blk}".on_red
     (0 ... @files.size).each do |idx|
       pn = @files[idx]
-      info "pn: #{pn}".yellow
       type = FileType.type pn.to_s
-      info "type: #{type}".yellow
 
       if stdin?
         blk.call [ :text, '-' ]
         next
       end
 
-      handle_pathname pn, depth, &blk
+      dirmax = @dir_to_maxdepth[pn] || @maxdepth
+      handle_pathname pn, dirmax, &blk
     end
   end
 
   def handle_pathname pn, depth, &blk
-    info "pn: #{pn}".red
-
     if pn.directory?
       handle_directory pn, depth, &blk
     elsif pn.file?
@@ -120,20 +123,23 @@ class Glark::FileSet
   end
 
   def handle_directory pn, depth, &blk
-    info "pn: #{pn}".cyan
-
     return if @skip_dirs
 
-    if @maxdepth.nil? || depth < @maxdepth
-      begin
-        pn.children.sort.each do |entry|
-          next if @yielded_files.include?(entry)
-          @yielded_files << entry
-          handle_pathname entry, depth + 1, &blk
-        end
-      rescue Errno::EACCES => e
-        write "directory not readable: #{pn}"
-      end
+    unless pn.readable?
+      write "directory not readable: #{pn}"
+      return
+    end
+    
+    if depth != INFINITY && depth && depth < 0
+      return
+    end
+
+    subdepth = depth == INFINITY ? INFINITY : depth && depth - 1
+
+    pn.children.sort.each do |entry|
+      next if @yielded_files.include?(entry)
+      @yielded_files << entry
+      handle_pathname entry, subdepth, &blk
     end
   end
 
@@ -146,7 +152,6 @@ class Glark::FileSet
     end
 
     type = FileType.type pn.to_s
-    info "type: #{type}".red
     case type
     when FileType::TEXT
       handle_text pn, &blk

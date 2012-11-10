@@ -1,24 +1,27 @@
 Sun Oct 28 08:57:48 2012
 
-  removed -F short option for --file-color, reducing the number of options.
-  removed --word-regexp as another tag for the -w, --word option.
-  removed undocumented and unused --multiline option.
+  Removed -F short option for --file-color, reducing the number of options.
+
+  Removed --word-regexp as another tag for the -w, --word option.
+
+  Removed undocumented and unused --multiline option.
 
 Tue Oct 30 08:55:25 2012
 
-  removed --verbosity; redundant with --verbose.
+  Removed --verbosity; redundant with --verbose.
 
 Wed Oct 31 07:50:46 2012
 
-  documented --extended option.
+  Documented --extended option.
 
 Thu Nov  1 14:41:02 2012
 
-  removed filter from rcfile; unused and useless.
+  Removed filter from rcfile; unused and useless.
 
 Fri Nov  2 20:07:20 2012
 
   --dump: fixed to display the current settings.
+
   --conf: now displays configuration without empty lines between fields.
 
 Sat Nov  3 14:25:54 2012
@@ -28,6 +31,7 @@ Sat Nov  3 14:25:54 2012
 Sun Nov  4 16:32:00 2012
 
   help: added --split-as-path.
+
   help: simplified --with[out]-[base|full]name to --[match|not]-[name|path].
 
 Wed Nov  7 20:21:59 2012
@@ -44,3 +48,5 @@ Fri Nov  9 14:02:25 2012
 
   --directories=action: refined the action to be skip, list, and recurse (AKA
   find), for simplicity and for integration with planned functionality.
+
+  Added file patterns of the form /path/..., for recursive searching.

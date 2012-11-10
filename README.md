@@ -3,7 +3,7 @@ glark(1) - Search text files for complex regular expressions
 
 ## SYNOPSIS
 
-`glark` [options] expression <file> ...
+`glark` [options] expression <files>
 
 ## DESCRIPTION
 
@@ -249,6 +249,39 @@ used instead.
   * `--verbose`:
     Display normally suppressed output, for debugging purposes.
 
+## FILES
+
+File arguments follow options and the expression to be matched. Files can be one
+or more of any of the following:
+
+  * `file`:
+    Name of files.
+
+  * `directory`:
+    Directories under which files are searched. See the `--directories` option
+    for controlling whether to match all files *in* the given directory (the
+    `list` value), or to match all files *under* the given directory,
+    recursively.
+
+    Files within a directory are listed in sorted order.
+
+    Directories can also be of the form </usr/lib/...>, which means to recurse
+    under the given directory. This can also be <...>, meaning to recurse under
+    the current directory.
+
+    The form </usr/lib/...N>, where N is a number, restrains recursive searching
+    to the given depth. A value of 0 means to search only the files in the given
+    directory; a value of 1 means to search the files in the given directory and
+    the immediate subdirectories.
+
+  * `-`:
+    Read from standard input. With no file arguments, this is the default.
+
+  * `path`:
+    This is a path, using the path separator for the current OS (':' for Linux,
+    ';' for Windows). Each element of the path will be processed as a file or
+    directory.
+
 ## EXPRESSIONS
 
 Regular expressions are expected to be in the Perl/Ruby format. `perldoc
@@ -465,6 +498,9 @@ reversed bold text.
 
   * `glark -r print .`:
     Search for "print" in all files at and below the current directory.
+    Equivalently, this can be:
+
+    % glark print ...
 
   * `glark --fullname='/\.java$/' -r println org`:
     Search for "println" in all Java files at and below the "org" directory.
@@ -474,6 +510,20 @@ reversed bold text.
 
   * `glark --size-limit=1024 -r main -r .`:
     Search for "main" in files no larger than 1024 bytes.
+
+  * `glark Regexp /usr/lib/ruby/1.9.1/...`:
+    Search for "Regexp" in all files under </usr/lib/ruby/1.9.1>, with no depth
+    limit.
+
+  * `glark Regexp /usr/lib/ruby/1.9.1/...0`:
+    Search for "Regexp" in all files in </usr/lib/ruby/1.9.1>. This is
+    equivalent to:
+
+    % glark Regexp /usr/lib/ruby/1.9.1
+
+  * `glark Regexp /usr/lib/ruby/1.9.1/...2`:
+    Search for "Regexp" in all files in </usr/lib/ruby/1.9.1> and up to two
+    levels of subdirectories under.
 
 ## ENVIRONMENT
 
