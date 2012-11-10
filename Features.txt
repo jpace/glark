@@ -39,3 +39,8 @@ Thu Nov  8 08:58:14 2012
 
   --filter: removed as an option, since it is the default.
   readme: refined formatting.
+
+Fri Nov  9 14:02:25 2012
+
+  --directories=action: refined the action to be skip, list, and recurse (AKA
+  find), for simplicity and for integration with planned functionality.

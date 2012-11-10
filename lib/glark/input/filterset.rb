@@ -20,8 +20,7 @@ class Glark::FilterSet
     @negative_filters << filter
   end
 
-  def skipped? fname
-    pn = Pathname.new fname
+  def skipped? pn
     @positive_filters.each do |filter|
       unless filter.match? pn
         return true

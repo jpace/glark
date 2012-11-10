@@ -20,7 +20,8 @@ class FileNameOnly < Common
 
   def print_file_name
     if @write_null
-      @out.print @file.fname + "\0"
+      @out.print @file.fname
+      @out.print "\0"
     else
       @out.puts @file.fname
     end

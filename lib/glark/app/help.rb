@@ -12,7 +12,7 @@ class GlarkHelp
     puts "  -0[nnn]                        Use \\nnn as the input record separator"
     puts "      --before NUM[%]            Restrict the search to the top % or lines"
     puts "      --after NUM[%]             Restrict the search to after the given location"
-    puts "  -d, --directories=ACTION       Process directories as read, skip, or recurse"
+    puts "  -d, --directories=ACTION       Process directories as list, skip, or find (recurse)"
     puts "      --binary-files=TYPE        Treat binary files as TYPE"
     puts "      --split-as-path            Treat file arguments as paths, to be split into directories and files"
     puts "      --match-name EXPR          Search only files with names (base names) matching EXPR"

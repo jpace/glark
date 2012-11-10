@@ -362,7 +362,7 @@ module Glark
     end
 
     def test_directory_short
-      %w{ read recurse skip }.each do |opt|
+      %w{ list find recurse skip }.each do |opt|
         run_test([ '-d', opt, 'foo' ],
                  :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
                  :input => { :directory => opt })
@@ -402,7 +402,7 @@ module Glark
     end
 
     def test_directory_long
-      %w{ read recurse skip }.each do |val|
+      %w{ list find recurse skip }.each do |val|
         [
          [ '--directories=' + val ],
          [ '--directories',   val ]

@@ -25,7 +25,7 @@ class InputOptions < Glark::Options
 
   def initialize optdata
     @binary_files = "binary"
-    @directory = "read"
+    @directory = "list"
     @exclude_matching = false      # exclude files whose names match the expression
     @filterset = nil
     @range = Glark::Range.new 
@@ -92,7 +92,7 @@ class InputOptions < Glark::Options
     end
   end
 
-  def skipped? fname
+  def skipped? pn
     unless @filterset
       @filterset = Glark::FilterSet.new
       
@@ -117,7 +117,7 @@ class InputOptions < Glark::Options
       end
     end
 
-    @filterset.skipped? fname
+    @filterset.skipped? pn
   end
   
   def add_as_options optdata    

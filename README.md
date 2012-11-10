@@ -28,9 +28,10 @@ used instead.
 
   * `-d` ACTION, `--directories`=ACTION:
     Directories are processed according to the given `ACTION`, which by default
-    is `read`. If `ACTION` is `recurse`, each file in the directory is read and
-    each subdirectory is recursed into (equivalent to the `-r` option). If
-    `ACTION` is `skip`, directories are not read, and no message is produced.
+    is `list`, meaning that each file in the directory will be searched. If
+    `ACTION` is `recurse` (or `find`), each file in the given directory and its
+    subdirectories will be searched (equivalent to the `-r` option). If `ACTION`
+    is `skip`, directories are not read, and no message is produced.
 
   * `--binary-files`=TYPE:
     Specify how to handle binary files, thus overriding the default behavior,
@@ -64,7 +65,7 @@ used instead.
     that class names match file names
 
   * `-r`, `--recurse`:
-    Recurse through directories. Equivalent to `--directories=read`.
+    Recurse through directories. Equivalent to `--directories=recurse`.
 
   * `--split-as-path`:
     If a command line argument includes the path separator (such as ":"), the

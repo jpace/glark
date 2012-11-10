@@ -20,26 +20,37 @@ class Glark::FileSet < Array
 
     @input_options = input_options
 
-    if @input_options.split_as_path
-      fnames = fnames.collect { |f| f.split File::PATH_SEPARATOR  }.flatten
-    end
-
     if fnames.size == 0
-      fnames = %w{ - }
+      self << '-'
+    else
+      fnames.each do |fname|
+        info "fname: #{fname}".yellow
+        if @input_options.split_as_path
+          info "fname: #{fname}".on_yellow
+          fname.split(File::PATH_SEPARATOR).each do |path|
+            pn = Pathname.new path
+            info "pn: #{pn}"
+            pn = Pathname.new path
+            next if pn.file? && skipped?(pn)
+            self << pn
+          end
+        else
+          pn = Pathname.new fname
+          info "pn: #{pn}"
+          next if pn.file? && skipped?(pn)
+          self << pn
+        end
+      end      
     end
 
-    fnames.each do |fname|
-      pn = Pathname.new fname
-      next if pn.file? && skipped?(fname)
-      self << fname
-    end
+    info "self: #{self.inspect}"
 
     # to keep from cycling through links:
     @yielded_files = nil
   end
 
-  def skipped? fname
-    @input_options.skipped? fname
+  def skipped? fd
+    @input_options.skipped? fd
   end
 
   def stdin?
@@ -54,11 +65,13 @@ class Glark::FileSet < Array
   def each &blk
     @yielded_files = Array.new
 
+    depth = 0
+
     info "blk: #{blk}".on_red
     (0 ... size).each do |idx|
       fd = self[idx]
       info "fd: #{fd}".yellow
-      type = FileType.type fd
+      type = FileType.type fd.to_s
       info "type: #{type}".yellow
 
       if stdin?
@@ -66,12 +79,14 @@ class Glark::FileSet < Array
         next
       end
 
-      handle_fd fd, &blk
+      handle_fd fd, depth, &blk
     end
   end
 
-  def handle_fd fd, &blk
-    type = FileType.type fd
+  def handle_fd fd, depth, &blk
+    info "fd: #{fd}".red
+    type = FileType.type fd.to_s
+    info "type: #{type}".red
 
     case type
     when FileType::TEXT
@@ -79,7 +94,7 @@ class Glark::FileSet < Array
         blk.call [ FileType::TEXT, fd ]
       end
     when FileType::DIRECTORY
-      handle_directory fd, &blk
+      handle_directory fd, depth, &blk
     when FileType::BINARY
       handle_binary fd, &blk
     when FileType::NONE
@@ -91,25 +106,27 @@ class Glark::FileSet < Array
     end
   end
 
-  def handle_directory fd, &blk
-    case @input_options.directory
-    when "read"
-      write "#{fd}: is a directory"
-    when "recurse"
+  def handle_directory fd, depth, &blk
+    info "fd: #{fd}".cyan
+
+    return if @input_options.directory == "skip"
+
+    info "@input_options.directory: #{@input_options.directory}".green
+
+    maxdepth = @input_options.directory == "list" ? 1 : nil
+
+    info "maxdepth: #{maxdepth}".blue
+
+    if maxdepth.nil? || depth < maxdepth
       begin
-        entries = Dir.entries(fd).reject { |x| x == "." || x == ".." }
-        entries.sort.each do |e|
-          entname = fd + "/" + e
-          inode = File.exists?(entname) && File.stat(entname).ino
-          next if inode && @yielded_files.include?(inode)
-          @yielded_files << inode
-          handle_fd entname, &blk
+        fd.children.sort.each do |entry|
+          next if @yielded_files.include?(entry)
+          @yielded_files << entry
+          handle_fd entry, depth + 1, &blk
         end
       rescue Errno::EACCES => e
         write "directory not readable: #{fd}"
       end
-    when "skip"
-      nil
     end
   end
 
