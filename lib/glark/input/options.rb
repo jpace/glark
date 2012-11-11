@@ -7,9 +7,8 @@
 require 'rubygems'
 require 'riel/log'
 require 'glark/input/range'
-require 'glark/input/filter'
-require 'glark/input/dir_filterset'
-require 'glark/input/file_filterset'
+require 'glark/input/filter/dir_filterset'
+require 'glark/input/filter/file_filterset'
 require 'glark/util/options'
 
 class InputOptions < Glark::Options
