@@ -466,7 +466,7 @@ module Glark
           ].each do |args|
             run_test(args + %w{ foo },
                      :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                     :input => { :match_name => Regexp.new(pat) })
+                     :input => { :match_names => [ Regexp.new(pat) ] })
           end
         end
       end
@@ -481,7 +481,7 @@ module Glark
           ].each do |args|
             run_test(args + %w{ foo },
                      :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                     :input => { :nomatch_name => Regexp.new(pat) })
+                     :input => { :nomatch_names => [ Regexp.new(pat) ] })
           end
         end
       end
@@ -496,7 +496,7 @@ module Glark
           ].each do |args|
             run_test(args + %w{ foo },
                      :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                     :input => { :match_path => Regexp.new(pat) })
+                     :input => { :match_paths => [ Regexp.new(pat) ] })
           end
         end
       end
@@ -511,7 +511,7 @@ module Glark
           ].each do |args|
             run_test(args + %w{ foo },
                      :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                     :input => { :nomatch_path => Regexp.new(pat) })
+                     :input => { :nomatch_paths => [ Regexp.new(pat) ] })
           end
         end
       end

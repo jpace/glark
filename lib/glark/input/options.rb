@@ -18,10 +18,10 @@ class InputOptions < Glark::Options
   attr_reader :range            # range to start and stop searching; nil => the entire file
   attr_reader :size_limit       # maximum size of files to be searched
   attr_reader :split_as_path    # use file arguments as path elements
-  attr_reader :match_name       # match files with this basename
-  attr_reader :match_path       # match files with this fullname
-  attr_reader :nomatch_name     # match files without this basename
-  attr_reader :nomatch_path     # match files without this fullname
+  attr_reader :match_names      # match files with any of these basenames
+  attr_reader :match_paths      # match files with any of these fullnames
+  attr_reader :nomatch_names    # match files without any of these basenames
+  attr_reader :nomatch_paths    # match files without any of these fullnames
 
   def initialize optdata
     @binary_files = "binary"
@@ -34,10 +34,10 @@ class InputOptions < Glark::Options
     @skip_methods = nil
     @split_as_path = true
 
-    @match_name = nil
-    @match_path = nil
-    @nomatch_name = nil
-    @nomatch_path = nil
+    @match_names = Array.new
+    @match_paths = Array.new
+    @nomatch_names = Array.new
+    @nomatch_paths = Array.new
 
     @match_dirname = nil
     @match_dirpath = nil
@@ -104,20 +104,20 @@ class InputOptions < Glark::Options
       @file_filterset = Glark::FilterSet.new
 
       pos_filters = Array.new
-      pos_filters << [ BaseNameFilter, @match_name ]
-      pos_filters << [ FullNameFilter, @match_path ]
+      pos_filters << [ BaseNameFilter, @match_names ]
+      pos_filters << [ FullNameFilter, @match_paths ]
 
       pos_filters.each do |cls, var|
-        add_filter :file, :positive, cls, var
+        add_filters :file, :positive, cls, var
       end
 
       neg_filters = Array.new
-      neg_filters << [ BaseNameFilter, @nomatch_name ]
-      neg_filters << [ FullNameFilter, @nomatch_path ]
+      neg_filters << [ BaseNameFilter, @nomatch_names ]
+      neg_filters << [ FullNameFilter, @nomatch_paths ]
       neg_filters << [ SizeLimitFilter, @size_limit ]
 
       neg_filters.each do |cls, var|
-        add_filter :file, :negative, cls, var
+        add_filters :file, :negative, cls, var
       end
     end
     @file_filterset
@@ -132,7 +132,7 @@ class InputOptions < Glark::Options
       pos_filters << [ FullNameFilter, @match_dirpath ]
 
       pos_filters.each do |cls, var|
-        add_filter :directory, :positive, cls, var
+        add_filters :directory, :positive, cls, var
       end
 
       neg_filters = Array.new
@@ -140,17 +140,36 @@ class InputOptions < Glark::Options
       neg_filters << [ FullNameFilter, @nomatch_dirpath ]
       
       neg_filters.each do |cls, var|
-        add_filter :directory, :negative, cls, var
+        add_filters :directory, :negative, cls, var
       end
     end
     @directory_filterset
   end
 
   def add_filter type, posneg, cls, field
-    return unless field
     meth = 'add_' + posneg.to_s + '_filter'
     var = instance_variable_get '@' + type.to_s + '_filterset'
     var.send meth.to_sym, cls.new(field)
+  end
+
+  def add_filters type, posneg, cls, field
+    return unless field
+
+    if field.kind_of? Array
+      field.each do |fld|
+        add_filter type, posneg, cls, fld
+      end
+    else
+      add_filter type, posneg, cls, field
+    end
+  end
+
+  def add_opt_regexp_ary optdata, tags, ary
+    optdata << {
+      :tags => tags,
+      :arg  => [ :string ],
+      :set  => Proc.new { |pat| ary << Regexp.create(pat) }
+    }
   end
   
   def add_as_options optdata    
@@ -177,29 +196,11 @@ class InputOptions < Glark::Options
 
     add_opt_int optdata, :size_limit, %w{ --size-limit }
 
-    optdata << basename_option = {
-      :tags => %w{ --basename --name --with-basename --with-name --match-name },
-      :arg  => [ :string ],
-      :set  => Proc.new { |pat| @match_name = Regexp.create pat }
-    }
+    add_opt_regexp_ary optdata, %w{ --basename --name --with-basename --with-name --match-name }, @match_names
+    add_opt_regexp_ary optdata, %w{ --without-basename --without-name --not-name }, @nomatch_names
 
-    optdata << nomatch_name_option = {
-      :tags => %w{ --without-basename --without-name --not-name },
-      :arg  => [ :string ],
-      :set  => Proc.new { |pat| @nomatch_name = Regexp.create pat }
-    }
-
-    optdata << fullname_option = {
-      :tags => %w{ --fullname --path --with-fullname --with-path --match-path },
-      :arg  => [ :string ],
-      :set  => Proc.new { |pat| @match_path = Regexp.create pat }
-    }
-
-    optdata << nomatch_path_option = {
-      :tags => %w{ --without-fullname --without-path --not-path },
-      :arg  => [ :string ],
-      :set  => Proc.new { |pat| @nomatch_path = Regexp.create pat }
-    }
+    add_opt_regexp_ary optdata, %w{ --fullname --path --with-fullname --with-path --match-path }, @match_paths
+    add_opt_regexp_ary optdata, %w{ --without-fullname --without-path --not-path }, @nomatch_paths
 
     add_opt_true optdata, :exclude_matching, %w{ -M --exclude-matching }
 

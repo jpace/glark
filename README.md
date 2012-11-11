@@ -46,18 +46,24 @@ used instead.
 
   * `--match-name`=REGEXP:
     Search only files with names that match the given regular expression. As in
-    find(1), this works on the basename of the file. This expression can be
-    negated and modified with `!` and `i`, such as `!/io\.[hc]$/i`.
+    find(1), this works on the basename of the file. The expression can be
+    negated and modified with `!` and `i`, such as `!/io\.[hc]$/i`. This option
+    can be specified multiple times, in which case only files matching *any* of
+    the given expressions will be searched.
 
   * `--match-path`=REGEXP:
     Search only files with full names that match the given regular expression.
-    As in find(1), this works on the path of the file.
+    As in find(1), this works on the path of the file. This option can be
+    specified any number of times, with same logic as `--match-name`.
 
   * `--not-name`=REGEXP:
     Do not search files with base names matching the given regular expression.
+    This option can be specified multiple times, in which case only files
+    matching *none* of the given expressions will be searched.
 
   * `--not-path`=REGEXP:
     Do not search files with full names matching the given regular expression.
+    This option can also be specified multiple times.
 
   * `-M`, `--exclude-matching`:
     Do not search files whose names match the primary expression. This can be
@@ -524,6 +530,30 @@ reversed bold text.
   * `glark Regexp /usr/lib/ruby/1.9.1/...2`:
     Search for "Regexp" in all files in </usr/lib/ruby/1.9.1> and up to two
     levels of subdirectories under.
+
+  * `glark --match-name 'http.*' Regexp /usr/lib/ruby/1.9.1/...`:
+    Search for "Regexp" in all files under </usr/lib/ruby/1.9.1> with a name
+    starting with 'http'.
+
+### ADVANCED USAGE
+
+  * `glark% --explain --match-name 'c.*\.rb$' --and=5 Regexp --xor parse --and=3 boundary quote /usr/lib/ruby/1.9.1/...2`:
+
+    As shown by the `--explain` options:
+
+        within 5 lines of each other:
+            /Regexp/
+        and
+            only one of:
+                /parse/
+            xor
+                within 3 lines of each other:
+                    /boundary/
+                and
+                    /quote/
+
+    Search for the given expression under the Ruby 1.9.1 tree, for .rb files
+    starting with 'c'.
 
 ## ENVIRONMENT
 

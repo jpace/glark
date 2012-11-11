@@ -54,3 +54,8 @@ Fri Nov  9 14:02:25 2012
 Sat Nov 10 18:02:05 2012
 
   Added skipping of .svn directories.
+
+Sun Nov 11 09:09:12 2012
+
+  Refined --match-name, --not-name, --match-path, --not-path to support multiple
+  patterns.
