@@ -8,7 +8,7 @@ require 'rubygems'
 require 'riel/log'
 require 'glark/input/range'
 require 'glark/input/filter'
-require 'glark/input/filterset'
+require 'glark/input/file_filterset'
 require 'glark/util/options'
 
 class InputOptions < Glark::Options
@@ -18,6 +18,7 @@ class InputOptions < Glark::Options
   attr_reader :range            # range to start and stop searching; nil => the entire file
   attr_reader :size_limit       # maximum size of files to be searched
   attr_reader :split_as_path    # use file arguments as path elements
+
   attr_reader :match_names      # match files with any of these basenames
   attr_reader :match_paths      # match files with any of these fullnames
   attr_reader :nomatch_names    # match files without any of these basenames
@@ -101,14 +102,14 @@ class InputOptions < Glark::Options
 
   def file_filters
     unless @file_filterset
-      @file_filterset = Glark::FilterSet.new
+      @file_filterset = Glark::FileFilterSet.new
 
       pos_filters = Array.new
       pos_filters << [ BaseNameFilter, @match_names ]
       pos_filters << [ FullNameFilter, @match_paths ]
 
       pos_filters.each do |cls, var|
-        add_filters :file, :positive, cls, var
+        @file_filterset.add_filters :positive, cls, var
       end
 
       neg_filters = Array.new

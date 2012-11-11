@@ -27,4 +27,21 @@ class Glark::FilterSet
     return true if !@positive_filters.empty? && !@positive_filters.match?(pn)
     @negative_filters.match? pn
   end
+
+  def add_filter posneg, cls, field
+    var = instance_variable_get '@' + posneg.to_s + '_filters'
+    var << cls.new(field)
+  end
+
+  def add_filters posneg, cls, field
+    return unless field
+
+    if field.kind_of? Array
+      field.each do |fld|
+        add_filter posneg, cls, fld
+      end
+    else
+      add_filter posneg, cls, field
+    end
+  end
 end
