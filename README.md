@@ -65,6 +65,19 @@ used instead.
     Do not search files with full names matching the given regular expression.
     This option can also be specified multiple times.
 
+  * `--match-dirname`=REGEXP:
+    Search only directories with basenames matching the given expression.
+
+  * `--not-dirname`=REGEXP:
+    Skip directories with basenames not matching the given expression.
+    Subdirectories of skipped directories will not be recursed.
+
+  * `--match-dirpath`=REGEXP:
+    Search in and under directories with paths matching the given expression.
+
+  * `--not-dirpath`=REGEXP:
+    Skip directories with paths matching the given expression.
+
   * `-M`, `--exclude-matching`:
     Do not search files whose names match the primary expression. This can be
     useful for finding external references to a file, or to a class, assuming

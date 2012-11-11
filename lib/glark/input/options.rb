@@ -8,6 +8,7 @@ require 'rubygems'
 require 'riel/log'
 require 'glark/input/range'
 require 'glark/input/filter'
+require 'glark/input/dir_filterset'
 require 'glark/input/file_filterset'
 require 'glark/util/options'
 
@@ -21,43 +22,19 @@ class InputOptions < Glark::Options
   def initialize optdata
     @binary_files = "binary"
     @directory = "list"
-    @directory_filterset = nil
     @exclude_matching = false      # exclude files whose names match the expression
 
-    @file_filterset = nil
-
     @range = Glark::Range.new 
-    @skip_methods = nil
     @split_as_path = true
-
-    @match_dirname = nil
-    @match_dirpath = nil
-    @nomatch_dirname = '.svn'
-    @nomatch_dirpath = nil
-
+    
     @file_filterset = Glark::FileFilterSet.new
+    @dir_filterset = Glark::DirFilterSet.new
 
     $/ = "\n"
 
     add_as_options optdata
   end
 
-  def match_names
-    @file_filterset.match_names
-  end
-
-  def match_paths
-    @file_filterset.match_paths
-  end
-  
-  def nomatch_names
-    @file_filterset.nomatch_names
-  end
-
-  def nomatch_paths
-    @file_filterset.nomatch_paths
-  end
-  
   def set_record_separator sep
     log { "sep: #{sep}" }
     $/ = if sep && sep.to_i > 0
@@ -79,7 +56,9 @@ class InputOptions < Glark::Options
     fields = {
       "binary-files" => @binary_files,
       "split-as-path" => @split_as_path,
-    }.merge @file_filterset.config_fields
+    }
+    fields.merge! @dir_filterset.config_fields
+    fields.merge! @file_filterset.config_fields
   end
 
   def dump_fields
@@ -92,10 +71,14 @@ class InputOptions < Glark::Options
       # "with-fullname" => @match_path,
       # "without-basename" => @nomatch_name,
       # "without-fullname" => @nomatch_path,
-    }.merge @file_filterset.dump_fields
+    }
+    fields.merge! @dir_filterset.dump_fields
+    fields.merge! @file_filterset.dump_fields
+    fields
   end
 
   def update_fields fields
+    @dir_filterset.update_fields fields
     @file_filterset.update_fields fields
 
     fields.each do |name, value|
@@ -111,52 +94,7 @@ class InputOptions < Glark::Options
   end
 
   def directory_filters
-    unless @directory_filterset
-      @directory_filterset = Glark::FilterSet.new
-
-      pos_filters = Array.new
-      pos_filters << [ BaseNameFilter, @match_dirname ]
-      pos_filters << [ FullNameFilter, @match_dirpath ]
-
-      pos_filters.each do |cls, var|
-        add_filters :directory, :positive, cls, var
-      end
-
-      neg_filters = Array.new
-      neg_filters << [ BaseNameFilter, @nomatch_dirname ]
-      neg_filters << [ FullNameFilter, @nomatch_dirpath ]
-      
-      neg_filters.each do |cls, var|
-        add_filters :directory, :negative, cls, var
-      end
-    end
-    @directory_filterset
-  end
-
-  def add_filter type, posneg, cls, field
-    meth = 'add_' + posneg.to_s + '_filter'
-    var = instance_variable_get '@' + type.to_s + '_filterset'
-    var.send meth.to_sym, cls.new(field)
-  end
-
-  def add_filters type, posneg, cls, field
-    return unless field
-
-    if field.kind_of? Array
-      field.each do |fld|
-        add_filter type, posneg, cls, fld
-      end
-    else
-      add_filter type, posneg, cls, field
-    end
-  end
-
-  def add_opt_regexp_ary optdata, tags, ary
-    optdata << {
-      :tags => tags,
-      :arg  => [ :string ],
-      :set  => Proc.new { |pat| ary << Regexp.create(pat) }
-    }
+    @dir_filterset
   end
   
   def add_as_options optdata    
@@ -182,6 +120,7 @@ class InputOptions < Glark::Options
     }
 
     @file_filterset.add_as_options optdata
+    @dir_filterset.add_as_options optdata
 
     add_opt_true optdata, :exclude_matching, %w{ -M --exclude-matching }
 

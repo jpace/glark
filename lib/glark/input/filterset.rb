@@ -36,15 +36,31 @@ class Glark::FilterSet
     var << cls.new(field)
   end
 
-  def add_filters posneg, cls, field
-    return unless field
+  def add_opt_filter_int optdata, tags, posneg, cls
+    optdata << {
+      :tags => tags,
+      :arg  => [ :integer ],
+      :set  => Proc.new { |val| add_filter posneg, cls, val.to_i }
+    }
+  end
 
-    if field.kind_of? Array
-      field.each do |fld|
-        add_filter posneg, cls, fld
-      end
-    else
-      add_filter posneg, cls, field
-    end
+  def add_opt_filter_re optdata, tags, posneg, cls
+    optdata << {
+      :tags => tags,
+      :arg  => [ :string ],
+      :set  => Proc.new { |pat| add_filter posneg, cls, Regexp.create(pat) }
+    }
+  end
+
+  def config_fields
+    fields = {
+    }
+  end
+
+  def dump_fields
+    config_fields
+  end
+
+  def update_fields fields
   end
 end

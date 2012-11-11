@@ -14,4 +14,57 @@ class Glark::DirNameTestCase < Glark::AppTestCase
                ]
     run_app_test expected, [ '--directories=recurse', 'this.*rea' ], dirname
   end
+
+  def test_with_basename
+    dirnames = [ '/proj/org/incava/glark/test/resources/canterbury', '/proj/org/incava/glark/test/glark' ]
+    expected = [
+                "[1m/proj/org/incava/glark/test/resources/canterbury/prologue.txt[0m",
+                "  187 He gave not of the te[30m[43mxt a pulled he[0mn,",
+                "  192 This ilke te[30m[43mxt held he not worth an oyste[0mr;",
+                "  291 Betwi[30m[43mxte Middleburg and Orewe[0mll",
+               ]
+    run_app_test expected, [ '-r', '--match-dirname=canterbury', 'xt.*e' ], *dirnames
+  end
+
+  def test_without_basename
+    dirnames = [ '/proj/org/incava/glark/test' ]
+    expected = [
+                "[1m/proj/org/incava/glark/test/resources/canterbury/franklin/tale.txt[0m",
+                "   80 That is betwi[30m[43mxt a husband and his wife[0m?",
+                "[1m/proj/org/incava/glark/test/resources/canterbury/prologue.txt[0m",
+                "  187 He gave not of the te[30m[43mxt a pulled he[0mn,",
+                "  192 This ilke te[30m[43mxt held he not worth an oyste[0mr;",
+                "  291 Betwi[30m[43mxte Middleburg and Orewe[0mll",
+                "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
+                "   10 te[30m[43mxt-color-3: underline mage[0mnta",
+                "Binary file /proj/org/incava/glark/test/resources/textfile.txt.gz matches",
+               ]
+    run_app_test expected, [ '-r', '--not-dirname=glark', 'xt.*e' ], *dirnames
+  end
+
+  def test_with_pathname
+    dirnames = [ '/proj/org/incava/glark/test/glark', '/proj/org/incava/glark/test/resources' ]
+    expected = [
+                "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
+                "   10 te[30m[43mxt-color-3: underline mage[0mnta",
+                "Binary file /proj/org/incava/glark/test/resources/textfile.txt.gz matches",
+               ]
+    run_app_test expected, [ '-r', '--match-dirpath', '^.*es$', 'xt.*e' ], *dirnames
+  end
+
+  def test_without_pathname
+    dirnames = [ '/proj/org/incava/glark/test/glark', '/proj/org/incava/glark/test/resources' ]
+    expected = [
+                "[1m/proj/org/incava/glark/test/resources/canterbury/franklin/tale.txt[0m",
+                "   80 That is betwi[30m[43mxt a husband and his wife[0m?",
+                "[1m/proj/org/incava/glark/test/resources/canterbury/prologue.txt[0m",
+                "  187 He gave not of the te[30m[43mxt a pulled he[0mn,",
+                "  192 This ilke te[30m[43mxt held he not worth an oyste[0mr;",
+                "  291 Betwi[30m[43mxte Middleburg and Orewe[0mll",
+                "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
+                "   10 te[30m[43mxt-color-3: underline mage[0mnta",
+                "Binary file /proj/org/incava/glark/test/resources/textfile.txt.gz matches",
+               ]
+    run_app_test expected, [ '-r', '--not-dirpath', 'test/glark', 'xt.*e' ], *dirnames
+  end
 end

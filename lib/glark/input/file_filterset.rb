@@ -10,22 +10,6 @@ module Glark; end
 class Glark::FileFilterSet < Glark::FilterSet
   include Loggable, Glark::OptionUtil
 
-  def add_opt_filter_int optdata, tags, posneg, cls
-    optdata << {
-      :tags => tags,
-      :arg  => [ :integer ],
-      :set  => Proc.new { |val| add_filter posneg, cls, val.to_i }
-    }
-  end
-
-  def add_opt_filter_re optdata, tags, posneg, cls
-    optdata << {
-      :tags => tags,
-      :arg  => [ :string ],
-      :set  => Proc.new { |pat| add_filter posneg, cls, Regexp.create(pat) }
-    }
-  end
-
   def add_as_options optdata
     add_opt_filter_int optdata, %w{ --size-limit }, :negative, SizeLimitFilter
 
@@ -44,17 +28,11 @@ class Glark::FileFilterSet < Glark::FilterSet
     }
   end
 
-  def dump_fields
-    config_fields
-  end
-
   def update_fields fields
     fields.each do |name, value|
       case name
       when "size-limit"
         add_filter :negative, SizeLimitFilter, value.to_i
-      when "split-as-path"
-        @split_as_path = to_boolean value
       end
     end
   end

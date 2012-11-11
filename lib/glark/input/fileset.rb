@@ -69,11 +69,11 @@ class Glark::FileSet
       pn = Pathname.new fname
     end
 
-    return if pn.file? && skipped?(pn)
+    return if pn.file? && file_skipped?(pn)
     @files << pn
   end
 
-  def skipped? pn
+  def file_skipped? pn
     @file_filterset.skipped? pn
   end
 
@@ -143,7 +143,7 @@ class Glark::FileSet
   end
 
   def handle_file pn, &blk
-    return if skipped? pn
+    return if file_skipped? pn
 
     unless pn.readable?
       log { "skipping unreadable: #{pn}" }
@@ -164,13 +164,13 @@ class Glark::FileSet
   end
 
   def handle_text pn, &blk
-    return if skipped? pn
+    return if file_skipped? pn
 
     blk.call [ FileType::TEXT, pn ]
   end
 
   def handle_binary pn, &blk
-    return if skipped? pn
+    return if file_skipped? pn
 
     type = @bin_as_text ? FileType::BINARY : FileType::TEXT
     blk.call [ type, pn ]

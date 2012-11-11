@@ -59,3 +59,6 @@ Sun Nov 11 09:09:12 2012
 
   Refined --match-name, --not-name, --match-path, --not-path to support multiple
   patterns.
+
+  Added --match-dirname, --not-dirname, --match-dirpath, and --not-dirpath.
+  These are for directories what --match-name et al are for files.
