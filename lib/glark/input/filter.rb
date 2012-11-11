@@ -15,12 +15,18 @@ end
 class PatternFilter
   include Loggable
 
+  attr_reader :pattern
+
   def initialize pattern
     @pattern = pattern
   end
 
   def pattern_match? str
     @pattern.match str
+  end
+
+  def to_s
+    @pattern.to_s
   end
 end
 
@@ -67,6 +73,8 @@ class FullNameFilter < PatternFilter
 end
 
 class SizeLimitFilter < Filter
+  attr_reader :max_size
+  
   def initialize maxsize
     @max_size = maxsize
   end

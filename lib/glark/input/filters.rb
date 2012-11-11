@@ -24,4 +24,8 @@ class Glark::Filters
   def match? pn
     @filters.detect { |filter| filter.match? pn }
   end
+
+  def find_by_class cls
+    @filters.detect { |filter| filter.kind_of? cls }
+  end
 end

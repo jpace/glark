@@ -9,27 +9,30 @@ module Glark; end
 
 class Glark::FilterSet
   include Loggable
+
+  attr_reader :positive
+  attr_reader :negative
   
   def initialize
-    @positive_filters = Glark::Filters.new
-    @negative_filters = Glark::Filters.new
+    @positive = Glark::Filters.new
+    @negative = Glark::Filters.new
   end
 
   def add_positive_filter filter
-    @positive_filters << filter
+    @positive << filter
   end
 
   def add_negative_filter filter
-    @negative_filters << filter
+    @negative << filter
   end
 
   def skipped? pn
-    return true if !@positive_filters.empty? && !@positive_filters.match?(pn)
-    @negative_filters.match? pn
+    return true if !@positive.empty? && !@positive.match?(pn)
+    @negative.match? pn
   end
 
   def add_filter posneg, cls, field
-    var = instance_variable_get '@' + posneg.to_s + '_filters'
+    var = instance_variable_get '@' + posneg.to_s
     var << cls.new(field)
   end
 

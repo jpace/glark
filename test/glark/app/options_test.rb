@@ -457,6 +457,12 @@ module Glark
       end
     end
 
+    def assert_file_filter_pattern exppat, opts, posneg, cls
+      matches = opts.input_options.file_filters.send posneg
+      bn = matches.find_by_class cls
+      assert_equal Regexp.new(exppat), bn.pattern
+    end
+
     def test_with_basename
       %w{ abc123 \w+\S* }.each do |pat|
         %w{ --with-basename --basename --with-name --name --match-name }.each do |tag|
@@ -465,8 +471,9 @@ module Glark
            [ tag + '=' + pat ]
           ].each do |args|
             run_test(args + %w{ foo },
-                     :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                     :input => { :match_names => [ Regexp.new(pat) ] })
+                     :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
+              assert_file_filter_pattern pat, opts, :positive, BaseNameFilter
+            end
           end
         end
       end
@@ -480,8 +487,9 @@ module Glark
            [ tag + '=' + pat ]
           ].each do |args|
             run_test(args + %w{ foo },
-                     :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                     :input => { :nomatch_names => [ Regexp.new(pat) ] })
+                     :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
+              assert_file_filter_pattern pat, opts, :negative, BaseNameFilter
+            end
           end
         end
       end
@@ -495,8 +503,9 @@ module Glark
            [ tag + '=' + pat ]
           ].each do |args|
             run_test(args + %w{ foo },
-                     :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                     :input => { :match_paths => [ Regexp.new(pat) ] })
+                     :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
+              assert_file_filter_pattern pat, opts, :positive, FullNameFilter
+            end
           end
         end
       end
@@ -510,8 +519,9 @@ module Glark
            [ tag + '=' + pat ]
           ].each do |args|
             run_test(args + %w{ foo },
-                     :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                     :input => { :nomatch_paths => [ Regexp.new(pat) ] })
+                     :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
+              assert_file_filter_pattern pat, opts, :negative, FullNameFilter
+            end
           end
         end
       end
@@ -574,6 +584,12 @@ module Glark
       end
     end
 
+    def assert_file_filter_int exp, opts, posneg, cls, field
+      matches = opts.input_options.file_filters.send posneg
+      bn = matches.find_by_class cls
+      assert_equal exp, bn.send(field)
+    end
+
     def test_size_limit
       [ 0, 1, 10, 10000, 100000 ].each do |val|
         [
@@ -581,8 +597,9 @@ module Glark
          [ '--size-limit',   val.to_s ],
         ].each do |opt|
           run_test(opt + %w{ foo },
-                   :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                   :input => { :size_limit => val })
+                   :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
+            assert_file_filter_int val, opts, :negative, SizeLimitFilter, :max_size
+          end
         end
       end
     end
