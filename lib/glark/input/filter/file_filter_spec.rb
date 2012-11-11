@@ -2,13 +2,13 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/input/filter/filterset'
+require 'glark/input/filter/filter_spec'
 require 'glark/util/optutil'
 
 module Glark; end
 
-class Glark::FileFilterSet < Glark::FilterSet
-  include Loggable, Glark::OptionUtil
+class Glark::FileFilterSpec < Glark::FilterSpec
+  include Glark::OptionUtil
 
   def add_as_options optdata
     add_opt_filter_int optdata, %w{ --size-limit }, :negative, SizeLimitFilter
@@ -33,6 +33,9 @@ class Glark::FileFilterSet < Glark::FilterSet
       case name
       when "size-limit"
         add_filter :negative, SizeLimitFilter, value.to_i
+      when "match-name"
+        info "value: #{value}".yellow
+        add_filter :positive, BaseNameFilter, Regexp.create(value)
       end
     end
   end

@@ -51,4 +51,17 @@ class Glark::RcfileTestCase < Glark::TestCase
       assert_equal "grep", opts.output_options.style
     end
   end
+
+  def xxxtest_match
+    run_option_test(%w{ foo }, []) do |opts|
+      opts.read_rcfile Pathname.new '/proj/org/incava/glark/test/resources/rcmatch.txt'
+
+      posfilters = opts.input_options.file_filters.positive
+      posfilters.each do |pf|
+        info "pf: #{pf} #{pf.class}".cyan
+      end
+
+      # assert_equal 1000, opts.input_options.file_filters.positive.find_by_class(SizeLimitFilter).max_size
+    end
+  end
 end

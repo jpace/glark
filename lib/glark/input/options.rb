@@ -7,8 +7,8 @@
 require 'rubygems'
 require 'riel/log'
 require 'glark/input/range'
-require 'glark/input/filter/dir_filterset'
-require 'glark/input/filter/file_filterset'
+require 'glark/input/filter/dir_filter_spec'
+require 'glark/input/filter/file_filter_spec'
 require 'glark/util/options'
 
 class InputOptions < Glark::Options
@@ -26,8 +26,8 @@ class InputOptions < Glark::Options
     @range = Glark::Range.new 
     @split_as_path = true
     
-    @file_filterset = Glark::FileFilterSet.new
-    @dir_filterset = Glark::DirFilterSet.new
+    @file_filterset = Glark::FileFilterSpec.new
+    @dir_filterset = Glark::DirFilterSpec.new
 
     $/ = "\n"
 

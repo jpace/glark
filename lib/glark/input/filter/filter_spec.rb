@@ -3,19 +3,19 @@
 # vim: set filetype=ruby : set sw=2
 
 require 'glark/input/filter/filter'
-require 'glark/input/filter/filters'
+require 'glark/input/filter/filter_list'
 
 module Glark; end
 
-class Glark::FilterSet
+class Glark::FilterSpec
   include Loggable
 
   attr_reader :positive
   attr_reader :negative
   
   def initialize
-    @positive = Glark::Filters.new
-    @negative = Glark::Filters.new
+    @positive = Glark::FilterList.new
+    @negative = Glark::FilterList.new
   end
 
   def add_positive_filter filter

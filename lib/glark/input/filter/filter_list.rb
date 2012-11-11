@@ -6,7 +6,7 @@ require 'glark/input/filter/filter'
 
 module Glark; end
 
-class Glark::Filters
+class Glark::FilterList
   include Loggable
   
   def initialize
@@ -27,5 +27,9 @@ class Glark::Filters
 
   def find_by_class cls
     @filters.detect { |filter| filter.kind_of? cls }
+  end
+
+  def each &blk
+    @filters.each(&blk)
   end
 end

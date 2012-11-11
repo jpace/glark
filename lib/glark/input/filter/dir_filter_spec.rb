@@ -2,13 +2,13 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/input/filter/filterset'
+require 'glark/input/filter/filter_spec'
 require 'glark/util/optutil'
 
 module Glark; end
 
-class Glark::DirFilterSet < Glark::FilterSet
-  include Loggable, Glark::OptionUtil
+class Glark::DirFilterSpec < Glark::FilterSpec
+  include Glark::OptionUtil
 
   def initialize 
     super
