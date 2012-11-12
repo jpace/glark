@@ -38,6 +38,8 @@ class Glark::PathTestCase < Glark::AppTestCase
                 "    1 ma[30m[43mtch-name[0m: \\w+.java",
                 "    2 ma[30m[43mtch-name[0m: \\w+.rb",
                 "    4 no[30m[43mt-name[0m: zxcdjlk",
+                "[1m/proj/org/incava/glark/test/resources/rcpath.txt[0m",
+                "    2 ma[30m[43mtch-dirpath: src/te[0mst/ruby",
                 "[1m/proj/org/incava/glark/test/resources/spaces.txt[0m",
                 "    2 01 The Knigh[30m[43mts Tale[0m.txt",
                 "    7 06 The Wife Of Ba[30m[43mths Tale[0m.txt",

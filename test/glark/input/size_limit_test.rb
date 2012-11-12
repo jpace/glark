@@ -32,6 +32,8 @@ class Glark::SizeLimitTestCase < Glark::AppTestCase
                 "    1 ma[30m[43mtch-name[0m: \\w+.java",
                 "    2 ma[30m[43mtch-name[0m: \\w+.rb",
                 "    4 no[30m[43mt-name[0m: zxcdjlk",
+                "[1m/proj/org/incava/glark/test/resources/rcpath.txt[0m",
+                "    2 ma[30m[43mtch-dirpath: src/te[0mst/ruby",
                ]
     run_app_test expected, [ '-r', '--size-limit', '100', 't.*e' ], dirname
   end

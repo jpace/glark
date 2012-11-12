@@ -54,7 +54,7 @@ class Glark::RcfileTestCase < Glark::TestCase
 
   def assert_has_filter_pattern exppat, filters, cls
     clsfilters = filters.select { |pf| pf.kind_of? cls }
-    assert clsfilters.detect { |filter| filter.pattern == Regexp.new(exppat) }
+    assert clsfilters.detect { |filter| filter.pattern == Regexp.new(exppat) }, "exppat: #{exppat}; cls: #{cls}"
   end
 
   def test_match
@@ -67,6 +67,19 @@ class Glark::RcfileTestCase < Glark::TestCase
 
       negfilters = opts.input_options.file_filters.negative
       assert_has_filter_pattern 'zxcdjlk', negfilters, BaseNameFilter
+    end
+  end
+
+  def test_path
+    run_option_test(%w{ foo }, []) do |opts|
+      opts.read_rcfile Pathname.new '/proj/org/incava/glark/test/resources/rcpath.txt'
+
+      posfilters = opts.input_options.directory_filters.positive
+      assert_has_filter_pattern 'src/main/java', posfilters, FullNameFilter
+      assert_has_filter_pattern 'src/test/ruby', posfilters, FullNameFilter
+
+      negfilters = opts.input_options.directory_filters.negative
+      assert_has_filter_pattern 'org/incava/util', negfilters, FullNameFilter
     end
   end
 end
