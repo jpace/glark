@@ -30,39 +30,9 @@ class PatternFilter
   end
 end
 
-module FileFilter
-  def match? pn
-    pn.file?
-  end
-end
-
-module DirectoryFilter
-  def match? pn
-    pn.file?
-  end
-end
-
-class DirectoryPatternFilter < PatternFilter
-  def match? pn
-    pn.directory?
-  end
-end
-
-class FilePatternFilter < PatternFilter
-  def match? pn
-    pn.file?
-  end
-end
-
 class BaseNameFilter < PatternFilter
   def match? pn
     pattern_match? pn.basename.to_s
-  end
-end
-
-class DirectoryBaseNameFilter < DirectoryPatternFilter
-  def match? pn
-    super && pattern_match?(pn.basename.to_s)
   end
 end
 

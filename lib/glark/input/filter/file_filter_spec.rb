@@ -29,18 +29,11 @@ class Glark::FileFilterSpec < Glark::FilterSpec
   end
 
   def update_fields fields
+    re = Regexp.new('^(match|not)-(path|name)$')
     fields.each do |name, values|
-      case name
-      when "size-limit"
+      next if add_filter_by_re re, name, values
+      if name == 'size-limit'
         add_filter :negative, SizeLimitFilter, values.last.to_i
-      when "match-name"
-        values.each do |val|
-          add_filter :positive, BaseNameFilter, Regexp.create(val)
-        end
-      when "not-name"
-        values.each do |val|
-          add_filter :negative, BaseNameFilter, Regexp.create(val)
-        end
       end
     end
   end

@@ -77,8 +77,12 @@ class Glark::FileSet
     @file_filterset.skipped? pn
   end
 
+  def directory_skipped? pn
+    @directory_filterset.skipped? pn
+  end
+
   def stdin?
-    @files.size == 1 && @files[0] == '-'
+    @files.size == 1 && @files.first == '-'
   end
 
   def directory? idx
@@ -114,10 +118,6 @@ class Glark::FileSet
     else
       write "unknown file type: #{pn}"
     end
-  end
-
-  def directory_skipped? pn
-    @directory_filterset.skipped? pn
   end
 
   def handle_directory pn, depth, &blk

@@ -112,9 +112,9 @@ class InputOptions < Glark::Options
     add_opt_str optdata, :directory, %w{ -d --directories }
     
     optdata << binary_files_option = {
-      :tags    => %w{ --binary-files },
-      :arg     => [ :required, :regexp, %r{ ^ [\'\"]? (text|without\-match|binary) [\'\"]? $ }x ],
-      :set     => Proc.new { |md| @binary_files = md[1] },
+      :tags => %w{ --binary-files },
+      :arg  => [ :required, :regexp, %r{ ^ [\'\"]? (text|without\-match|binary) [\'\"]? $ }x ],
+      :set  => Proc.new { |md| @binary_files = md[1] },
       :rc   => %w{ binary-files },
     }
 

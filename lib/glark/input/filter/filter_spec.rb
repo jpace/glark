@@ -18,14 +18,6 @@ class Glark::FilterSpec
     @negative = Glark::FilterList.new
   end
 
-  def add_positive_filter filter
-    @positive << filter
-  end
-
-  def add_negative_filter filter
-    @negative << filter
-  end
-
   def skipped? pn
     return true if !@positive.empty? && !@positive.match?(pn)
     @negative.match? pn
@@ -62,5 +54,20 @@ class Glark::FilterSpec
   end
 
   def update_fields fields
+  end
+
+  def add_filters posneg, cls, values
+    values.each do |val|
+      add_filter posneg, cls, Regexp.create(val)
+    end
+  end
+  
+  def add_filter_by_re re, name, values
+    return false unless md = re.match(name)
+
+    posneg = md[1] == 'match' ? :positive : :negative
+    cls    = md[2] == 'path'  ? FullNameFilter : BaseNameFilter
+    add_filters posneg, cls, values
+    true
   end
 end

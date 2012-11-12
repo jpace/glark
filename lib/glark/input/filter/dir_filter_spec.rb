@@ -12,7 +12,7 @@ class Glark::DirFilterSpec < Glark::FilterSpec
 
   def initialize 
     super
-    add_negative_filter BaseNameFilter.new('.svn')
+    add_filter :negative, BaseNameFilter, '.svn'
   end
 
   def add_as_options optdata
@@ -26,17 +26,9 @@ class Glark::DirFilterSpec < Glark::FilterSpec
   end
 
   def update_fields fields
+    re = Regexp.new('^(match|not)-dir(path|name)$')
     fields.each do |name, values|
-      case name
-      when "match-dirpath"
-        values.each do |val|
-          add_filter :positive, FullNameFilter, Regexp.create(val)
-        end
-      when "not-dirpath"
-        values.each do |val|
-          add_filter :negative, FullNameFilter, Regexp.create(val)
-        end
-      end
+      add_filter_by_re re, name, values
     end
   end
 end
