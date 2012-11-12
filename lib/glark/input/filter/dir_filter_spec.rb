@@ -26,7 +26,7 @@ class Glark::DirFilterSpec < Glark::FilterSpec
   end
 
   def update_fields fields
-    re = Regexp.new('^(match|not)-dir(path|name)$')
+    re = Regexp.new '^(match|not)-dir(path|name)$'
     fields.each do |name, values|
       add_filter_by_re re, name, values
     end
