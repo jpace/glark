@@ -7,7 +7,7 @@ require 'glark/input/filter/filter'
 module Glark; end
 
 class Glark::FilterList
-  include Loggable
+  include Loggable, Enumerable
   
   def initialize
     @filters = Array.new

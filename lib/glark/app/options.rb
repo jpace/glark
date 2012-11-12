@@ -135,18 +135,18 @@ class Glark::AppOptions < Glark::Options
   def read_rcfile rcfname
     rcfile = Glark::RCFile.new rcfname
 
-    rcvalues = rcfile.names.collect { |name| [ name, rcfile.value(name) ] }
+    rcvalues = rcfile.names.collect { |name| [ name, rcfile.values(name) ] }
 
     all_option_sets.each do |opts|
       opts.update_fields rcvalues
     end
     
     rcfile.names.each do |name|
-      value = rcfile.value name
+      values = rcfile.values name
       
       case name
       when "local-config-files"
-        @local_config_files = to_boolean value
+        @local_config_files = to_boolean values.last
       end
     end
   end

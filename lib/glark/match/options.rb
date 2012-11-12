@@ -65,10 +65,10 @@ class MatchOptions < Glark::Options
   end
 
   def update_fields fields
-    fields.each do |name, value|
+    fields.each do |name, values|
       case name
       when "ignore-case"
-        @ignorecase = to_boolean value
+        @ignorecase = to_boolean values.last
       end
     end
   end

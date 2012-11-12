@@ -62,3 +62,8 @@ Sun Nov 11 09:09:12 2012
 
   Added --match-dirname, --not-dirname, --match-dirpath, and --not-dirpath.
   These are for directories what --match-name et al are for files.
+
+Mon Nov 12 10:02:53 2012
+
+  match-name, not-name, match-path, not-path: added functionality so that those
+  fields can be defined multiple times in .glarkrc files.

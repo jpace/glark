@@ -521,10 +521,10 @@ reversed bold text.
 
     % glark print ...
 
-  * `glark --fullname='/\.java$/' -r println org`:
+  * `glark --match-path='/\.java$/' -r println org`:
     Search for "println" in all Java files at and below the "org" directory.
 
-  * `glark --basename='!/CVS/' -r '\b\d\d:\d\d:\d\d\b' .`:
+  * `glark --match-name='!/CVS/' -r '\b\d\d:\d\d:\d\d\b' .`:
     Search for a time pattern in all files without "CVS" in their basenames.
 
   * `glark --size-limit=1024 -r main -r .`:
@@ -585,6 +585,8 @@ reversed bold text.
         ignore-case:       false
         quiet:             yes
         text-color:        bold reverse
+        text-color-1:      yellow on black
+        text-color-2:      red on black
         line-number-color: bold
         verbose:           false
         grep:              true
@@ -634,11 +636,6 @@ reversed bold text.
   * `file-color`:
     See the `--file-color` option. For example, for white on black:
         file-color: white on black
-    
-  * `fullname`:
-    See the `--fullname` and `--basename` options. For example, to omit CVS files:
-    
-        fullname: !/\bCVS\b/
 
   * `grep`:
     See the `--grep` option. For example, to always run in grep mode:
@@ -682,15 +679,15 @@ reversed bold text.
     This can be used, for example, in a Java project, where .class files are binary,
     versus a PHP project, where .class files are text:
     
-        /home/me/.glarkrc
+        ~/.glarkrc
     
             local-config-files: true
     
-        /home/me/projects/java/.glarkrc
+        /projects/javaproj/.glarkrc
     
             known-nontext-files: class
     
-        /home/me/projects/php/.glarkrc
+        /projects/phpproj/.glarkrc
     
             known-text-files: class
     
@@ -698,12 +695,15 @@ reversed bold text.
     file in Java projects, and .class files will be treated as text. This can speed
     up searches.
     
-    Note that the configuration file ~/.glarkrc is read first, so the local
-    configuration file can override those settings.
+    The configuration file ~/.glarkrc is read first, so the definitions in the
+    local configuration file will override those settings.
     
-  * `man`:
-    Display the man page. This option exists so that the man page can be
-    displayed even when glark is installed as a Ruby gem.
+  * `match-name`, `not-name`, `match-path`, `not-path`:
+    See the equivalent options. For example, to omit CVS files:
+    
+        not-path: .*\bCVS\b/
+
+    This field can be specified multiple times.
     
   * `quiet`:
     See the `--quiet` option.
@@ -716,16 +716,22 @@ reversed bold text.
     By default, this is false.
     
   * `text-color`:
-    See the `--text-color` option. Example:
+    See the `--text-color` option. All matching regexps will be highlighted with
+    the given color. Example:
     
         text-color: bold blue on white
+    
+  * `text-color-NUM`:
+    Sets the color with which the NUMth regexp will be highlighted. Example:
+    
+        text-color-2: white on green
     
   * `verbose`:
     See the `--verbose` option. Example:
     
         verbose: true
 
-### Exclusion of Non-Text Files
+## EXCLUSION OF NON-TEXT FILES
 
 Non-text files are automatically skipped, by taking a sample of the file and
 checking for an excessive number of non-ASCII characters. This test is skipped
@@ -772,7 +778,7 @@ This test is also skipped for files with suffixes associated with non-text
 See the `known-text-files` and `known-nontext-files` fields for denoting file
 name suffixes to associate as text or nontext.
     
-### Exit Status
+## EXIT STATUS
     
 The exit status is 0 if matches were found; 1 if no matches were found, and 2 if
 there was an error. An inverted match (the -v/--invert-match option) will result
@@ -802,9 +808,9 @@ The code to detect nontext files assumes ASCII, not Unicode.
 
 Jeff Pace (jeugenepace at gmail dot com)
 
-incava.org/projects/glark
+http://www.incava.org/projects/glark
 
-github.com/jeugenepace/glark
+http://www.github.com/jeugenepace/glark
 
 ## COPYRIGHT
 

@@ -29,13 +29,18 @@ class Glark::FileFilterSpec < Glark::FilterSpec
   end
 
   def update_fields fields
-    fields.each do |name, value|
+    fields.each do |name, values|
       case name
       when "size-limit"
-        add_filter :negative, SizeLimitFilter, value.to_i
+        add_filter :negative, SizeLimitFilter, values.last.to_i
       when "match-name"
-        info "value: #{value}".yellow
-        add_filter :positive, BaseNameFilter, Regexp.create(value)
+        values.each do |val|
+          add_filter :positive, BaseNameFilter, Regexp.create(val)
+        end
+      when "not-name"
+        values.each do |val|
+          add_filter :negative, BaseNameFilter, Regexp.create(val)
+        end
       end
     end
   end

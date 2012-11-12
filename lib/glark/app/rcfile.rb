@@ -10,11 +10,8 @@ class Glark::RCFile
   COMMENT_RE = Regexp.new '\s*#.*'
   NAME_VALUE_RE = Regexp.new '\s*[=:]\s*'
   
-  attr_reader :names
-  
   def initialize file
-    @names = Array.new
-    @values = Hash.new
+    @values = Array.new
 
     pn = file.kind_of?(Pathname) ? file : Pathname.new(file)
     
@@ -33,15 +30,23 @@ class Glark::RCFile
     name, value = line.split NAME_VALUE_RE
     return unless name && value
 
-    @names << name unless @names.include?(name)
-    @values[name] = value
+    add name, value
   end
 
-  def value name
-    @values[name]
+  def names
+    @values.collect { |x| x[0] }
+  end
+
+  def values name
+    ary = @values.assoc name
+    ary && ary[1 .. -1]
   end
 
   def add name, value
-    @values[name]
+    if ary = @values.assoc(name)
+      ary << value
+    else
+      @values << [ name, value ]
+    end
   end
 end

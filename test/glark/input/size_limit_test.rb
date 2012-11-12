@@ -8,46 +8,31 @@ class Glark::SizeLimitTestCase < Glark::AppTestCase
     dirname = '/proj/org/incava/glark/test/resources'
     expected = [
                 "[1m/proj/org/incava/glark/test/resources/expressions.txt[0m",
-                "    2 Th[30m[43me[0mM.*Tal[30m[43me[0m",
+                "    2 TheM.*Ta[30m[43mle[0m",
                 "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
-                "    1 # comm[30m[43me[0mnt h[30m[43me[0mr[30m[43me[0m",
-                "    2 highlight: singl[30m[43me[0m",
-                "    4 local-config-fil[30m[43me[0ms: tru[30m[43me[0m",
-                "    6 lin[30m[43me[0m-numb[30m[43me[0mr-color: bold r[30m[43me[0md",
-                "    7 ignor[30m[43me[0m-cas[30m[43me[0m: tru[30m[43me[0m",
-                "    8 siz[30m[43me[0m-limit: 1000",
-                "   10 t[30m[43me[0mxt-color-3: und[30m[43me[0mrlin[30m[43me[0m mag[30m[43me[0mnta",
-                "[1m/proj/org/incava/glark/test/resources/rcgrep.txt[0m",
-                "    1 gr[30m[43me[0mp: tru[30m[43me[0m",
+                "    2 high[30m[43mlight: single[0m",
+                "    4 [30m[43mlocal-config-files: true[0m",
+                "    6 [30m[43mline-number-color: bold re[0md",
+                "   10 text-co[30m[43mlor-3: underline mage[0mnta",
                 "[1m/proj/org/incava/glark/test/resources/zfile.txt[0m",
-                "    1 zaffr[30m[43me[0ms",
-                "    2 zoa[30m[43me[0ma",
-                "    3 zoa[30m[43me[0ma's",
-                "    4 zo[30m[43me[0ma",
-                "    5 zo[30m[43me[0mas",
-                "    6 zonula[30m[43me[0m",
-                "    7 zoo[30m[43me[0ma",
-                "    8 zoo[30m[43me[0ma[30m[43me[0m",
-                "    9 zoo[30m[43me[0mal",
-                "   10 zoo[30m[43me[0mas",
-                "   11 zoo[30m[43me[0mcia",
-                "   12 zoo[30m[43me[0mcium",
-                "   13 zooglo[30m[43me[0ma[30m[43me[0m",
-                "   14 zooglo[30m[43me[0mal",
-                "   15 zooglo[30m[43me[0mas",
-                "   16 zyga[30m[43me[0mnid",
+                "    6 zonu[30m[43mlae[0m",
+                "   13 zoog[30m[43mloeae[0m",
+                "   14 zoog[30m[43mloe[0mal",
+                "   15 zoog[30m[43mloe[0mas",
                ]
-    run_app_test expected, [ '-r', '--size-limit', '300', 'e' ], dirname
+    run_app_test expected, [ '-r', '--size-limit', '300', 'l.*e' ], dirname
   end
 
   def test_limit_100
     dirname = '/proj/org/incava/glark/test/resources'
     expected = [
-                "[1m/proj/org/incava/glark/test/resources/expressions.txt[0m",
-                "    2 Th[30m[43me[0mM.*Tal[30m[43me[0m",
                 "[1m/proj/org/incava/glark/test/resources/rcgrep.txt[0m",
-                "    1 gr[30m[43me[0mp: tru[30m[43me[0m",
+                "    1 grep: [30m[43mtrue[0m",
+                "[1m/proj/org/incava/glark/test/resources/rcmatch.txt[0m",
+                "    1 ma[30m[43mtch-name[0m: \\w+.java",
+                "    2 ma[30m[43mtch-name[0m: \\w+.rb",
+                "    4 no[30m[43mt-name[0m: zxcdjlk",
                ]
-    run_app_test expected, [ '-r', '--size-limit', '100', 'e' ], dirname
+    run_app_test expected, [ '-r', '--size-limit', '100', 't.*e' ], dirname
   end
 end

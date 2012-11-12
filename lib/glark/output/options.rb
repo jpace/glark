@@ -107,12 +107,12 @@ class OutputOptions < Glark::Options
   end
 
   def update_fields fields
-    fields.each do |name, value|
+    fields.each do |name, values|
       case name
       when "grep"
-        self.style = "grep" if to_boolean value
+        self.style = "grep" if to_boolean values.last
       when "output"
-        self.style = value
+        self.style = values.last
       end
     end
     @context.update_fields fields

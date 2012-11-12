@@ -52,16 +52,21 @@ class Glark::RcfileTestCase < Glark::TestCase
     end
   end
 
-  def xxxtest_match
+  def assert_has_filter_pattern exppat, filters, cls
+    clsfilters = filters.select { |pf| pf.kind_of? cls }
+    assert clsfilters.detect { |filter| filter.pattern == Regexp.new(exppat) }
+  end
+
+  def test_match
     run_option_test(%w{ foo }, []) do |opts|
       opts.read_rcfile Pathname.new '/proj/org/incava/glark/test/resources/rcmatch.txt'
 
       posfilters = opts.input_options.file_filters.positive
-      posfilters.each do |pf|
-        info "pf: #{pf} #{pf.class}".cyan
-      end
+      assert_has_filter_pattern '\w+.java', posfilters, BaseNameFilter
+      assert_has_filter_pattern '\w+.rb', posfilters, BaseNameFilter
 
-      # assert_equal 1000, opts.input_options.file_filters.positive.find_by_class(SizeLimitFilter).max_size
+      negfilters = opts.input_options.file_filters.negative
+      assert_has_filter_pattern 'zxcdjlk', negfilters, BaseNameFilter
     end
   end
 end
