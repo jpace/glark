@@ -37,6 +37,8 @@ class Glark::DirectoryTestCase < Glark::AppTestCase
   def test_recurse_as_option
     dirname = '/proj/org/incava/glark/test/resources'
     expected = [
+                "[1m/proj/org/incava/glark/test/resources/add.rb[0m",
+                "    5   def initiali[30m[43mze[0m x, y",
                 "[1m/proj/org/incava/glark/test/resources/canterbury/franklin/tale.txt[0m",
                 "  298 For th' hori[30m[43mzon had reft the[0m sun his light",
                 "[1m/proj/org/incava/glark/test/resources/canterbury/prologue.txt[0m",
@@ -45,6 +47,8 @@ class Glark::DirectoryTestCase < Glark::AppTestCase
                 "  256 To have with such la[30m[43mzars acquaintance[0m.",
                 "  330 Justice he was full often in assi[30m[43mze[0m,",
                 "  605 Of which there was a do[30m[43mzen in that house[0m,",
+                "[1m/proj/org/incava/glark/test/resources/greet.rb[0m",
+                "    8   def initiali[30m[43mze name[0m",
                 "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
                 "    8 si[30m[43mze[0m-limit: 1000",
                 "Binary file /proj/org/incava/glark/test/resources/textfile.txt.gz matches",

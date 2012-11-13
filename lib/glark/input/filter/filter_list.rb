@@ -22,11 +22,11 @@ class Glark::FilterList
   end
 
   def match? pn
-    @filters.detect { |filter| filter.match? pn }
+    detect { |filter| filter.match? pn }
   end
 
   def find_by_class cls
-    @filters.detect { |filter| filter.kind_of? cls }
+    detect { |filter| filter.kind_of? cls }
   end
 
   def each &blk
