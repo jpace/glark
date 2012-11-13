@@ -67,3 +67,7 @@ Mon Nov 12 10:02:53 2012
 
   match-name, not-name, match-path, not-path: added functionality so that those
   fields can be defined multiple times in .glarkrc files.
+
+Tue Nov 13 11:38:28 2012
+
+  Added --match-ext and --not-ext, for matching based on extensions.

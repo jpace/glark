@@ -47,23 +47,22 @@ used instead.
   * `--match-name`=REGEXP:
     Search only files with names that match the given regular expression. As in
     find(1), this works on the basename of the file. The expression can be
-    negated and modified with `!` and `i`, such as `!/io\.[hc]$/i`. This option
-    can be specified multiple times, in which case only files matching *any* of
+    negated and modified with `!` and `i`, such as `!/io\.[hc]$/i`. This option,
+    and all `--match-` and `--not-` options, can be specified multiple times, in
+    which case only files matching *any* of the given expressions will be
+    searched.
+
+  * `--not-name`=REGEXP:
+    Do not search files with base names matching the given regular expression.
+    If this option is specified multiple times, only files matching *none* of
     the given expressions will be searched.
 
   * `--match-path`=REGEXP:
     Search only files with full names that match the given regular expression.
-    As in find(1), this works on the path of the file. This option can be
-    specified any number of times, with same logic as `--match-name`.
-
-  * `--not-name`=REGEXP:
-    Do not search files with base names matching the given regular expression.
-    This option can be specified multiple times, in which case only files
-    matching *none* of the given expressions will be searched.
+    As in find(1), this works on the path of the file.
 
   * `--not-path`=REGEXP:
-    Do not search files with full names matching the given regular expression.
-    This option can also be specified multiple times.
+    Skip files with full names matching the given regular expression.
 
   * `--match-dirname`=REGEXP:
     Search only directories with basenames matching the given expression.
@@ -77,6 +76,12 @@ used instead.
 
   * `--not-dirpath`=REGEXP:
     Skip directories with paths matching the given expression.
+
+  * `--match-ext`=REGEXP:
+    Search only files with extensions that match the given regular expression.
+
+  * `--not-ext`=REGEXP:
+    Skip files with extensions that match the given regular expression.
 
   * `-M`, `--exclude-matching`:
     Do not search files whose names match the primary expression. This can be
@@ -541,8 +546,8 @@ reversed bold text.
     % glark Regexp /usr/lib/ruby/1.9.1
 
   * `glark Regexp /usr/lib/ruby/1.9.1/...2`:
-    Search for "Regexp" in all files in </usr/lib/ruby/1.9.1> and up to two
-    levels of subdirectories under.
+    Search for "Regexp" in all files in </usr/lib/ruby/1.9.1> and two levels of
+    subdirectories underneath.
 
   * `glark --match-name 'http.*' Regexp /usr/lib/ruby/1.9.1/...`:
     Search for "Regexp" in all files under </usr/lib/ruby/1.9.1> with a name
@@ -698,12 +703,12 @@ reversed bold text.
     The configuration file ~/.glarkrc is read first, so the definitions in the
     local configuration file will override those settings.
     
-  * `match-name`, `not-name`, `match-path`, `not-path`:
+  * `match-name`, `not-name`, `match-path`, `not-path`, `match-ext`, `not-ext`:
     See the equivalent options. For example, to omit CVS files:
     
-        not-path: .*\bCVS\b/
+        not-dirname: CVS
 
-    This field can be specified multiple times.
+    These fields can be specified multiple times.
     
   * `quiet`:
     See the `--quiet` option.

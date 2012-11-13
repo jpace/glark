@@ -1,0 +1,4 @@
+match-ext: rb
+match-ext: pl
+
+not-ext: txt

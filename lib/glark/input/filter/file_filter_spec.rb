@@ -20,6 +20,9 @@ class Glark::FileFilterSpec < Glark::FilterSpec
     # match/skip files by pathname
     add_opt_filter_re optdata, %w{ --fullname --path --with-fullname --with-path --match-path }, :positive, FullNameFilter
     add_opt_filter_re optdata, %w{ --without-fullname --without-path --not-path }, :negative, FullNameFilter
+
+    add_opt_filter_re optdata, %w{ --match-ext }, :positive, ExtFilter
+    add_opt_filter_re optdata, %w{ --not-ext }, :negative, ExtFilter
   end
 
   def config_fields
@@ -29,7 +32,7 @@ class Glark::FileFilterSpec < Glark::FilterSpec
   end
 
   def update_fields fields
-    re = Regexp.new '^(match|not)-(path|name)$'
+    re = Regexp.new '^(match|not)-(path|name|ext)$'
     fields.each do |name, values|
       next if add_filter_by_re re, name, values
       if name == 'size-limit'

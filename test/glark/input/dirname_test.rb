@@ -15,7 +15,7 @@ class Glark::DirNameTestCase < Glark::AppTestCase
     run_app_test expected, [ '--directories=recurse', 'this.*rea' ], dirname
   end
 
-  def test_with_basename
+  def test_match_basename
     dirnames = [ '/proj/org/incava/glark/test/resources/canterbury', '/proj/org/incava/glark/test/glark' ]
     expected = [
                 "[1m/proj/org/incava/glark/test/resources/canterbury/prologue.txt[0m",
@@ -26,7 +26,7 @@ class Glark::DirNameTestCase < Glark::AppTestCase
     run_app_test expected, [ '-r', '--match-dirname=canterbury', 'xt.*e' ], *dirnames
   end
 
-  def test_without_basename
+  def test_not_basename
     dirnames = [ '/proj/org/incava/glark/test' ]
     expected = [
                 "[1m/proj/org/incava/glark/test/resources/canterbury/franklin/tale.txt[0m",
@@ -42,7 +42,7 @@ class Glark::DirNameTestCase < Glark::AppTestCase
     run_app_test expected, [ '-r', '--not-dirname=glark', 'xt.*e' ], *dirnames
   end
 
-  def test_with_pathname
+  def test_match_pathname
     dirnames = [ '/proj/org/incava/glark/test/glark', '/proj/org/incava/glark/test/resources' ]
     expected = [
                 "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
@@ -52,7 +52,7 @@ class Glark::DirNameTestCase < Glark::AppTestCase
     run_app_test expected, [ '-r', '--match-dirpath', '^.*es$', 'xt.*e' ], *dirnames
   end
 
-  def test_without_pathname
+  def test_not_pathname
     dirnames = [ '/proj/org/incava/glark/test/glark', '/proj/org/incava/glark/test/resources' ]
     expected = [
                 "[1m/proj/org/incava/glark/test/resources/canterbury/franklin/tale.txt[0m",

@@ -33,6 +33,10 @@ class Glark::SizeLimitTestCase < Glark::AppTestCase
   def test_limit_100
     dirname = '/proj/org/incava/glark/test/resources'
     expected = [
+                "[1m/proj/org/incava/glark/test/resources/rcext.txt[0m",
+                "    1 ma[30m[43mtch-e[0mxt: rb",
+                "    2 ma[30m[43mtch-e[0mxt: pl",
+                "    4 no[30m[43mt-e[0mxt: txt",
                 "[1m/proj/org/incava/glark/test/resources/rcgrep.txt[0m",
                 "    1 grep: [30m[43mtrue[0m",
                 "[1m/proj/org/incava/glark/test/resources/rcmatch.txt[0m",

@@ -4,7 +4,7 @@
 require 'glark/app/tc'
 
 class Glark::NameTestCase < Glark::AppTestCase
-  def test_with_single
+  def test_match_single
     dirname = '/proj/org/incava/glark/test/resources'
     expected = [
                 '[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m',
@@ -23,7 +23,7 @@ class Glark::NameTestCase < Glark::AppTestCase
     run_app_test expected, [ '-r', '--match-name', '^\w+ile.txt$', 't.*e' ], dirname
   end
 
-  def test_without_single
+  def test_not_single
     dirname = '/proj/org/incava/glark/test/resources'
     expected = [
                 "[1m/proj/org/incava/glark/test/resources/04-TheCooksTale.txt[0m",
@@ -40,34 +40,26 @@ class Glark::NameTestCase < Glark::AppTestCase
     run_app_test expected, [ '-r', '--not-name', '^\w+e.txt$', 'g.*t.*e\b' ], dirname
   end
 
-  def test_with_multiple
+  def test_match_multiple
     dirname = '/proj/org/incava/glark/test/resources'
     expected = [
                 "[1m/proj/org/incava/glark/test/resources/filelist.txt[0m",
-                "    2 01-The_Knigh[30m[43mts_Tale[0m.txt",
                 "    7 06-The_Wife_Of_Ba[30m[43mths_Tale[0m.txt",
-                "   11 10-The_Merchan[30m[43mts_Tale[0m.txt",
-                "   14 13-The_Doc[30m[43mtors_Tale[0m.txt",
-                "   21 20-The_Nuns_Pries[30m[43mts_Tale[0m.txt",
-                "[1m/proj/org/incava/glark/test/resources/rcgrep.txt[0m",
-                "    1 grep: [30m[43mtrue[0m",
+                "[1m/proj/org/incava/glark/test/resources/rcext.txt[0m",
+                "    1 ma[30m[43mtch-e[0mxt: rb",
+                "    2 ma[30m[43mtch-e[0mxt: pl",
                 "[1m/proj/org/incava/glark/test/resources/rcmatch.txt[0m",
                 "    1 ma[30m[43mtch-name[0m: \\w+.java",
                 "    2 ma[30m[43mtch-name[0m: \\w+.rb",
-                "    4 no[30m[43mt-name[0m: zxcdjlk",
                 "[1m/proj/org/incava/glark/test/resources/rcpath.txt[0m",
                 "    2 ma[30m[43mtch-dirpath: src/te[0mst/ruby",
                 "[1m/proj/org/incava/glark/test/resources/spaces.txt[0m",
-                "    2 01 The Knigh[30m[43mts Tale[0m.txt",
                 "    7 06 The Wife Of Ba[30m[43mths Tale[0m.txt",
-                "   11 10 The Merchan[30m[43mts Tale[0m.txt",
-                "   14 13 The Doc[30m[43mtors Tale[0m.txt",
-                "   21 20 The Nuns Pries[30m[43mts Tale[0m.txt",
                ]
-    run_app_test expected, [ '-r', '--match-name', '^\w+[^e].txt$', '--match-name', 'rcgrep.txt', 't.*e' ], dirname
+    run_app_test expected, [ '-r', '--match-name', '^\w+[^e].txt$', '--match-name', 'rcgrep.txt', 't.*h.*e' ], dirname
   end    
 
-  def test_without_multiple
+  def test_not_multiple
     dirname = '/proj/org/incava/glark/test/resources'
     expected = [
                 "[1m/proj/org/incava/glark/test/resources/filelist.txt[0m",

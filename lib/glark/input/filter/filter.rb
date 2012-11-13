@@ -53,3 +53,9 @@ class SizeLimitFilter < Filter
     pn.size > @max_size
   end
 end
+
+class ExtFilter < PatternFilter
+  def match? pn
+    pattern_match? pn.extname.to_s[1 .. -1]
+  end
+end

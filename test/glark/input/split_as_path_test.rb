@@ -4,7 +4,7 @@
 require 'glark/app/tc'
 
 class Glark::SplitAsPathTestCase < Glark::AppTestCase
-  def test_with
+  def test_default
     path = '/proj/org/incava/glark/test/resources:/var/this/doesnt/exist'
     expected = [
                 "[1m/proj/org/incava/glark/test/resources/canterbury/franklin/tale.txt[0m",
@@ -17,7 +17,7 @@ class Glark::SplitAsPathTestCase < Glark::AppTestCase
     run_app_test expected, [ '-r', 'x.*er\w' ], path
   end
 
-  def test_without
+  def test_no_split
     path = '/proj/org/incava/glark/test/resources:/var/this/doesnt/exist'
     expected = [
                ]

@@ -4,7 +4,7 @@
 require 'glark/app/tc'
 
 class Glark::PathTestCase < Glark::AppTestCase
-  def test_with_single
+  def test_match_single
     dirname = '/proj/org/incava/glark/test/resources'
     expected = [
                 "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
@@ -23,7 +23,7 @@ class Glark::PathTestCase < Glark::AppTestCase
     run_app_test expected, [ '-r', '--match-path', 'test/resources/.*ile.txt$', 't.*e' ], dirname
   end
 
-  def test_without_single
+  def test_not_single
     dirname = '/proj/org/incava/glark/test/resources'
     expected = [
                 "[1m/proj/org/incava/glark/test/resources/filelist.txt[0m",
@@ -37,7 +37,7 @@ class Glark::PathTestCase < Glark::AppTestCase
     run_app_test expected, [ '-r', '--not-path', 'test/resources/.*e.txt$', 'g.*t.*e\b' ], dirname
   end
 
-  def test_with_multiple
+  def test_match_multiple
     dirname = '/proj/org/incava/glark/test/resources'
     expected = [
                 "[1m/proj/org/incava/glark/test/resources/canterbury/franklin/tale.txt[0m",
@@ -52,7 +52,7 @@ class Glark::PathTestCase < Glark::AppTestCase
     run_app_test expected, [ '-r', '--match-path', 'test/resources/.*ile.txt$', '--match-path', 'test/resources/canterbury/.*.txt$', 'xt.*e' ], dirname
   end
 
-  def test_without_multiple
+  def test_not_multiple
     dirname = '/proj/org/incava/glark/test/resources'
     expected = [
                 "[1m/proj/org/incava/glark/test/resources/filelist.txt[0m",

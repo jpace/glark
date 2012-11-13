@@ -33,7 +33,10 @@ class Glark::AppTestCase < Glark::TestCase
 
   def run_app_test expected, args, *files
     result = run_glark args, *files
-    assert_equal expected.collect { |line| "#{line}\n" }.join(''), result
+    actual = result.split "\n"
+    ( 0 ... [ expected.length, actual.length ].max ).each do |idx|
+      assert_equal expected[idx], actual[idx], "idx: #{idx}"
+    end
   end
 
   def run_app_test_exact_output expected, args, *files
