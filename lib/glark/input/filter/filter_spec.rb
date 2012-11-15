@@ -25,11 +25,20 @@ class Glark::FilterSpec
     @criteria.add field, posneg, cls.new(criteria)
   end
 
-  def add_opt_filter_int optdata, tags, field, posneg, cls
+  def add_opt_filter_int optdata, opt
+    optdata << {
+      :tags => opt[:tags],
+      :arg  => [ :integer ],
+      :set  => Proc.new { |val| add_filter opt[:field], opt[:posneg], opt[:cls], val.to_i }
+    }
+  end
+
+  def add_opt_filter_int_rc optdata, tags, rcfield, field, posneg, cls
     optdata << {
       :tags => tags,
       :arg  => [ :integer ],
-      :set  => Proc.new { |val| add_filter field, posneg, cls, val.to_i }
+      :set  => Proc.new { |val| add_filter field, posneg, cls, val.to_i },
+      :rc   => [ rcfield ]
     }
   end
 
@@ -38,6 +47,14 @@ class Glark::FilterSpec
       :tags => tags,
       :arg  => [ :string ],
       :set  => Proc.new { |pat| add_filter field, posneg, cls, Regexp.create(pat) }
+    }
+  end
+
+  def add_opt_filter_pat optdata, opt
+    optdata << {
+      :tags => opt[:tags],
+      :arg  => [ :string ],
+      :set  => Proc.new { |pat| add_filter opt[:field], opt[:posneg], opt[:cls], Regexp.create(pat) }
     }
   end
 

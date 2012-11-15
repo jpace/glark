@@ -703,7 +703,7 @@ reversed bold text.
     The configuration file ~/.glarkrc is read first, so the definitions in the
     local configuration file will override those settings.
     
-  * `match-name`, `not-name`, `match-path`, `not-path`, `match-ext`, `not-ext`:
+  * `match-name`, `not-name`, `match-path`, `not-path`, `match-ext`, `not-ext`, `match-dirname`, `not-dirname`, `match-dirpath`, `not-dirpath`:
     See the equivalent options. For example, to omit CVS files:
     
         not-dirname: CVS
@@ -712,13 +712,6 @@ reversed bold text.
     
   * `quiet`:
     See the `--quiet` option.
-    
-  * `show-break`:
-    Whether to display breaks between sections, when displaying context. Example:
-    
-        show-break: true
-    
-    By default, this is false.
     
   * `text-color`:
     See the `--text-color` option. All matching regexps will be highlighted with
