@@ -11,21 +11,10 @@ module Glark; end
 class Glark::FilterSpec
   include Loggable
 
-  attr_reader :positive
-  attr_reader :negative
-
   attr_reader :criteria
   
   def initialize
-    @positive = Glark::FilterList.new
-    @negative = Glark::FilterList.new
-
     @criteria = Glark::Criteria.new
-  end
-
-  def orig_skipped? pn
-    return true if !@positive.empty? && !@positive.match?(pn)
-    @negative.match? pn
   end
 
   def skipped? pn
@@ -33,13 +22,6 @@ class Glark::FilterSpec
   end
 
   def add_filter field, posneg, cls, criteria
-    info "field   : #{field}".cyan
-    info "posneg  : #{posneg}"
-    info "cls     : #{cls}"
-    info "criteria: #{criteria}"
-    # var = instance_variable_get '@' + posneg.to_s
-    # var << cls.new(criteria)
-
     @criteria.add field, posneg, cls.new(criteria)
   end
 
@@ -89,9 +71,6 @@ class Glark::FilterSpec
                  when 'ext'
                    [ :ext, ExtFilter ]
                  end
-    info "field: #{field}".yellow
-    info "cls: #{cls}".yellow
-    info "posneg: #{posneg}"
     add_filters field, posneg, cls, values
     true
   end
