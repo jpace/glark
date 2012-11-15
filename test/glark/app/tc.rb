@@ -43,4 +43,41 @@ class Glark::AppTestCase < Glark::TestCase
     result = run_glark args, *files
     assert_equal expected, result
   end
+
+  def assert_file_filter_pattern_eq exppat, opts, field, posneg, cls
+    expre = Regexp.new exppat
+    criteria = opts.input_options.file_filters.criteria
+    assert_filter_eq expre, criteria, field, posneg, cls, :pattern
+  end
+
+  def assert_file_filter_eq expval, opts, field, posneg, cls, matchfield
+    criteria = opts.input_options.file_filters.criteria
+    assert_filter_eq expval, criteria, field, posneg, cls, matchfield
+  end
+
+  def assert_directory_filter_pattern_eq exppat, opts, field, posneg, cls
+    expre = Regexp.new exppat
+    criteria = opts.input_options.directory_filters.criteria
+    assert_filter_eq expre, criteria, field, posneg, cls, :pattern
+  end
+
+  def assert_directory_filter_eq expval, opts, field, posneg, cls, matchfield
+    criteria = opts.input_options.directory_filters.criteria
+    assert_filter_eq expval, criteria, field, posneg, cls, matchfield
+  end
+  
+  def assert_filter_eq expval, criteria, field, posneg, cls, matchfield
+    fldcrit = criteria.filters[field]
+    pncrit = fldcrit[posneg]
+
+    pncrit.each do |crit|
+      matchval = crit.send matchfield
+      if expval == matchval
+        assert true
+        return
+      end
+    end
+
+    assert false, "no match: #{matchfield}; #{expval}"
+  end
 end

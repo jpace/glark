@@ -71,3 +71,7 @@ Mon Nov 12 10:02:53 2012
 Tue Nov 13 11:38:28 2012
 
   Added --match-ext and --not-ext, for matching based on extensions.
+
+Wed Nov 14 18:53:49 2012
+
+  Added match-ext and not-ext as rc file fields.

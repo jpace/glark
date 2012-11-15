@@ -10,19 +10,25 @@ module Glark; end
 class Glark::FileFilterSpec < Glark::FilterSpec
   include Glark::OptionUtil
 
+  def initialize 
+    super
+    
+    @ext_filters = Array.new
+  end
+
   def add_as_options optdata
-    add_opt_filter_int optdata, %w{ --size-limit }, :negative, SizeLimitFilter
+    add_opt_filter_int optdata, %w{ --size-limit }, :size, :negative, SizeLimitFilter
 
     # match/skip files by basename
-    add_opt_filter_re optdata, %w{ --basename --name --with-basename --with-name --match-name }, :positive, BaseNameFilter
-    add_opt_filter_re optdata, %w{ --without-basename --without-name --not-name }, :negative, BaseNameFilter
+    add_opt_filter_re optdata, %w{ --basename --name --with-basename --with-name --match-name }, :name, :positive, BaseNameFilter
+    add_opt_filter_re optdata, %w{ --without-basename --without-name --not-name }, :name, :negative, BaseNameFilter
 
     # match/skip files by pathname
-    add_opt_filter_re optdata, %w{ --fullname --path --with-fullname --with-path --match-path }, :positive, FullNameFilter
-    add_opt_filter_re optdata, %w{ --without-fullname --without-path --not-path }, :negative, FullNameFilter
+    add_opt_filter_re optdata, %w{ --fullname --path --with-fullname --with-path --match-path }, :path, :positive, FullNameFilter
+    add_opt_filter_re optdata, %w{ --without-fullname --without-path --not-path }, :path, :negative, FullNameFilter
 
-    add_opt_filter_re optdata, %w{ --match-ext }, :positive, ExtFilter
-    add_opt_filter_re optdata, %w{ --not-ext }, :negative, ExtFilter
+    add_opt_filter_re optdata, %w{ --match-ext }, :ext, :positive, ExtFilter
+    add_opt_filter_re optdata, %w{ --not-ext }, :ext, :negative, ExtFilter
   end
 
   def config_fields
@@ -35,8 +41,9 @@ class Glark::FileFilterSpec < Glark::FilterSpec
     re = Regexp.new '^(match|not)-(path|name|ext)$'
     fields.each do |name, values|
       next if add_filter_by_re re, name, values
+
       if name == 'size-limit'
-        add_filter :negative, SizeLimitFilter, values.last.to_i
+        add_filter :size, :negative, SizeLimitFilter, values.last.to_i
       end
     end
   end
