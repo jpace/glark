@@ -13,54 +13,33 @@ class Glark::FileFilterSpec < Glark::FilterSpec
   def initialize 
     super
 
-    @szlimit = { :tags => %w{ --size-limit }, :rcfield => 'size-limit', :field => :size, :posneg => :negative, :cls => SizeLimitFilter }
+    @szlimit_opt = { :tags => %w{ --size-limit }, :negrc => 'size-limit', :field => :size, :posneg => :negative, :cls => SizeLimitFilter }
 
-    @basename = { :field => :name, :cls => BaseNameFilter }
+    @basename_opt = { :field => :name, :cls => BaseNameFilter }
+    @basename_opt[:postags] = %w{ --basename --name --with-basename --with-name --match-name }
+    @basename_opt[:negtags] = %w{ --without-basename --without-name --not-name }
+    @basename_opt[:posrc] = 'match-name'
+    @basename_opt[:negrc] = 'not-name'
+    
+    @pathname_opt = { :field => :path, :cls => FullNameFilter }
+    @pathname_opt[:postags] = %w{ --fullname --path --with-fullname --with-path --match-path }
+    @pathname_opt[:negtags] = %w{ --without-fullname --without-path --not-path }
+    @pathname_opt[:posrc] = 'match-path'
+    @pathname_opt[:negrc] = 'not-path'
 
-    @match_basename = @basename.dup
-    @match_basename[:tags] = %w{ --basename --name --with-basename --with-name --match-name }
-    @match_basename[:posneg] = :positive
-
-    @not_basename = @basename.dup
-    @not_basename[:tags] = %w{ --without-basename --without-name --not-name }
-    @not_basename[:posneg] = :negative
-
-    @pathname = { :field => :path, :cls => FullNameFilter }
-
-    @match_pathname = @pathname.dup
-    @match_pathname[:tags] = %w{ --fullname --path --with-fullname --with-path --match-path }
-    @match_pathname[:posneg] = :positive
-
-    @not_pathname = @pathname.dup
-    @not_pathname[:tags] = %w{ --without-fullname --without-path --not-path }
-    @not_pathname[:posneg] = :negative
-
-    @ext = { :field => :ext, :cls => ExtFilter }
-
-    @match_ext = @ext.dup
-    @match_ext[:tags] = %w{ --match-ext }
-    @match_ext[:posneg] = :positive
-
-    @not_ext = @ext.dup
-    @not_ext[:tags] = %w{ --not-ext }
-    @not_ext[:posneg] = :negative
-
-    @ext_filters = Array.new
+    @ext_opt = { :field => :ext, :cls => ExtFilter }
+    @ext_opt[:postags] = %w{ --match-ext }
+    @ext_opt[:negtags] = %w{ --not-ext }
+    @ext_opt[:posrc] = 'match-ext'
+    @ext_opt[:negrc] = 'not-ext'
   end
 
   def add_as_options optdata
-    add_opt_filter_int optdata, @szlimit
+    add_opt_filter_int optdata, @szlimit_opt
 
-    # match/skip files by basename
-    add_opt_filter_pat optdata, @match_basename
-    add_opt_filter_pat optdata, @not_basename
-
-    # match/skip files by pathname
-    add_opt_filter_pat optdata, @match_pathname
-    add_opt_filter_pat optdata, @not_pathname
-
-    add_opt_filter_pat optdata, @match_ext
-    add_opt_filter_pat optdata, @not_ext
+    add_opt_filter_pat optdata, @basename_opt
+    add_opt_filter_pat optdata, @pathname_opt
+    add_opt_filter_pat optdata, @ext_opt
   end
 
   def config_fields
@@ -69,13 +48,12 @@ class Glark::FileFilterSpec < Glark::FilterSpec
     }
   end
 
-  def update_fields fields
-    re = Regexp.new '^(match|not)-(path|name|ext)$'
-    fields.each do |name, values|
-      next if add_filter_by_re re, name, values
+  def update_fields rcfields
+    process_rcfields rcfields, [ @basename_opt, @pathname_opt, @ext_opt ]
 
-      if name == @szlimit[:rcfield]
-        add_filter @szlimit[:field], @szlimit[:posneg], @szlimit[:cls], values.last.to_i
+    rcfields.each do |name, values|
+      if name == @szlimit_opt[:negrc]
+        add_filter @szlimit_opt[:field], @szlimit_opt[:posneg], @szlimit_opt[:cls], values.last.to_i
       end
     end
   end

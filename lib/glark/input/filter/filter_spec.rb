@@ -33,29 +33,16 @@ class Glark::FilterSpec
     }
   end
 
-  def add_opt_filter_int_rc optdata, tags, rcfield, field, posneg, cls
-    optdata << {
-      :tags => tags,
-      :arg  => [ :integer ],
-      :set  => Proc.new { |val| add_filter field, posneg, cls, val.to_i },
-      :rc   => [ rcfield ]
-    }
-  end
-
-  def add_opt_filter_re optdata, tags, field, posneg, cls
-    optdata << {
-      :tags => tags,
-      :arg  => [ :string ],
-      :set  => Proc.new { |pat| add_filter field, posneg, cls, Regexp.create(pat) }
-    }
-  end
-
   def add_opt_filter_pat optdata, opt
-    optdata << {
-      :tags => opt[:tags],
-      :arg  => [ :string ],
-      :set  => Proc.new { |pat| add_filter opt[:field], opt[:posneg], opt[:cls], Regexp.create(pat) }
-    }
+    [ [ opt[:postags], :positive ], 
+      [ opt[:negtags], :negative ] ].each do |tags, posneg|
+      next unless tags
+      optdata << {
+        :tags => tags,
+        :arg  => [ :string ],
+        :set  => Proc.new { |pat| add_filter opt[:field], posneg, opt[:cls], Regexp.create(pat) }
+      }
+    end
   end
 
   def config_fields
@@ -76,19 +63,20 @@ class Glark::FilterSpec
     end
   end
   
-  def add_filter_by_re re, name, values
-    return false unless md = re.match(name)
-
-    posneg = md[1] == 'match' ? :positive : :negative
-    field, cls = case md[2]
-                 when 'path'
-                   [ :path, FullNameFilter ]
-                 when 'name'
-                   [ :name, BaseNameFilter ]
-                 when 'ext'
-                   [ :ext, ExtFilter ]
+  def process_rcfields rcfields, options
+    rcfields.each do |name, values|
+      options.each do |opt|
+        posneg = case name
+                 when opt[:posrc]
+                   :positive
+                 when opt[:negrc]
+                   :negative
+                 else
+                   next
                  end
-    add_filters field, posneg, cls, values
-    true
+        
+        add_filters opt[:field], posneg, opt[:cls], values
+      end
+    end
   end
 end

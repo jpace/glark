@@ -12,23 +12,28 @@ class Glark::DirFilterSpec < Glark::FilterSpec
 
   def initialize 
     super
+
+    @basename_opt = { :field => :name, :cls => BaseNameFilter }
+    @basename_opt[:postags] = %w{ --match-dirname }
+    @basename_opt[:negtags] = %w{ --not-dirname }
+    @basename_opt[:posrc] = 'match-dirname'
+    @basename_opt[:negrc] = 'not-dirname'
+    
+    @pathname_opt = { :field => :path, :cls => FullNameFilter }
+    @pathname_opt[:postags] = %w{ --match-dirpath }
+    @pathname_opt[:negtags] = %w{ --not-dirpath }
+    @pathname_opt[:posrc] = 'match-dirpath'
+    @pathname_opt[:negrc] = 'not-dirpath'
+
     add_filter :name, :negative, BaseNameFilter, '.svn'
   end
 
   def add_as_options optdata
-    # match/skip files by basename
-    add_opt_filter_re optdata, %w{ --match-dirname }, :name, :positive, BaseNameFilter
-    add_opt_filter_re optdata, %w{ --not-dirname }, :name, :negative, BaseNameFilter
-
-    # match/skip files by pathname
-    add_opt_filter_re optdata, %w{ --match-dirpath }, :path, :positive, FullNameFilter
-    add_opt_filter_re optdata, %w{ --not-dirpath }, :path, :negative, FullNameFilter
+    add_opt_filter_pat optdata, @basename_opt
+    add_opt_filter_pat optdata, @pathname_opt
   end
 
-  def update_fields fields
-    re = Regexp.new '^(match|not)-dir(path|name)$'
-    fields.each do |name, values|
-      add_filter_by_re re, name, values
-    end
+  def update_fields rcfields
+    process_rcfields rcfields, [ @basename_opt, @pathname_opt ]
   end
 end
