@@ -25,7 +25,7 @@ class Glark::DirFilterSpec < Glark::FilterSpec
     @pathname_opt[:posrc] = 'match-dirpath'
     @pathname_opt[:negrc] = 'not-dirpath'
 
-    @criteria.add :name, :negative, BaseNameFilter.new('.svn')
+    add :name, :negative, BaseNameFilter.new('.svn')
   end
 
   def add_as_options optdata

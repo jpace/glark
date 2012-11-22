@@ -27,6 +27,10 @@ class Glark::Criteria
     return unless filters = get(type, posneg)
     filters.detect { |filter| filter.kind_of? cls }
   end
+  
+  def skipped? pn
+    !match? pn
+  end
 
   def match? pn
     @type_to_posneg.values.each do |typefilters|
