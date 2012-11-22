@@ -21,7 +21,6 @@ class InputOptions < Glark::Options
   attr_reader :dir_criteria
 
   def initialize optdata
-    @binary_files = "binary"
     @binary_files_option = BinaryFilesOption.new
     @directory = "list"
     @exclude_matching = false      # exclude files whose names match the expression
@@ -56,7 +55,7 @@ class InputOptions < Glark::Options
 
   def config_fields
     fields = {
-      "binary-files" => @binary_files,
+      "binary-files" => binary_files,
       "split-as-path" => @split_as_path,
     }
     fields.merge! @dir_criteria.config_fields
@@ -65,7 +64,7 @@ class InputOptions < Glark::Options
 
   def dump_fields
     fields = {
-      "binary_files" => @binary_files,
+      "binary_files" => binary_files,
       "directory" => @directory,
       "exclude_matching" => @exclude_matching,
       "split-as-path" => @split_as_path,
