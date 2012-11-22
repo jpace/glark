@@ -26,7 +26,4 @@ class Glark::TarFile
       end
     end
   end
-
-  def each_as_list &blk
-  end
 end

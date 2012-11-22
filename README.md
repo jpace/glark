@@ -43,12 +43,13 @@ used instead.
     `text`: binary file are treated as text. This option may have negative side
     effects with the terminal, attempting to print non-printable characters.
 
-    `list`: binary files that contain lists of files (such as tar and jar files)
-    are searched such that the _file names_ are searched against.
+    `list`: binary files that contain lists of files (such as tar, zip and jar
+    files) are searched such that the _file names_ are searched against.
 
     `read`: the full contents of binary files will be searched. This supports
-    tar and gz files. Only one level of compression/archiving is handled; thus
-    compressed files within other compressed files are not searched.
+    tar, jar, zip and gz files. Only one level of compression/archiving is
+    handled; thus compressed files within other compressed files are not
+    searched.
 
   * `--match-name`=REGEXP:
     Search only files with names that match the given regular expression. As in

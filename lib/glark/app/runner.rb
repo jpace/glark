@@ -9,6 +9,7 @@ require 'glark/input/file/file'
 require 'glark/input/file/binary_file'
 require 'glark/input/file/gz_file'
 require 'glark/input/file/tar_file'
+require 'glark/input/file/zip_file'
 require 'glark/input/fileset'
 
 $stdout.sync = true             # unbuffer
@@ -108,6 +109,14 @@ class Glark::Runner
       tarfile.each_file do |entry|
         contents << "#{entry.full_name}\n"
       end
+    when '.jar', '.zip'
+      contents = StringIO.new 
+      jarfile = Glark::ZipFile.new(fname)
+      jarfile.each_file do |entry|
+        contents << "#{entry.name}\n"
+      end
+    else
+      raise "extension '#{extname}' is not handled"
     end
     contents.rewind
     
