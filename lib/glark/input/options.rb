@@ -68,7 +68,6 @@ class InputOptions < Glark::Options
   def dump_fields
     fields = {
       "binary_files" => @binary_files,
-      "decompress" => @decompress,
       "directory" => @directory,
       "exclude_matching" => @exclude_matching,
       "split-as-path" => @split_as_path,
