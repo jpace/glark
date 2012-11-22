@@ -4,7 +4,7 @@
 
 # Generic output.
 
-require 'glark/input/file'
+require 'glark/input/file/file'
 require 'glark/output/formatted'
 require 'glark/output/options'
 

@@ -5,7 +5,7 @@
 # Output that has (possibly) been reformatted, i.e., highlighting of regular
 # expressions.
 
-require 'glark/input/file'
+require 'glark/input/file/file'
 require 'glark/output/results'
 
 class Formatted < Results
