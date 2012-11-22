@@ -21,8 +21,8 @@ class Glark::FileSet
 
     # bin_as should be binary (read), text (readlines), uncompress, unarchive
     @binary_file_process_as = input_options.binary_files
-    @directory_filterset = input_options.directory_filters
-    @file_filterset = input_options.file_filters
+    @dir_criteria = input_options.dir_criteria
+    @file_criteria = input_options.file_criteria
     @skip_dirs = input_options.directory == "skip"
     @split_as_path = input_options.split_as_path
 
@@ -77,11 +77,11 @@ class Glark::FileSet
   end
 
   def file_skipped? pn
-    @file_filterset.skipped? pn
+    @file_criteria.skipped? pn
   end
 
   def directory_skipped? pn
-    @directory_filterset.skipped? pn
+    @dir_criteria.skipped? pn
   end
 
   def stdin?

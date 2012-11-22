@@ -7,8 +7,8 @@
 require 'rubygems'
 require 'glark/input/range'
 require 'glark/input/binary_files_option'
-require 'glark/input/filter/dir_filter_spec'
-require 'glark/input/filter/file_filter_spec'
+require 'glark/input/filter/dir_criteria'
+require 'glark/input/filter/file_criteria'
 require 'glark/util/options'
 
 class InputOptions < Glark::Options
@@ -16,6 +16,9 @@ class InputOptions < Glark::Options
   attr_reader :exclude_matching # exclude files whose names match the expression
   attr_reader :range            # range to start and stop searching; nil => the entire file
   attr_reader :split_as_path    # use file arguments as path elements
+
+  attr_reader :file_criteria
+  attr_reader :dir_criteria
 
   def initialize optdata
     @binary_files = "binary"
@@ -26,8 +29,8 @@ class InputOptions < Glark::Options
     @range = Glark::Range.new 
     @split_as_path = true
     
-    @file_filterset = Glark::FileFilterSpec.new
-    @dir_filterset = Glark::DirFilterSpec.new
+    @file_criteria = Glark::FileCriteria.new
+    @dir_criteria = Glark::DirCriteria.new
 
     $/ = "\n"
 
@@ -56,8 +59,8 @@ class InputOptions < Glark::Options
       "binary-files" => @binary_files,
       "split-as-path" => @split_as_path,
     }
-    fields.merge! @dir_filterset.config_fields
-    fields.merge! @file_filterset.config_fields
+    fields.merge! @dir_criteria.config_fields
+    fields.merge! @file_criteria.config_fields
   end
 
   def dump_fields
@@ -67,14 +70,14 @@ class InputOptions < Glark::Options
       "exclude_matching" => @exclude_matching,
       "split-as-path" => @split_as_path,
     }
-    fields.merge! @dir_filterset.dump_fields
-    fields.merge! @file_filterset.dump_fields
+    fields.merge! @dir_criteria.dump_fields
+    fields.merge! @file_criteria.dump_fields
     fields
   end
 
   def update_fields fields
-    @dir_filterset.update_fields fields
-    @file_filterset.update_fields fields
+    @dir_criteria.update_fields fields
+    @file_criteria.update_fields fields
 
     fields.each do |name, value|
       case name
@@ -82,14 +85,6 @@ class InputOptions < Glark::Options
         @split_as_path = to_boolean value
       end
     end
-  end
-
-  def file_filters
-    @file_filterset
-  end
-
-  def directory_filters
-    @dir_filterset
   end
   
   def add_as_options optdata    
@@ -109,8 +104,8 @@ class InputOptions < Glark::Options
     
     @binary_files_option.add_as_option optdata
 
-    @file_filterset.add_as_options optdata
-    @dir_filterset.add_as_options optdata
+    @file_criteria.add_as_options optdata
+    @dir_criteria.add_as_options optdata
 
     add_opt_true optdata, :exclude_matching, %w{ -M --exclude-matching }
 

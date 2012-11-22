@@ -46,23 +46,23 @@ class Glark::AppTestCase < Glark::TestCase
 
   def assert_file_filter_pattern_eq exppat, opts, field, posneg, cls
     expre = Regexp.new exppat
-    criteria = opts.input_options.file_filters
+    criteria = opts.input_options.file_criteria
     assert_filter_eq expre, criteria, field, posneg, cls, :pattern
   end
 
   def assert_file_filter_eq expval, opts, field, posneg, cls, matchfield
-    criteria = opts.input_options.file_filters
+    criteria = opts.input_options.file_criteria
     assert_filter_eq expval, criteria, field, posneg, cls, matchfield
   end
 
   def assert_directory_filter_pattern_eq exppat, opts, field, posneg, cls
     expre = Regexp.new exppat
-    criteria = opts.input_options.directory_filters
+    criteria = opts.input_options.dir_criteria
     assert_filter_eq expre, criteria, field, posneg, cls, :pattern
   end
 
   def assert_directory_filter_eq expval, opts, field, posneg, cls, matchfield
-    criteria = opts.input_options.directory_filters
+    criteria = opts.input_options.dir_criteria
     assert_filter_eq expval, criteria, field, posneg, cls, matchfield
   end
   
