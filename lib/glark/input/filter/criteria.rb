@@ -9,25 +9,25 @@ module Glark; end
 class Glark::Criteria
   include Loggable
 
-  attr_reader :filters
+  attr_reader :filter_list
   
   def initialize
-    # by type => by positive/negative => filter list
-    @filters = Hash.new { |h, k| h[k] = Hash.new { |h1, k1| h1[k1] = Glark::FilterList.new } }
+    @filter_list = Glark::FilterList.new
   end
 
   def add type, posneg, filter
-    @filters[type][posneg] << filter
+    @filter_list.add type, posneg, filter
   end
 
   def match? pn
-    @filters.each do |type, typefilters|
+    filters = @filter_list.get_all
+    filters.values.each do |typefilters|
       if (posf = typefilters[:positive]) && !posf.empty?
-        return false unless posf.match? pn
+        return false unless posf.detect { |fl| fl.match? pn }
       end
 
       if (negf = typefilters[:negative]) && !negf.empty?
-        return false if negf.match? pn
+        return false if negf.detect { |fl| fl.match? pn }
       end
     end
     true

@@ -67,8 +67,7 @@ class Glark::AppTestCase < Glark::TestCase
   end
   
   def assert_filter_eq expval, criteria, field, posneg, cls, matchfield
-    fldcrit = criteria.filters[field]
-    pncrit = fldcrit[posneg]
+    pncrit = criteria.filter_list.get(field, posneg)
 
     pncrit.each do |crit|
       matchval = crit.send matchfield
