@@ -46,13 +46,9 @@ used instead.
     `list`: binary files that contain lists of files (such as tar and jar files)
     are searched such that the _file names_ are searched against.
 
-    `decompress`: binary files that contain compressed files (such as gz and bz2
-    files) are searched such that the decompressed versions of their contents
-    are searched against.
-
-    `expand`: this combines the `list` and `decompress` options to search the
-    full contents of archived and compressed binary files, such as jar files and
-    tar.gz and tar.bz2 files.
+    `read`: the full contents of binary files will be searched. This supports
+    tar and gz files. Only one level of compression/archiving is handled; thus
+    compressed files within other compressed files are not searched.
 
   * `--match-name`=REGEXP:
     Search only files with names that match the given regular expression. As in
@@ -635,9 +631,10 @@ reversed bold text.
         before-context: 7
     
   * `binary-files`:
-    See the `--binary-files` option. For example, to skip binary files:
+    See the `--binary-files` option. For example, to always search binary
+    files, instead of the default behavior of skipping them:
     
-        binary-files: skip
+        binary-files: binary
     
   * `context`:
     See the `--context` option. For example, for 2 lines before and after matches:

@@ -179,8 +179,10 @@ class Glark::FileSet
              FileType::BINARY
            when 'skip', 'without-match'
              return
-           when 'decompress'
+           when 'decompress', 'read'
              :decompress
+           when 'list'
+             :list
            else
              FileType::TEXT
            end

@@ -10,7 +10,7 @@ require 'riel/log'
 class BinaryFilesOption
   include Loggable
 
-  VALID_TYPES = [ 'text', 'without-match', 'skip', 'binary', 'list', 'decompress', 'expand' ]
+  VALID_TYPES = [ 'text', 'without-match', 'skip', 'binary', 'list', 'decompress', 'read', 'expand' ]
 
   attr_reader :process_as
 

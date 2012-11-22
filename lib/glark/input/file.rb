@@ -19,7 +19,9 @@ class Glark::File
     @range = range
 
     linescls = $/ == "\n" ? Glark::LinesCR : Glark::LinesNonCR
+    info "linescls: #{linescls}"
     @lines = linescls.new fname, io
+    info "@lines: #{@lines}"
   end
   
   def linecount

@@ -66,16 +66,79 @@ class Glark::Runner
     search_file file, output_type
   end
 
-  def search_decompress fname
+  def search_read fname
     info "fname: #{fname}".yellow
 
     extname = fname.extname
     info "extname: #{extname}".cyan
     case extname
     when '.gz'
-      raise "extension '#{extname}' is not handled"
+      require 'zlib'
+      Zlib::GzipReader.open(fname) do |gz|
+        info "gz: #{gz}".red
+        file, output_type = create_file Glark::File, fname, gz
+        search_file file, output_type
+      end
+    when '.tar'
+      @opts.output_options.show_file_names = true
+      each_tar_entry(fname) do |entry|
+        contents = StringIO.new entry.read
+        file, output_type = create_file Glark::File, entry.full_name + " (in #{fname})", contents
+        search_file file, output_type
+      end
     else
       raise "extension '#{extname}' is not handled"
+    end
+  end
+
+  def each_tar_entry fname, &blk
+    # module Gem::Package is declared in 'rubygems/package', not in
+    # .../tar_reader.
+    require 'rubygems/package'
+    require 'rubygems/package/tar_reader'
+
+    entries = Array.new
+
+    f = File.new fname
+    tr = Gem::Package::TarReader.new f
+
+    tr.each do |entry|
+      if entry.file?
+        blk.call entry
+      end
+    end
+    entries
+  end
+
+  def search_list fname
+    extname = fname.extname
+    info "extname: #{extname}".yellow
+
+    case extname
+    when '.tar'
+      contents = StringIO.new 
+      each_tar_entry(fname) do |entry|
+        contents << "#{entry.full_name}\n"
+      end
+    end
+    contents.rewind
+    
+    file, output_type = create_file Glark::File, fname, contents
+    search_file file, output_type
+  end
+
+  def search_archive fname
+    extname = fname.extname
+    info "extname: #{extname}".yellow
+
+    case extname
+    when '.tar'
+      entries = get_tar_entries fname
+      entries.each do |entry|
+        contents = StringIO.new entry.read
+        file, output_type = create_file Glark::File, entry.full_name + " (in #{fname})", contents
+        search_file file, output_type
+      end
     end
   end
   
@@ -94,8 +157,10 @@ class Glark::Runner
         search_binary name 
       when FileType::TEXT
         search_text name 
-      when :decompress
-        search_decompress name 
+      when :decompress, :read
+        search_read name 
+      when :list
+        search_list name 
       else
         raise "type unknown: file: #{name}; type: #{type}"
       end

@@ -93,3 +93,6 @@ Thu Nov 22 09:46:16 2012
   Fixed processing of skipped directories, specified by strings. Thus .svn as a
   filter no longer erroneously filters out '.' or '.svndir'.
 
+  Added searching within gz files.
+
+  Added searching of tar files as lists.

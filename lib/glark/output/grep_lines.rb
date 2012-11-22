@@ -15,7 +15,7 @@ class GrepLines < Lines
   # 0-indexed, whereas they are displayed as if 1-indexed.
   def print_line lnum, ch = nil
     ln = get_line_to_print lnum
-    next unless ln
+    return unless ln
 
     print_file_name
     if @show_line_numbers
