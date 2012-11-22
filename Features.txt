@@ -79,3 +79,8 @@ Wed Nov 14 18:53:49 2012
 Thu Nov 15 06:38:19 2012
 
   Removed obsolete "show-break" field from documentation.
+
+Wed Nov 21 15:28:55 2012
+
+  Refined processing of directories, so that "implied" binary files are
+  excluded.

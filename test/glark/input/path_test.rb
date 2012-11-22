@@ -32,7 +32,6 @@ class Glark::PathTestCase < Glark::AppTestCase
                 "    1 [30m[43mgrep: true[0m",
                 "[1m/proj/org/incava/glark/test/resources/spaces.txt[0m",
                 "    2 01 The Kni[30m[43mghts Tale[0m.txt",
-                "Binary file /proj/org/incava/glark/test/resources/textfile.txt.gz matches",
                ]
     run_app_test expected, [ '-r', '--not-path', 'test/resources/.*e.txt$', 'g.*t.*e\b' ], dirname
   end

@@ -15,7 +15,6 @@ class Glark::InfoOptions < Glark::Options
 
   def initialize colors, optdata
     @colors = colors
-
     @explain = false      # display a legible version of the expression
 
     add_as_options optdata
@@ -43,22 +42,22 @@ class Glark::InfoOptions < Glark::Options
   end
 
   def update_fields fields
-    fields.each do |name, value|
+    fields.each do |name, values|
       case name
       when "known-nontext-files"
-        value.split.each do |ext|
+        values.last.split.each do |ext|
           FileType.set_nontext ext
         end
       when "known-text-files"
-        value.split.each do |ext|
+        values.last.split.each do |ext|
           FileType.set_text ext
         end
       when "quiet"
-        Log.quiet = to_boolean(value)
+        Log.quiet = to_boolean(values.last)
       when "verbose"
-        Log.verbose = to_boolean(value) ? 1 : nil
+        Log.verbose = to_boolean(values.last) ? 1 : nil
       when "verbosity"
-        Log.verbose = value.to_i
+        Log.verbose = values.last.to_i
       end
     end
   end

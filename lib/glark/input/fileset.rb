@@ -18,6 +18,8 @@ class Glark::FileSet
   
   def initialize fnames, input_options, &blk
     @maxdepth = input_options.directory == "list" ? 0 : nil
+
+    # bin_as should be binary (read), text (readlines), uncompress, unarchive
     @bin_as_text = input_options.binary_files == "binary"
     @split_as_path = input_options.split_as_path
     @skip_dirs = input_options.directory == "skip"
@@ -104,7 +106,12 @@ class Glark::FileSet
         blk.call [ :text, '-' ]
         next
       end
-
+      
+      unless pn.readable?
+        write "directory not readable: #{pn}"
+        next
+      end
+      
       dirmax = @dir_to_maxdepth[pn] || @maxdepth
       handle_pathname pn, dirmax, &blk
     end
@@ -124,11 +131,6 @@ class Glark::FileSet
     return if @skip_dirs
     return if directory_skipped? pn
 
-    unless pn.readable?
-      write "directory not readable: #{pn}"
-      return
-    end
-    
     if depth != INFINITY && depth && depth < 0
       return
     end
@@ -137,6 +139,10 @@ class Glark::FileSet
 
     pn.children.sort.each do |entry|
       next if @yielded_files.include?(entry)
+      if entry.file?
+        type = FileType.type entry.to_s
+        next if type == FileType::BINARY
+      end
       @yielded_files << entry
       handle_pathname entry, subdepth, &blk
     end
@@ -144,11 +150,6 @@ class Glark::FileSet
 
   def handle_file pn, &blk
     return if file_skipped? pn
-
-    unless pn.readable?
-      log { "skipping unreadable: #{pn}" }
-      return
-    end
 
     type = FileType.type pn.to_s
     case type

@@ -37,7 +37,6 @@ class Glark::DirNameTestCase < Glark::AppTestCase
                 "  291 Betwi[30m[43mxte Middleburg and Orewe[0mll",
                 "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
                 "   10 te[30m[43mxt-color-3: underline mage[0mnta",
-                "Binary file /proj/org/incava/glark/test/resources/textfile.txt.gz matches",
                ]
     run_app_test expected, [ '-r', '--not-dirname=glark', 'xt.*e' ], *dirnames
   end
@@ -47,7 +46,6 @@ class Glark::DirNameTestCase < Glark::AppTestCase
     expected = [
                 "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
                 "   10 te[30m[43mxt-color-3: underline mage[0mnta",
-                "Binary file /proj/org/incava/glark/test/resources/textfile.txt.gz matches",
                ]
     run_app_test expected, [ '-r', '--match-dirpath', '^.*es$', 'xt.*e' ], *dirnames
   end
@@ -63,7 +61,6 @@ class Glark::DirNameTestCase < Glark::AppTestCase
                 "  291 Betwi[30m[43mxte Middleburg and Orewe[0mll",
                 "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
                 "   10 te[30m[43mxt-color-3: underline mage[0mnta",
-                "Binary file /proj/org/incava/glark/test/resources/textfile.txt.gz matches",
                ]
     run_app_test expected, [ '-r', '--not-dirpath', 'test/glark', 'xt.*e' ], *dirnames
   end

@@ -22,7 +22,7 @@ class Glark::DirectoryTestCase < Glark::AppTestCase
                 '   12   -rw-r--r--   1 jpace jpace   42282 2010-12-04 15:24 11-[30m[43mTheSquiresTale[0m.txt',
                 '   16   -rw-r--r--   1 jpace jpace   25163 2010-12-04 15:24 15-[30m[43mTheShipmansTale[0m.txt',
                 '   22   -rw-r--r--   1 jpace jpace   30734 2010-12-04 15:24 21-[30m[43mTheSecondNunsTale[0m.txt',
-]
+               ]
     run_app_test expected, args + [ 'The.*S.*Tale' ], dirname
   end
 
@@ -51,7 +51,6 @@ class Glark::DirectoryTestCase < Glark::AppTestCase
                 "    8   def initiali[30m[43mze name[0m",
                 "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
                 "    8 si[30m[43mze[0m-limit: 1000",
-                "Binary file /proj/org/incava/glark/test/resources/textfile.txt.gz matches",
                 "[1m/proj/org/incava/glark/test/resources/zfile.txt[0m",
                 "    1 [30m[43mzaffre[0ms",
                 "    2 [30m[43mzoae[0ma",

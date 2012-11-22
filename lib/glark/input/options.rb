@@ -63,6 +63,7 @@ class InputOptions < Glark::Options
   def dump_fields
     fields = {
       "binary_files" => @binary_files,
+      "decompress" => @decompress,
       "directory" => @directory,
       "exclude_matching" => @exclude_matching,
       "split-as-path" => @split_as_path,
@@ -110,6 +111,8 @@ class InputOptions < Glark::Options
     }
 
     add_opt_str optdata, :directory, %w{ -d --directories }
+
+    add_opt_false optdata, :decompress, %w{ --decompress }
     
     optdata << binary_files_option = {
       :tags => %w{ --binary-files },
