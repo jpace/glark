@@ -98,3 +98,5 @@ Thu Nov 22 09:46:16 2012
   Added searching of tar files as lists of files.
 
   Added searching of jar and zip files as lists of files.
+
+  Added searching within jar and zip files.

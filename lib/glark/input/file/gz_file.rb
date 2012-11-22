@@ -12,7 +12,7 @@ class Glark::GzFile < Glark::File
     Zlib::GzipReader.open(fname) do |gz|
       info "gz: #{gz}".red
       super fname, gz, nil
-      blk.call self
+      blk.call [ self, gz ]
     end
   end
 end
