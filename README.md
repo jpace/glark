@@ -34,15 +34,25 @@ used instead.
     is `skip`, directories are not read, and no message is produced.
 
   * `--binary-files`=TYPE:
-    Specify how to handle binary files, thus overriding the default behavior,
-    which is to denote the binary files that match the expression, without
-    displaying the match. `TYPE` may be one of: `binary`, the default;
-    `without-match`, which results in binary files being skipped; and `text`,
-    which results in the binary file being treated as text, the display of which
-    may have bad side effects with the terminal. Note that the default behavior
-    has changed; this previously was to skip binary files. The same effect may
-    be achieved by setting `binary-files` to `without-match` in the ~/.glarkrc
-    file.
+    Specify how to handle binary files. `TYPE` may be one of:
+
+    `binary`: only the name of matching files is printed.
+
+    `without-match` or `skip`: binary files are skipped. This is the default.
+
+    `text`: binary file are treated as text. This option may have negative side
+    effects with the terminal, attempting to print non-printable characters.
+
+    `list`: binary files that contain lists of files (such as tar and jar files)
+    are searched such that the _file names_ are searched against.
+
+    `decompress`: binary files that contain compressed files (such as gz and bz2
+    files) are searched such that the decompressed versions of their contents
+    are searched against.
+
+    `expand`: this combines the `list` and `decompress` options to search the
+    full contents of archived and compressed binary files, such as jar files and
+    tar.gz and tar.bz2 files.
 
   * `--match-name`=REGEXP:
     Search only files with names that match the given regular expression. As in
@@ -627,7 +637,7 @@ reversed bold text.
   * `binary-files`:
     See the `--binary-files` option. For example, to skip binary files:
     
-        binary-files: without-match
+        binary-files: skip
     
   * `context`:
     See the `--context` option. For example, for 2 lines before and after matches:

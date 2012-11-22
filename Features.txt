@@ -84,3 +84,6 @@ Wed Nov 21 15:28:55 2012
 
   Refined processing of directories, so that "implied" binary files are
   excluded.
+
+  Changed default behavior of --binary to 'skip' instead of 'binary', so that
+  binary files are omitted by default from being searched.

@@ -7,12 +7,12 @@
 require 'rubygems'
 require 'riel/log'
 require 'glark/input/range'
+require 'glark/input/binary_files_option'
 require 'glark/input/filter/dir_filter_spec'
 require 'glark/input/filter/file_filter_spec'
 require 'glark/util/options'
 
 class InputOptions < Glark::Options
-  attr_reader :binary_files     # how to process binary (non-text) files
   attr_reader :directory        # read, skip, or recurse, a la grep
   attr_reader :exclude_matching # exclude files whose names match the expression
   attr_reader :range            # range to start and stop searching; nil => the entire file
@@ -20,6 +20,7 @@ class InputOptions < Glark::Options
 
   def initialize optdata
     @binary_files = "binary"
+    @binary_files_option = BinaryFilesOption.new
     @directory = "list"
     @exclude_matching = false      # exclude files whose names match the expression
 
@@ -32,6 +33,10 @@ class InputOptions < Glark::Options
     $/ = "\n"
 
     add_as_options optdata
+  end
+
+  def binary_files
+    @binary_files_option.process_as
   end
 
   def set_record_separator sep
@@ -111,15 +116,15 @@ class InputOptions < Glark::Options
     }
 
     add_opt_str optdata, :directory, %w{ -d --directories }
-
-    add_opt_false optdata, :decompress, %w{ --decompress }
     
-    optdata << binary_files_option = {
-      :tags => %w{ --binary-files },
-      :arg  => [ :required, :regexp, %r{ ^ [\'\"]? (text|without\-match|binary) [\'\"]? $ }x ],
-      :set  => Proc.new { |md| @binary_files = md[1] },
-      :rc   => %w{ binary-files },
-    }
+    # optdata << binary_files_option = {
+    #   :tags => %w{ --binary-files },
+    #   :arg  => [ :required, :regexp, %r{ ^ [\'\"]? (text|without\-match|binary) [\'\"]? $ }x ],
+    #   :set  => Proc.new { |md| @binary_files = md[1] },
+    #   :rc   => %w{ binary-files },
+    # }
+
+    @binary_files_option.add_as_option optdata
 
     @file_filterset.add_as_options optdata
     @dir_filterset.add_as_options optdata

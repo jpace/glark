@@ -20,13 +20,14 @@ class Glark::FileSet
     @maxdepth = input_options.directory == "list" ? 0 : nil
 
     # bin_as should be binary (read), text (readlines), uncompress, unarchive
-    @bin_as_text = input_options.binary_files == "binary"
-    @split_as_path = input_options.split_as_path
+    @binary_file_process_as = input_options.binary_files
+    @directory_filterset = input_options.directory_filters
+    @file_filterset = input_options.file_filters
     @skip_dirs = input_options.directory == "skip"
+    @split_as_path = input_options.split_as_path
+
     @dir_to_maxdepth = Hash.new
     @files = Array.new
-    @file_filterset = input_options.file_filters
-    @directory_filterset = input_options.directory_filters
     
     if fnames.size == 0
       @files << '-'
@@ -173,7 +174,14 @@ class Glark::FileSet
   def handle_binary pn, &blk
     return if file_skipped? pn
 
-    type = @bin_as_text ? FileType::BINARY : FileType::TEXT
+    type = case @binary_file_process_as
+           when 'binary'
+             FileType::BINARY
+           when 'skip', 'without-match'
+             return
+           else
+             FileType::TEXT
+           end
     blk.call [ type, pn ]
   end
 end
