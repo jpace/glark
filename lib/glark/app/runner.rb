@@ -65,6 +65,19 @@ class Glark::Runner
     output_type = BinaryFileSummary.new file, output_opts
     search_file file, output_type
   end
+
+  def search_decompress fname
+    info "fname: #{fname}".yellow
+
+    extname = fname.extname
+    info "extname: #{extname}".cyan
+    case extname
+    when '.gz'
+      raise "extension '#{extname}' is not handled"
+    else
+      raise "extension '#{extname}' is not handled"
+    end
+  end
   
   def search type, name
     if @opts.input_options.exclude_matching
@@ -81,6 +94,8 @@ class Glark::Runner
         search_binary name 
       when FileType::TEXT
         search_text name 
+      when :decompress
+        search_decompress name 
       else
         raise "type unknown: file: #{name}; type: #{type}"
       end

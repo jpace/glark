@@ -172,13 +172,18 @@ class Glark::FileSet
   end
 
   def handle_binary pn, &blk
+    info "pn: #{pn}".red
     return if file_skipped? pn
+
+    info "@binary_file_process_as: #{@binary_file_process_as}".red
 
     type = case @binary_file_process_as
            when 'binary'
              FileType::BINARY
            when 'skip', 'without-match'
              return
+           when 'decompress'
+             :decompress
            else
              FileType::TEXT
            end
