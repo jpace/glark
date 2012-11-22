@@ -14,10 +14,6 @@ class Glark::FilterList
     @type_to_posneg = Hash.new
   end
 
-  def empty?
-    @type_to_posneg.empty?
-  end
-
   def find_by_class type, posneg, cls
     return unless filters = get(type, posneg)
     filters.detect { |filter| filter.kind_of? cls }

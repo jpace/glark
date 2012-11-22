@@ -5,22 +5,6 @@ require 'glark/tc'
 require 'glark/input/filter/filter_list'
 
 class Glark::FilterListTest < Glark::TestCase
-  def run_bnf_test expmatch, pattern, fname
-    bnf = BaseNameFilter.new pattern
-    assert_equal expmatch, bnf.match?(Pathname.new fname), "fname: #{fname}"
-  end
-
-  def test_empty
-    fl = Glark::FilterList.new
-    assert fl.empty?
-  end
-
-  def test_not_empty
-    fl = Glark::FilterList.new
-    fl.add :name, :positive, Filter.new
-    assert !fl.empty?
-  end
-
   def test_match
     fl = Glark::FilterList.new
     fl.add :name, :positive, BaseNameFilter.new('.svn')
