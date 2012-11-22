@@ -29,15 +29,15 @@ class Glark::FilterSpec
   end
 
   def config_fields
-    fields = {
-    }
+    @criteria.config_fields
   end
 
   def dump_fields
-    config_fields
+    @criteria.dump_fields
   end
 
   def update_fields fields
+    @criteria.update_fields fields
   end
 
   def add_filters field, posneg, cls, values
@@ -45,19 +45,6 @@ class Glark::FilterSpec
   end
   
   def process_rcfields rcfields, options
-    rcfields.each do |name, values|
-      options.each do |opt|
-        posneg = case name
-                 when opt[:posrc]
-                   :positive
-                 when opt[:negrc]
-                   :negative
-                 else
-                   next
-                 end
-        
-        add_filters opt[:field], posneg, opt[:cls], values
-      end
-    end
+    @criteria.process_rcfields rcfields, options
   end
 end

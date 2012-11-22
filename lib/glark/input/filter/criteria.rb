@@ -66,4 +66,33 @@ class Glark::Criteria
       add field, posneg, cls.new(Regexp.create val)
     end
   end
+
+  def config_fields
+    fields = {
+    }
+  end
+
+  def dump_fields
+    config_fields
+  end
+
+  def update_fields fields
+  end
+  
+  def process_rcfields rcfields, options
+    rcfields.each do |name, values|
+      options.each do |opt|
+        posneg = case name
+                 when opt[:posrc]
+                   :positive
+                 when opt[:negrc]
+                   :negative
+                 else
+                   next
+                 end
+        
+        add_filters opt[:field], posneg, opt[:cls], values
+      end
+    end
+  end
 end
