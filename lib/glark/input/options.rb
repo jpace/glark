@@ -5,7 +5,6 @@
 # Options for input.
 
 require 'rubygems'
-require 'riel/log'
 require 'glark/input/range'
 require 'glark/input/binary_files_option'
 require 'glark/input/filter/dir_filter_spec'
@@ -40,7 +39,6 @@ class InputOptions < Glark::Options
   end
 
   def set_record_separator sep
-    log { "sep: #{sep}" }
     $/ = if sep && sep.to_i > 0
            begin
              sep.oct.chr
@@ -49,11 +47,8 @@ class InputOptions < Glark::Options
              nil
            end
          else
-           log { "setting to paragraph" }
            "\n\n"
          end
-    
-    log { "record separator set to #{$/.inspect}" }
   end
 
   def config_fields

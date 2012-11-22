@@ -146,4 +146,20 @@ class Glark::DirectoryTestCase < Glark::AppTestCase
     expected = [ ]
     run_app_test expected, [ '--directories=list', 'The.*Tale' ], dirname
   end
+
+  def test_recurse_from_current_dir
+    origdir = Dir.pwd
+    Dir.chdir '/proj/org/incava/glark/test/resources'
+    dirname = '.'
+    expected = [ 
+                "[1mfilelist.txt[0m",
+                "   23 22-[30m[43mThe_Canons_Yeomans_Tale[0m.txt",
+                "[1mspaces.txt[0m",
+                "   23 22 [30m[43mThe Canons Yeomans Tale[0m.txt",
+                "[1mtextfile.txt[0m",
+                "   23   -rw-r--r--   1 jpace jpace   52953 2010-12-04 15:24 22-[30m[43mTheCanonsYeomansTale[0m.txt",
+               ]
+    run_app_test expected, [ '-r', 'The.*Y.*Tale' ], dirname
+    Dir.chdir origdir
+  end
 end

@@ -22,7 +22,11 @@ class PatternFilter
   end
 
   def pattern_match? str
-    @pattern.match str
+    if @pattern.kind_of? String
+      @pattern == str
+    else
+      @pattern.match str
+    end
   end
 
   def to_s
