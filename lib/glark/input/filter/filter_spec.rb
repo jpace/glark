@@ -20,28 +20,12 @@ class Glark::FilterSpec
     !@criteria.match? pn
   end
 
-  def add_filter field, posneg, cls, criteria
-    @criteria.add field, posneg, cls.new(criteria)
-  end
-
   def add_opt_filter_int optdata, opt
-    optdata << {
-      :tags => opt[:tags],
-      :arg  => [ :integer ],
-      :set  => Proc.new { |val| add_filter opt[:field], opt[:posneg], opt[:cls], val.to_i }
-    }
+    @criteria.add_opt_filter_int optdata, opt
   end
 
   def add_opt_filter_pat optdata, opt
-    [ [ opt[:postags], :positive ], 
-      [ opt[:negtags], :negative ] ].each do |tags, posneg|
-      next unless tags
-      optdata << {
-        :tags => tags,
-        :arg  => [ :string ],
-        :set  => Proc.new { |pat| add_filter opt[:field], posneg, opt[:cls], Regexp.create(pat) }
-      }
-    end
+    @criteria.add_opt_filter_pat optdata, opt
   end
 
   def config_fields
@@ -57,9 +41,7 @@ class Glark::FilterSpec
   end
 
   def add_filters field, posneg, cls, values
-    values.each do |val|
-      add_filter field, posneg, cls, Regexp.create(val)
-    end
+    @criteria.add_filters field, posneg, cls, values
   end
   
   def process_rcfields rcfields, options

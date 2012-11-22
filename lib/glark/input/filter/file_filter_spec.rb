@@ -54,7 +54,7 @@ class Glark::FileFilterSpec < Glark::FilterSpec
 
     rcfields.each do |name, values|
       if name == @szlimit_opt[:negrc]
-        add_filter @szlimit_opt[:field], @szlimit_opt[:posneg], @szlimit_opt[:cls], values.last.to_i
+        @criteria.add @szlimit_opt[:field], @szlimit_opt[:posneg], @szlimit_opt[:cls].new(values.last.to_i)
       end
     end
   end

@@ -40,4 +40,30 @@ class Glark::Criteria
     end
     true
   end
+
+  def add_opt_filter_int optdata, opt
+    optdata << {
+      :tags => opt[:tags],
+      :arg  => [ :integer ],
+      :set  => Proc.new { |val| add opt[:field], opt[:posneg], opt[:cls].new(val.to_i) }
+    }
+  end
+
+  def add_opt_filter_pat optdata, opt
+    [ [ opt[:postags], :positive ], 
+      [ opt[:negtags], :negative ] ].each do |tags, posneg|
+      next unless tags
+      optdata << {
+        :tags => tags,
+        :arg  => [ :string ],
+        :set  => Proc.new { |pat| add opt[:field], posneg, opt[:cls].new(Regexp.create pat) }
+      }
+    end
+  end
+
+  def add_filters field, posneg, cls, values
+    values.each do |val|
+      add field, posneg, cls.new(Regexp.create val)
+    end
+  end
 end
