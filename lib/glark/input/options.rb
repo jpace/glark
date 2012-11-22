@@ -66,10 +66,6 @@ class InputOptions < Glark::Options
       "directory" => @directory,
       "exclude_matching" => @exclude_matching,
       "split-as-path" => @split_as_path,
-      # "with-basename" => @match_name,
-      # "with-fullname" => @match_path,
-      # "without-basename" => @nomatch_name,
-      # "without-fullname" => @nomatch_path,
     }
     fields.merge! @dir_filterset.dump_fields
     fields.merge! @file_filterset.dump_fields
@@ -111,13 +107,6 @@ class InputOptions < Glark::Options
 
     add_opt_str optdata, :directory, %w{ -d --directories }
     
-    # optdata << binary_files_option = {
-    #   :tags => %w{ --binary-files },
-    #   :arg  => [ :required, :regexp, %r{ ^ [\'\"]? (text|without\-match|binary) [\'\"]? $ }x ],
-    #   :set  => Proc.new { |md| @binary_files = md[1] },
-    #   :rc   => %w{ binary-files },
-    # }
-
     @binary_files_option.add_as_option optdata
 
     @file_filterset.add_as_options optdata

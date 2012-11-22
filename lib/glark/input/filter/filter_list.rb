@@ -11,6 +11,9 @@ class Glark::FilterList
   
   def initialize
     @filters = Array.new
+
+    # by type => by positive/negative => filter list
+    @type_to_posneg = Hash.new
   end
 
   def << filter
@@ -31,5 +34,14 @@ class Glark::FilterList
 
   def each &blk
     @filters.each(&blk)
+  end
+
+  def add type, posneg, filter
+    # by type => by positive/negative => filter list
+    @filters = Hash.new { |h, k| h[k] = Hash.new { |h1, k1| h1[k1] = Glark::FilterList.new } }
+
+    posneg_to_filters = (@type_to_posneg[type] ||= Hash.new)
+    filters = (posneg_to_filters[posneg] ||= Array.new)
+    filters << filter
   end
 end

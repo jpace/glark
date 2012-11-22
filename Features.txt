@@ -87,3 +87,9 @@ Wed Nov 21 15:28:55 2012
 
   Changed default behavior of --binary to 'skip' instead of 'binary', so that
   binary files are omitted by default from being searched.
+
+Thu Nov 22 09:46:16 2012
+
+  Fixed processing of skipped directories, specified by strings. Thus .svn as a
+  filter no longer erroneously filters out '.' or '.svndir'.
+

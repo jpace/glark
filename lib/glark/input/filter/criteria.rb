@@ -12,6 +12,7 @@ class Glark::Criteria
   attr_reader :filters
   
   def initialize
+    # by type => by positive/negative => filter list
     @filters = Hash.new { |h, k| h[k] = Hash.new { |h1, k1| h1[k1] = Glark::FilterList.new } }
   end
 
