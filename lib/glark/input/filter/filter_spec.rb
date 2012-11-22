@@ -3,7 +3,6 @@
 # vim: set filetype=ruby : set sw=2
 
 require 'glark/input/filter/filter'
-require 'glark/input/filter/filter_list'
 require 'glark/input/filter/criteria'
 
 module Glark; end

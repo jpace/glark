@@ -65,4 +65,25 @@ class Glark::CriteriaTestCase < Glark::AppTestCase
     
     assert !crit.match?(Pathname.new '/path/to/foo.rb')
   end
+
+  def test_find_by_class
+    fl = Glark::Criteria.new
+    bnf = BaseNameFilter.new '.svn'
+    fl.add :name, :negative, bnf
+    assert_equal bnf.object_id, fl.find_by_class(:name, :negative, BaseNameFilter).object_id
+  end
+
+  def test_add
+    fl = Glark::Criteria.new
+    svnbnf = BaseNameFilter.new '.svn'
+    fl.add :name, :negative, svnbnf
+    bldbnf = BaseNameFilter.new 'build'
+    fl.add :name, :negative, bldbnf
+
+    slf = SizeLimitFilter.new 1000
+    fl.add :size, :negative, slf
+
+    extf = ExtFilter.new 'rb'
+    fl.add :ext, :positive, extf
+  end
 end

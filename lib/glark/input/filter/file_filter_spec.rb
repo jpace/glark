@@ -43,8 +43,7 @@ class Glark::FileFilterSpec < Glark::FilterSpec
   end
 
   def config_fields
-    info "@criteria.filter_list: #{@criteria.filter_list}".yellow
-    maxsize = (filter = @criteria.filter_list.find_by_class(:size, :negative, SizeLimitFilter)) && filter.max_size
+    maxsize = (filter = @criteria.find_by_class(:size, :negative, SizeLimitFilter)) && filter.max_size
     fields = {
       "size-limit" => maxsize
     }
