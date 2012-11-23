@@ -93,7 +93,7 @@ class MatchOptions < Glark::Options
     optdata << text_color_option = {
       :tags => %w{ --text-color },
       :arg  => [ :string ],
-      :set  => Proc.new { |val| @colors.text_highlights = [ @colors.make_highlight "text-color", val ] }
+      :set  => Proc.new { |val| @colors.text_highlights = [ @colors.make_highlight("text-color", val) ] }
     }
 
     add_opt_true optdata, :extract_matches, %w{ -y --extract-matches }

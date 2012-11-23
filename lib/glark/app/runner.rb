@@ -145,7 +145,7 @@ class Glark::Runner
       file = Glark::ZipFile.new fname
       list = file.list
     when TAR_GZ_RE.match(fstr)
-      Glark::GzFile.new(fname) do |file, io|
+      Glark::GzFile.new(fname) do |gzfile, io|
         tarfile = Glark::TarFile.new fname, io
         list = tarfile.list
       end
@@ -163,7 +163,7 @@ class Glark::Runner
   def search type, name
     if @exclude_matching
       expr = @opts.expr
-      return if expr.respond_to?(:re) && expr.re.match(name)
+      return if expr.respond_to?(:re) && expr.re.match(name.to_s)
     end
     
     if name == "-" 

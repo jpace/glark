@@ -88,7 +88,7 @@ class InputOptions < Glark::Options
   
   def add_as_options optdata    
     optdata << record_separator_option = {
-      :res => [ Regexp.new '^ -0 (\d{1,3})? $ ', Regexp::EXTENDED ],
+      :res => [ Regexp.new('^ -0 (\d{1,3})? $ ', Regexp::EXTENDED) ],
       :set => Proc.new { |md| rs = md ? md[1] : 0; set_record_separator rs }
     }
 

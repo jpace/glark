@@ -11,7 +11,7 @@ class BinaryFileSummary < Common
 
   def process_end lnum
     if matched?
-      @out.puts "Binary file " + @file.fname + " matches"
+      @out.puts "Binary file " + @file.fname.to_s + " matches"
     end
   end
 end

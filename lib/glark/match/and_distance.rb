@@ -6,7 +6,6 @@
 
 require 'rubygems'
 require 'riel/regexp'
-require 'glark/app/options'
 require 'glark/match/re'
 require 'glark/match/ior'
 require 'glark/match/xor'

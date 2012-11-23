@@ -102,7 +102,7 @@ class Glark::Colors
       when "line-number-color"
         @line_number_highlight = make_highlight name, values.last
       when "text-color"
-        @text_highlights = [ make_highlight name, values.last ]
+        @text_highlights = [ make_highlight(name, values.last) ]
       when %r{^text\-color\-(\d+)$}
         set_text_highlight $1.to_i, make_highlight(name, values.last)
       end

@@ -6,7 +6,6 @@
 
 require 'glark/input/file/file'
 require 'glark/output/formatted'
-require 'glark/output/options'
 
 class Common < Formatted
   def initialize file, opts

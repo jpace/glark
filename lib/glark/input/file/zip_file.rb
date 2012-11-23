@@ -13,6 +13,11 @@ class Glark::ZipFile
 
     begin
       require 'zip/zip'
+    rescue LoadError => e
+      msg = "error loading zip gem: #{e}\n"
+      msg << "to install this dependency, run 'gem install rubyzip'"
+      info "msg: #{msg}".on_red
+      raise msg
     end
     @fname = fname
   end

@@ -3,14 +3,12 @@
 
 require 'rubygems'
 require 'riel'
-require 'zlib'
-
 require 'glark/input/file/file'
+require 'zlib'
 
 class Glark::GzFile < Glark::File
   def initialize fname, &blk
     Zlib::GzipReader.open(fname) do |gz|
-      info "gz: #{gz}".red
       super fname, gz, nil
       blk.call [ self, gz ]
     end

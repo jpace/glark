@@ -12,7 +12,7 @@ class FileHeader
 
   def print out
     fname = @name
-    fname = @highlighter.highlight(fname) if @highlighter
-    out.puts fname
+    fname = @highlighter.highlight(fname.to_s) if @highlighter
+    out.puts fname.to_s
   end
 end
