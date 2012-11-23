@@ -5,10 +5,11 @@ require 'rubygems'
 require 'riel'
 require 'glark/app/info/options'
 require 'glark/app/rcfile'
-require 'glark/match/options'
+require 'glark/input/fileset'
 require 'glark/input/options'
-require 'glark/output/options'
+require 'glark/match/options'
 require 'glark/output/context'
+require 'glark/output/options'
 require 'glark/util/colors'
 require 'glark/util/options'
 
@@ -16,10 +17,6 @@ module Glark
   PACKAGE = 'glark'
   VERSION = '1.9.1'
 end
-
-# -------------------------------------------------------
-# Options
-# -------------------------------------------------------
 
 class Glark::AppOptions < Glark::Options
   attr_accessor :local_config_files

@@ -12,17 +12,17 @@ require 'glark/output/unfiltered_lines'
 require 'glark/util/options'
 
 class OutputOptions < Glark::Options
-  attr_accessor :context         # lines before and after
-  attr_accessor :count           # only count the matches
-  attr_accessor :file_names_only # display only the file names
-  attr_accessor :filter          # display only matches
-  attr_accessor :invert_match    # display non-matching lines
+  attr_accessor :context           # lines before and after
+  attr_accessor :count             # only count the matches
+  attr_accessor :file_names_only   # display only the file names
+  attr_accessor :filter            # display only matches
+  attr_accessor :invert_match      # display non-matching lines
   attr_accessor :label
-  attr_accessor :match_limit # the maximum number of matches to display per file
+  attr_accessor :match_limit       # the maximum number of matches to display per file
   attr_accessor :out
   attr_accessor :show_file_names   # display file names
   attr_accessor :show_line_numbers # display numbers of matching lines
-  attr_accessor :write_null # in @file_names_only mode, write '\0' instead of '\n'
+  attr_accessor :write_null        # in @file_names_only mode, write '\0' instead of '\n'
 
   attr_reader :colors
   attr_reader :style            # grep, glark
@@ -43,6 +43,8 @@ class OutputOptions < Glark::Options
     @show_line_numbers = true
     @style = nil
     @write_null = false
+
+    @output_cls = nil
 
     add_as_options optdata
   end
@@ -123,21 +125,25 @@ class OutputOptions < Glark::Options
   end
 
   def output_type_cls
-    if @count
-      if @style == "grep" 
-        GrepCount
-      else
-        GlarkCount
-      end
-    elsif @file_names_only
-      FileNameOnly
-    elsif !@filter
-      UnfilteredLines
-    elsif @style == "grep"
-      GrepLines
-    else
-      GlarkLines
+    if @output_cls
+      return @output_cls
     end
+    
+    @output_cls = if @count
+                    if @style == "grep" 
+                      GrepCount
+                    else
+                      GlarkCount
+                    end
+                  elsif @file_names_only
+                    FileNameOnly
+                  elsif !@filter
+                    UnfilteredLines
+                  elsif @style == "grep"
+                    GrepLines
+                  else
+                    GlarkLines
+                  end
   end
 
   def set_file_names_only invert_match

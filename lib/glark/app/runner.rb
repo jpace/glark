@@ -5,12 +5,10 @@
 require 'rubygems'
 require 'riel'
 require 'glark/app/options'
-require 'glark/input/file/file'
 require 'glark/input/file/binary_file'
 require 'glark/input/file/gz_file'
 require 'glark/input/file/tar_file'
 require 'glark/input/file/zip_file'
-require 'glark/input/fileset'
 
 $stdout.sync = true             # unbuffer
 $stderr.sync = true             # unbuffer
@@ -41,6 +39,8 @@ class Glark::Runner
 
     # 0 == matches, 1 == no matches, 2 == error
     @exit_status = @invert_match ? 0 : 1
+
+    @output_type_cls = @output_opts.output_type_cls
     
     @opts.files.each do |type, file|
       search type, file
@@ -60,7 +60,7 @@ class Glark::Runner
   end
 
   def create_output_type file
-    @output_opts.create_output_type file
+    @output_type_cls.new file, @output_opts
   end
 
   def search_text fname
@@ -117,13 +117,8 @@ class Glark::Runner
   end
 
   def search_read fname
-    info "fname: #{fname}".yellow
-
     fstr = fname.to_s
-    info "fstr: #{fstr}"
-
-    extname = fname.extname
-    info "extname: #{extname}".cyan
+    
     case
     when TAR_GZ_RE.match(fstr)
       search_read_tar_gz_file fname
@@ -139,9 +134,6 @@ class Glark::Runner
   end
 
   def search_list fname
-    extname = fname.extname
-    info "extname: #{extname}".yellow
-
     fstr = fname.to_s
 
     list = nil
