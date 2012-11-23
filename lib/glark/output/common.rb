@@ -4,7 +4,7 @@
 
 # Generic output.
 
-require 'glark/input/file/file'
+require 'glark/io/file/file'
 require 'glark/output/formatted'
 
 class Common < Formatted

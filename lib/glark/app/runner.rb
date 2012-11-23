@@ -5,10 +5,10 @@
 require 'rubygems'
 require 'riel'
 require 'glark/app/options'
-require 'glark/input/file/binary_file'
-require 'glark/input/file/gz_file'
-require 'glark/input/file/tar_file'
-require 'glark/input/file/zip_file'
+require 'glark/io/file/binary_file'
+require 'glark/io/file/gz_file'
+require 'glark/io/file/tar_file'
+require 'glark/io/file/zip_file'
 
 $stdout.sync = true             # unbuffer
 $stderr.sync = true             # unbuffer
@@ -47,36 +47,25 @@ class Glark::Runner
     end
   end
 
-  def search_file file, output_type = create_output_type(file)
-    @expr.process file, output_type
-
-    if output_type.matched?
+  def search_file file, output_type_cls = @output_type_cls
+    output_type = output_type_cls.new file, @output_opts
+    if file.search @expr, output_type
       @exit_status = @invert_match ? 1 : 0
     end
   end
 
-  def create_input_file filecls, fname, io
-    filecls.new fname, io, @range
-  end
-
-  def create_output_type file
-    @output_type_cls.new file, @output_opts
-  end
-
   def search_text fname
     io = fname == "-" ? $stdin : File.new(fname)
-
-    file = create_input_file Glark::File, fname, io
+    file = Glark::File.new fname, io, @range
     search_file file
   end
 
   def search_binary fname
     file = Glark::BinaryFile.new fname
-    search_file file, BinaryFileSummary.new(file, @output_opts)
+    search_file file, BinaryFileSummary
   end
 
   def search_read_tar_gz_file fname
-    @output_opts.show_file_names = true    
     Glark::GzFile.new(fname) do |file, io|
       tarfile = Glark::TarFile.new fname, io
       search_read_tar_entries fname, tarfile
@@ -84,7 +73,6 @@ class Glark::Runner
   end
 
   def search_read_tar_file fname
-    @output_opts.show_file_names = true
     tarfile = Glark::TarFile.new fname
     search_read_tar_entries fname, tarfile
   end
@@ -95,6 +83,7 @@ class Glark::Runner
   end
 
   def search_read_tar_entries fname, tarfile
+    @output_opts.show_file_names = true
     tarfile.each_file do |entry|
       contents = StringIO.new entry.read
       search_read_archive_file fname, entry.full_name, contents
@@ -107,13 +96,18 @@ class Glark::Runner
     end
   end
 
-  def search_read_zip_file fname
+  def search_read_zip_entries fname, zipfile
     @output_opts.show_file_names = true
-    zipfile = Glark::ZipFile.new(fname)
     zipfile.each_file do |entry|
       contents = StringIO.new zipfile.read(entry)
       search_read_archive_file fname, entry.name, contents
     end
+  end
+
+  def search_read_zip_file fname
+    @output_opts.show_file_names = true
+    zipfile = Glark::ZipFile.new fname
+    search_read_zip_entries fname, zipfile
   end
 
   def search_read fname
@@ -156,7 +150,7 @@ class Glark::Runner
     contents = StringIO.new list.collect { |x| x + "\n" }.join('')
     contents.rewind
 
-    file = create_input_file Glark::File, fname, contents
+    file = Glark::File.new fname, contents, @range
     search_file file
   end
   

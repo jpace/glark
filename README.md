@@ -560,6 +560,9 @@ reversed bold text.
     Search for "Regexp" in all files under </usr/lib/ruby/1.9.1> with a name
     starting with 'http'.
 
+  * `glark connect -
+    Search standard input for "connect".
+
 ### ADVANCED USAGE
 
   * `glark% --explain --match-name 'c.*\.rb$' --and=5 Regexp --xor parse --and=3 boundary quote /usr/lib/ruby/1.9.1/...2`:

@@ -1,8 +1,6 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-require 'glark/input/file/file'
-
 class Glark::TarFile
   def initialize fname, io = nil, &blk
     # Given that this is a gem, I'm not sure if it is installed with other

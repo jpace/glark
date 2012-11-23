@@ -1,8 +1,6 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-require 'glark/input/file/file'
-
 class Glark::ZipFile
   include Loggable
   

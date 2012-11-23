@@ -54,4 +54,9 @@ class Glark::File
   def get_range_end
     @range && @range.to && @range.to_line(@range.to, linecount)
   end
+
+  def search expr, output
+    expr.process self, output
+    output.matched?
+  end
 end

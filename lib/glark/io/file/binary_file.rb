@@ -1,7 +1,7 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-require 'glark/input/file/file'
+require 'glark/io/file/file'
 
 class Glark::BinaryFile < Glark::File
   def initialize fname

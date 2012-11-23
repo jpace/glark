@@ -3,7 +3,7 @@
 
 require 'rubygems'
 require 'riel'
-require 'glark/input/file/file'
+require 'glark/io/file/file'
 require 'zlib'
 
 class Glark::GzFile < Glark::File
