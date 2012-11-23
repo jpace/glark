@@ -8,6 +8,7 @@ require 'glark/app/options'
 require 'glark/io/file/binary_file'
 require 'glark/io/file/gz_file'
 require 'glark/io/file/tar_file'
+require 'glark/io/file/tar_gz_file'
 require 'glark/io/file/zip_file'
 
 $stdout.sync = true             # unbuffer
@@ -49,7 +50,11 @@ class Glark::Runner
 
   def search_file file, output_type_cls = @output_type_cls
     output_type = output_type_cls.new file, @output_opts
-    if file.search @expr, output_type
+    update_status file.search @expr, output_type
+  end
+
+  def update_status matched
+    if matched
       @exit_status = @invert_match ? 1 : 0
     end
   end
@@ -62,7 +67,7 @@ class Glark::Runner
 
   def search_binary fname
     file = Glark::BinaryFile.new fname
-    search_file file, BinaryFileSummary
+    update_status file.search_as_binary @expr, @output_opts
   end
 
   def search_read_tar_gz_file fname
@@ -91,6 +96,9 @@ class Glark::Runner
   end
 
   def search_read_gz_file fname
+    # gzfile = Glark::GzFile.new fname
+    # output_type = @output_type_cls.new gzfile, @output_opts
+    # update_status gzfile.search @expr, output_type
     Glark::GzFile.new(fname) do |file, io|
       search_file file
     end
@@ -130,28 +138,19 @@ class Glark::Runner
   def search_list fname
     fstr = fname.to_s
 
-    list = nil
+    file = nil
     case
     when TAR_RE.match(fstr)
       file = Glark::TarFile.new fname
-      list = file.list
     when ZIP_RE.match(fstr)
       file = Glark::ZipFile.new fname
-      list = file.list
     when TAR_GZ_RE.match(fstr)
-      Glark::GzFile.new(fname) do |gzfile, io|
-        tarfile = Glark::TarFile.new fname, io
-        list = tarfile.list
-      end
+      file = Glark::TarGzFile.new fname
     else
       raise "file '#{fname}' does not have a handled extension"
     end
-    
-    contents = StringIO.new list.collect { |x| x + "\n" }.join('')
-    contents.rewind
 
-    file = Glark::File.new fname, contents, @range
-    search_file file
+    update_status file.search_list(@expr, @output_type_cls, @output_opts, @range)
   end
   
   def search type, name

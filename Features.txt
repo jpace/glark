@@ -104,3 +104,7 @@ Thu Nov 22 09:46:16 2012
   Added searching of tgz and tar.gz files as lists of files.
 
   Updated to work with Ruby 1.9.
+
+Fri Nov 23 15:31:12 2012
+
+  Added to readme that '-' is the argument for standard input.

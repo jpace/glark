@@ -1,10 +1,14 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-class Glark::ZipFile
+require 'glark/io/file/archive_file'
+
+class Glark::ZipFile < Glark::ArchiveFile
   include Loggable
   
   def initialize fname, &blk
+    super fname
+    
     # Same caveat as ZipFile. Given that this is a gem, I'm not sure if it is
     # installed with other package managers. So the require is down here, used
     # only if needed.
@@ -17,7 +21,6 @@ class Glark::ZipFile
       info "msg: #{msg}".on_red
       raise msg
     end
-    @fname = fname
   end
 
   def each_file &blk

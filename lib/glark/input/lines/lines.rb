@@ -48,6 +48,7 @@ class Glark::LinesCR < Glark::Lines
       @lines << line
       blk.call line
     end
+    @io.close
   end
 
   def get_region rnum

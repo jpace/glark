@@ -1,8 +1,12 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-class Glark::TarFile
+require 'glark/io/file/archive_file'
+
+class Glark::TarFile < Glark::ArchiveFile
   def initialize fname, io = nil, &blk
+    super fname
+
     # Given that this is a gem, I'm not sure if it is installed with other
     # package managers. So the require is down here, used only if needed.
     
@@ -10,8 +14,6 @@ class Glark::TarFile
     # .../tar_reader.
     require 'rubygems/package'
     require 'rubygems/package/tar_reader'
-
-    @fname = fname
     @io = io
   end
 
