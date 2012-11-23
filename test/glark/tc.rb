@@ -15,23 +15,23 @@ Log.verbose = true
 Log.set_widths(-15, 35, -35)
 Log.level = Log::DEBUG
 
-module Glark; end
+module Glark
+  class TestCase < Test::Unit::TestCase
+    include Loggable
 
-class Glark::TestCase < Test::Unit::TestCase
-  include Loggable
+    # Returns a list of instance methods, in sorted order, so that they are run
+    # predictably by the unit test framework.
 
-  # Returns a list of instance methods, in sorted order, so that they are run
-  # predictably by the unit test framework.
-
-  class << self
-    alias :unsorted_instance_methods :instance_methods
-    
-    def instance_methods b
-      unsorted_instance_methods(true).sort
+    class << self
+      alias :unsorted_instance_methods :instance_methods
+      
+      def instance_methods b
+        unsorted_instance_methods(true).sort
+      end
     end
-  end
 
-  def test_truth
-    assert true
+    def test_truth
+      assert true
+    end
   end
 end

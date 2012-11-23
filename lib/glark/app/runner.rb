@@ -21,6 +21,11 @@ module Glark; end
 class Glark::Runner
   include Loggable
 
+  GZ_RE = Regexp.new '\.gz$'
+  TAR_GZ_RE = Regexp.new '\.(?:tgz|tar\.gz)$'
+  TAR_RE = Regexp.new '\.tar$'
+  ZIP_RE = Regexp.new '\.(?:zip|jar)$'
+  
   attr_reader :exit_status
   
   def initialize opts, files
@@ -42,7 +47,7 @@ class Glark::Runner
     end
   end
 
-  def search_file file, output_type
+  def search_file file, output_type = create_output_type(file)
     @expr.process file, output_type
 
     if output_type.matched?
@@ -62,109 +67,74 @@ class Glark::Runner
     io = fname == "-" ? $stdin : File.new(fname)
 
     file = create_input_file Glark::File, fname, io
-    output_type = create_output_type file
-    search_file file, output_type
+    search_file file
   end
 
   def search_binary fname
     file = Glark::BinaryFile.new fname
-    output_type = BinaryFileSummary.new file, @output_opts
-    search_file file, output_type
+    search_file file, BinaryFileSummary.new(file, @output_opts)
   end
 
-  def search_read_targzfile fname
-    info "fname: #{fname}"
-
+  def search_read_tar_gz_file fname
     @output_opts.show_file_names = true    
     Glark::GzFile.new(fname) do |file, io|
-      sansext = Pathname.new(fname.basename.to_s - %r{\.gz$})
-      info "sansext: #{sansext}".on_blue
       tarfile = Glark::TarFile.new fname, io
-      info "tarfile: #{tarfile}"
       search_read_tar_entries fname, tarfile
     end
+  end
+
+  def search_read_tar_file fname
+    @output_opts.show_file_names = true
+    tarfile = Glark::TarFile.new fname
+    search_read_tar_entries fname, tarfile
+  end
+
+  def search_read_archive_file fname, name, contents
+    file = Glark::File.new name + " (in #{fname})", contents, nil
+    search_file file
   end
 
   def search_read_tar_entries fname, tarfile
     tarfile.each_file do |entry|
       contents = StringIO.new entry.read
-      file = Glark::File.new entry.full_name + " (in #{fname})", contents, nil
-      output_type = create_output_type file
-      info "output_type: #{output_type}"
-      search_file file, output_type
+      search_read_archive_file fname, entry.full_name, contents
     end
   end
 
-  def search_read_gzfile fname
-    info "fname: #{fname}"
-    
+  def search_read_gz_file fname
     Glark::GzFile.new(fname) do |file, io|
-      output_type = create_output_type file
-      search_file file, output_type
+      search_file file
     end
   end
 
-  def search_read_tarfile fname
-    @output_opts.show_file_names = true
-    tarfile = Glark::TarFile.new fname
-    tarfile.each_file do |entry|
-      contents = StringIO.new entry.read
-      file = Glark::File.new entry.full_name + " (in #{fname})", contents, nil
-      output_type = create_output_type file
-      info "output_type: #{output_type}"
-      search_file file, output_type
-    end
-  end
-
-  def search_read_zipfile fname
+  def search_read_zip_file fname
     @output_opts.show_file_names = true
     zipfile = Glark::ZipFile.new(fname)
     zipfile.each_file do |entry|
       contents = StringIO.new zipfile.read(entry)
-      file = Glark::File.new entry.name + " (in #{fname})", contents, nil
-      output_type = create_output_type file
-      info "output_type: #{output_type}"
-      search_file file, output_type
+      search_read_archive_file fname, entry.name, contents
     end
   end
 
   def search_read fname
     info "fname: #{fname}".yellow
 
+    fstr = fname.to_s
+    info "fstr: #{fstr}"
+
     extname = fname.extname
     info "extname: #{extname}".cyan
-    case extname
-    when '.tgz'
-      search_read_targzfile fname
-    when '.gz'
-      sansgz = Pathname.new(fname.basename.to_s - %r{\.gz$})
-      if sansgz.extname == '.tar'
-        search_read_targzfile fname
-      else
-        search_read_gzfile fname
-      end
-    when '.tar'
-      search_read_tarfile fname
-    when '.zip', '.jar'
-      search_read_zipfile fname
+    case
+    when TAR_GZ_RE.match(fstr)
+      search_read_tar_gz_file fname
+    when GZ_RE.match(fstr)
+      search_read_gz_file fname
+    when TAR_RE.match(fstr)
+      search_read_tar_file fname
+    when ZIP_RE.match(fstr)
+      search_read_zip_file fname
     else
-      raise "extension '#{extname}' is not handled"
-    end
-  end
-
-  def search_list_zipfile fname
-    contents = StringIO.new 
-    jarfile = Glark::ZipFile.new fname
-    jarfile.each_file do |entry|
-      contents << "#{entry.name}\n"
-    end
-    contents
-  end
-
-  def search_list_tar_gz_file fname
-    Glark::GzFile.new(fname) do |file, io|
-      tarfile = Glark::TarFile.new fname, io
-      return tarfile.list
+      raise "file '#{fname}' does not have a handled extension"
     end
   end
 
@@ -176,41 +146,26 @@ class Glark::Runner
 
     list = nil
     case
-    when Regexp.new('\.tar$').match(fstr)
+    when TAR_RE.match(fstr)
       file = Glark::TarFile.new fname
       list = file.list
-    when Regexp.new('\.(?:zip|jar)$').match(fstr)
+    when ZIP_RE.match(fstr)
       file = Glark::ZipFile.new fname
       list = file.list
-    when Regexp.new('\.(?:tgz|tar\.gz)$').match(fstr)
-      list = search_list_tar_gz_file fname
+    when TAR_GZ_RE.match(fstr)
+      Glark::GzFile.new(fname) do |file, io|
+        tarfile = Glark::TarFile.new fname, io
+        list = tarfile.list
+      end
     else
-      raise "extension '#{extname}' is not handled"
+      raise "file '#{fname}' does not have a handled extension"
     end
-    info "list: #{list}".magenta
     
     contents = StringIO.new list.collect { |x| x + "\n" }.join('')
     contents.rewind
 
     file = create_input_file Glark::File, fname, contents
-    output_type = create_output_type file
-    search_file file, output_type
-  end
-
-  def search_archive fname
-    extname = fname.extname
-    info "extname: #{extname}".yellow
-
-    case extname
-    when '.tar'
-      entries = get_tar_entries fname
-      entries.each do |entry|
-        contents = StringIO.new entry.read
-        file = create_input_file Glark::File, entry.full_name + " (in #{fname})", contents
-        output_type = create_output_type file
-        search_file file, output_type
-      end
-    end
+    search_file file
   end
   
   def search type, name

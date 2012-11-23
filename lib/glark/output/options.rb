@@ -125,18 +125,18 @@ class OutputOptions < Glark::Options
   def output_type_cls
     if @count
       if @style == "grep" 
-        return GrepCount
+        GrepCount
       else
-        return GlarkCount
+        GlarkCount
       end
     elsif @file_names_only
-      return FileNameOnly
+      FileNameOnly
     elsif !@filter
-      return UnfilteredLines
+      UnfilteredLines
     elsif @style == "grep"
-      return GrepLines
+      GrepLines
     else
-      return GlarkLines
+      GlarkLines
     end
   end
 

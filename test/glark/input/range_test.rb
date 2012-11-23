@@ -1,7 +1,7 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-require 'tc'
+require 'glark/tc'
 require 'glark/input/range'
 
 class Glark::RangeTestCase < Glark::TestCase

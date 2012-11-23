@@ -4,7 +4,7 @@
 require 'rubygems'
 require 'riel'
 require 'glark/match/factory'
-require 'tc'
+require 'glark/tc'
 require 'stringio'
 
 class Glark::MatchTestCase < Glark::TestCase

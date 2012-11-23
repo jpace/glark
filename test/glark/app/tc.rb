@@ -3,7 +3,7 @@
 
 require 'pathname'
 require 'tempfile'
-require 'tc'
+require 'glark/tc'
 require 'glark/app/options'
 
 class Glark::AppTestCase < Glark::TestCase
