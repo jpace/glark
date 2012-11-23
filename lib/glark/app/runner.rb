@@ -72,6 +72,29 @@ class Glark::Runner
     search_file file, output_type
   end
 
+  def search_read_targzfile fname
+    info "fname: #{fname}"
+
+    @output_opts.show_file_names = true    
+    Glark::GzFile.new(fname) do |file, io|
+      sansext = Pathname.new(fname.basename.to_s - %r{\.gz$})
+      info "sansext: #{sansext}".on_blue
+      tarfile = Glark::TarFile.new fname, io
+      info "tarfile: #{tarfile}"
+      search_read_tar_entries fname, tarfile
+    end
+  end
+
+  def search_read_tar_entries fname, tarfile
+    tarfile.each_file do |entry|
+      contents = StringIO.new entry.read
+      file = Glark::File.new entry.full_name + " (in #{fname})", contents, nil
+      output_type = create_output_type file
+      info "output_type: #{output_type}"
+      search_file file, output_type
+    end
+  end
+
   def search_read_gzfile fname
     info "fname: #{fname}"
     
@@ -83,7 +106,7 @@ class Glark::Runner
 
   def search_read_tarfile fname
     @output_opts.show_file_names = true
-    tarfile = Glark::TarFile.new(fname)
+    tarfile = Glark::TarFile.new fname
     tarfile.each_file do |entry|
       contents = StringIO.new entry.read
       file = Glark::File.new entry.full_name + " (in #{fname})", contents, nil
@@ -111,22 +134,21 @@ class Glark::Runner
     extname = fname.extname
     info "extname: #{extname}".cyan
     case extname
+    when '.tgz'
+      search_read_targzfile fname
     when '.gz'
-      search_read_gzfile fname
+      sansgz = Pathname.new(fname.basename.to_s - %r{\.gz$})
+      if sansgz.extname == '.tar'
+        search_read_targzfile fname
+      else
+        search_read_gzfile fname
+      end
     when '.tar'
       search_read_tarfile fname
     when '.zip', '.jar'
       search_read_zipfile fname
     else
       raise "extension '#{extname}' is not handled"
-    end
-  end
-
-  def get_tarfile fname
-    contents = StringIO.new 
-    tarfile = Glark::TarFile.new fname
-    tarfile.each_file do |entry|
-      contents << "#{entry.full_name}\n"
     end
   end
 
@@ -139,34 +161,29 @@ class Glark::Runner
     contents
   end
 
+  def search_list_tar_gz_file fname
+    Glark::GzFile.new(fname) do |file, io|
+      tarfile = Glark::TarFile.new fname, io
+      return tarfile.list
+    end
+  end
+
   def search_list fname
     extname = fname.extname
     info "extname: #{extname}".yellow
 
-    file = nil
+    fstr = fname.to_s
 
     list = nil
-
-    case extname
-    when '.tar'
+    case
+    when Regexp.new('\.tar$').match(fstr)
       file = Glark::TarFile.new fname
       list = file.list
-    when '.zip', '.jar'
+    when Regexp.new('\.(?:zip|jar)$').match(fstr)
       file = Glark::ZipFile.new fname
       list = file.list
-    when '.gz'
-      Glark::GzFile.new(fname) do |file, io|
-        info "fname: #{fname}"
-        info "file: #{file}".yellow
-        sansext = Pathname.new(fname.basename.to_s - %r{\.gz$})
-        info "sansext: #{sansext}"
-        if sansext.extname == '.tar'
-          info "sansext: #{sansext}".on_blue
-          tarfile = Glark::TarFile.new fname, io
-          info "tarfile: #{tarfile}"
-          list = tarfile.list
-        end
-      end
+    when Regexp.new('\.(?:tgz|tar\.gz)$').match(fstr)
+      list = search_list_tar_gz_file fname
     else
       raise "extension '#{extname}' is not handled"
     end
