@@ -96,12 +96,9 @@ class Glark::Runner
   end
 
   def search_read_gz_file fname
-    # gzfile = Glark::GzFile.new fname
-    # output_type = @output_type_cls.new gzfile, @output_opts
-    # update_status gzfile.search @expr, output_type
-    Glark::GzFile.new(fname) do |file, io|
-      search_file file
-    end
+    gzfile = Glark::GzFile.new fname
+    output_type = @output_type_cls.new gzfile, @output_opts
+    update_status gzfile.search @expr, output_type
   end
 
   def search_read_zip_entries fname, zipfile

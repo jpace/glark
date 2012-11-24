@@ -4,11 +4,9 @@
 require 'glark/io/file/gz_file'
 require 'glark/io/file/tar_file'
 
-class Glark::TarGzFile < Glark::GzFile
+class Glark::TarGzFile
   def initialize fname
-    super fname do |file, io|
-      @io = io.read
-    end
+    @fname = fname
   end
 
   def list
@@ -20,7 +18,9 @@ class Glark::TarGzFile < Glark::GzFile
   end
 
   def search_list expr, output_cls, output_opts, range
-    tarfile = Glark::TarFile.new @fname, StringIO.new(@io)
-    tarfile.search_list expr, output_cls, output_opts, range
+    Zlib::GzipReader.open(@fname) do |gzio|
+      tarfile = Glark::TarFile.new @fname, gzio
+      tarfile.search_list expr, output_cls, output_opts, range
+    end
   end
 end

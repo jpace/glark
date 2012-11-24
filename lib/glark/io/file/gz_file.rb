@@ -8,11 +8,14 @@ require 'zlib'
 
 class Glark::GzFile < Glark::File
   def initialize fname, &blk
-    Zlib::GzipReader.open(fname) do |gz|
-      super fname, gz, nil
-      if blk
+    if blk
+      Zlib::GzipReader.open(fname) do |gz|
+        super fname, gz, nil
         blk.call [ self, gz ]
       end
+    else
+      gz = Zlib::GzipReader.new fname
+      super fname, gz, nil
     end
   end
 end

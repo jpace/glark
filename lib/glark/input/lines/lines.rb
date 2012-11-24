@@ -48,6 +48,7 @@ class Glark::LinesCR < Glark::Lines
       @lines << line
       blk.call line
     end
+    info "@io: #{@io}".on_red
     @io.close
   end
 
