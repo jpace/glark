@@ -92,13 +92,13 @@ class Glark::RcfileTestCase < Glark::AppTestCase
     run_option_test(%w{ foo }, []) do |opts|
       opts.read_rcfile Pathname.new '/proj/org/incava/glark/test/resources/rcpath.txt'
 
-      assert_directory_filter_pattern_eq 'src/main/java', opts, :path, :positive, FullNameFilter
+      assert_directory_filter_pattern_eq 'src/main/java', opts, :dirpath, :positive, FullNameFilter
 
       [ 'src/main/java', 'src/test/ruby' ].each do |pat|
-        assert_directory_filter_pattern_eq pat, opts, :path, :positive, FullNameFilter
+        assert_directory_filter_pattern_eq pat, opts, :dirpath, :positive, FullNameFilter
       end
 
-      assert_directory_filter_pattern_eq 'org/incava/util', opts, :path, :negative, FullNameFilter
+      assert_directory_filter_pattern_eq 'org/incava/util', opts, :dirpath, :negative, FullNameFilter
     end
   end
 

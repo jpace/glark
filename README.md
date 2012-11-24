@@ -781,6 +781,11 @@ This test is also skipped for files with suffixes associated with non-text
 
 See the `known-text-files` and `known-nontext-files` fields for denoting file
 name suffixes to associate as text or nontext.
+
+## EXCLUSION OF DIRECTORIES
+
+The .svn and .git directories are always excluded from recursive searching of a
+file hierarchy.
     
 ## EXIT STATUS
     

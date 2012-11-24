@@ -111,3 +111,6 @@ Fri Nov 23 15:31:12 2012
 
   Removed the options to unsuppress warnings, since they are enabled by default.
 
+Sat Nov 24 18:47:11 2012
+
+  Added .git as excluded. Added commentary as such to the readme.

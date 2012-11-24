@@ -10,6 +10,11 @@ class Glark::Criteria
   def initialize
     # by type (hash) => by positive/negative (hash) => filter list (array)
     @type_to_posneg = Hash.new
+    @options = opt_classes.collect { |optcls| optcls.new self }
+  end
+
+  def opt_classes
+    Array.new
   end
 
   def add type, posneg, filter
@@ -45,28 +50,6 @@ class Glark::Criteria
     true
   end
 
-  def add_opt_filter_pat optdata, opt
-    [ [ opt[:postags], :positive ], 
-      [ opt[:negtags], :negative ] ].each do |tags, posneg|
-      next unless tags
-      optdata << {
-        :tags => tags,
-        :arg  => [ :string ],
-        :set  => Proc.new { |pat| add opt[:field], posneg, opt[:cls].new(Regexp.create pat) }
-      }
-    end
-  end
-
-  def add_option optdata, option
-    optdata << option.to_hash
-  end
-
-  def add_filters field, posneg, cls, values
-    values.each do |val|
-      add field, posneg, cls.new(Regexp.create val)
-    end
-  end
-
   def config_fields
     fields = {
     }
@@ -76,23 +59,17 @@ class Glark::Criteria
     config_fields
   end
 
-  def update_fields fields
-  end
-  
-  def process_rcfields rcfields, options
+  def update_fields rcfields
     rcfields.each do |name, values|
-      options.each do |opt|
-        posneg = case name
-                 when opt[:posrc]
-                   :positive
-                 when opt[:negrc]
-                   :negative
-                 else
-                   next
-                 end
-        
-        add_filters opt[:field], posneg, opt[:cls], values
+      @options.each do |opt|
+        opt.match_rc name, values
       end
+    end
+  end
+
+  def add_as_options optdata
+    @options.each do |opt|
+      opt.add_to_option_data optdata
     end
   end
 end
