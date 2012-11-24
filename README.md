@@ -9,13 +9,11 @@ glark(1) - Search text files for complex regular expressions
 
 Similar to `grep`, `glark` supports: Perl-compatible regular expressions, color
 highlighting of matches, context around matches, complex expressions ("and" and
-"or") and automatic exclusion of non-text files. Its regular expressions should
-be familiar to those experienced in Perl, Python or Ruby.
+"or"), inclusion and exclusion of files by patterns, and automatic exclusion of
+non-text files. Its regular expressions should be familiar to those experienced
+in Perl, Python or Ruby.
 
 ## OPTIONS
-
-Options are in the categories of `input`, `matching`, `output` and
-`information`.
 
 For each option of the type `--option=ARG`, the equivalent `--option ARG` can be
 used instead.
