@@ -17,16 +17,25 @@ class Glark::Option
 end
 
 class Glark::SizeLimitOption < Glark::Option
-  def to_hash
-    {
-      :tags => %w{ --size-limit },
+  def add_to_option_data optdata
+    optdata << {
+      :tags => tags,
       :arg  => [ :integer ],
       :set  => Proc.new { |val| set val }
     }
   end
 
+  def tags
+    %w{ --size-limit }
+  end
+
   def set val
     @criteria.add :size, :negative, SizeLimitFilter.new(val.to_i)
+  end
+
+  def match_rc name, values
+    set values.last
+    true
   end
 end
 
@@ -72,6 +81,24 @@ class Glark::ExtOption < Glark::Option
     info "val: #{val}"
     @criteria.add field, posneg, cls.new(Regexp.create val)
   end
+
+  def match_rc name, values
+    if name == 'match-ext'
+      info "name: #{name}".blue
+      values.each do |val|
+        set :positive, val
+      end
+      true
+    elsif name == 'not-ext'
+      info "name: #{name}".red
+      values.each do |val|
+        set :negative, val
+      end
+      true
+    else
+      false
+    end
+  end
 end
 
 class Glark::PathnameOption
@@ -101,11 +128,10 @@ class Glark::FileCriteria < Glark::Criteria
   end
 
   def add_as_options optdata
-    add_option optdata, @szlimit_opt
+    @szlimit_opt.add_to_option_data optdata
 
     add_opt_filter_pat optdata, @basename_opt
     add_opt_filter_pat optdata, @pathname_opt
-    # add_opt_filter_pat optdata, @ext_opt
 
     @ext_opt.add_to_option_data optdata
   end
@@ -122,18 +148,8 @@ class Glark::FileCriteria < Glark::Criteria
 
     rcfields.each do |name, values|
       info "name: #{name}".cyan
-      if name == 'size-limit'
-        @szlimit_opt.set values.last
-      elsif name == 'match-ext'
-        info "name: #{name}".blue
-        values.each do |val|
-          @ext_opt.set :positive, val
-        end
-      elsif name == 'not-ext'
-        info "name: #{name}".red
-        values.each do |val|
-          @ext_opt.set :negative, val
-        end
+      [ @szlimit_opt, @ext_opt ].each do |opt|
+        opt.match_rc name, values
       end
     end
   end
