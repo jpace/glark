@@ -1,6 +1,7 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
+require 'glark/io/file/file'
 require 'glark/io/file/archive_file'
 
 class Glark::TarFile < Glark::ArchiveFile
@@ -17,22 +18,16 @@ class Glark::TarFile < Glark::ArchiveFile
     @io = io
   end
 
-  def each_file &blk
-    f = @io || ::File.new(@fname)
-    tr = Gem::Package::TarReader.new f
-
-    tr.each do |entry|
-      if entry.file?
-        blk.call entry
-      end
-    end
+  def get_reader 
+    io = @io || ::File.new(@fname)
+    Gem::Package::TarReader.new io
   end
 
-  def list
-    contents = Array.new
-    each_file do |entry|
-      contents << entry.full_name
-    end
-    contents
+  def entry_name entry
+    entry.full_name
+  end
+
+  def read entry
+    entry.read
   end
 end

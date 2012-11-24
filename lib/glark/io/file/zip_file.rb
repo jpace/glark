@@ -23,24 +23,15 @@ class Glark::ZipFile < Glark::ArchiveFile
     end
   end
 
-  def each_file &blk
+  def get_reader 
     @zipfile = Zip::ZipFile.new @fname
-    @zipfile.each do |entry|
-      if entry.file?
-        blk.call entry
-      end
-    end
   end
 
   def read entry
     @zipfile.read entry
   end
 
-  def list
-    contents = Array.new
-    each_file do |entry|
-      contents << entry.name
-    end
-    contents
+  def entry_name entry
+    entry.name
   end
 end

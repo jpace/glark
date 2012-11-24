@@ -71,6 +71,7 @@ class Glark::Runner
   end
 
   def search_read_tar_gz_file fname
+    @output_opts.show_file_names = true
     Glark::GzFile.new(fname) do |file, io|
       tarfile = Glark::TarFile.new fname, io
       search_read_tar_entries fname, tarfile
@@ -78,8 +79,9 @@ class Glark::Runner
   end
 
   def search_read_tar_file fname
+    @output_opts.show_file_names = true
     tarfile = Glark::TarFile.new fname
-    search_read_tar_entries fname, tarfile
+    tarfile.search @expr, @output_type_cls, @output_opts
   end
 
   def search_read_archive_file fname, name, contents
@@ -101,18 +103,10 @@ class Glark::Runner
     update_status gzfile.search @expr, output_type
   end
 
-  def search_read_zip_entries fname, zipfile
-    @output_opts.show_file_names = true
-    zipfile.each_file do |entry|
-      contents = StringIO.new zipfile.read(entry)
-      search_read_archive_file fname, entry.name, contents
-    end
-  end
-
   def search_read_zip_file fname
     @output_opts.show_file_names = true
     zipfile = Glark::ZipFile.new fname
-    search_read_zip_entries fname, zipfile
+    update_status zipfile.search @expr, @output_type_cls, @output_opts
   end
 
   def search_read fname
