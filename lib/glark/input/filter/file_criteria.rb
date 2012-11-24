@@ -14,48 +14,83 @@ class Glark::Option
   def initialize criteria
     @criteria = criteria
   end
-end
 
-class Glark::SizeLimitOption < Glark::Option
+  def tags
+    [ '--' + rcfield ]
+  end  
+  
+  def match_rc name, values
+    if name == rcfield
+      info "name: #{name}".blue
+      values.each do |val|
+        set val
+      end
+      true
+    end
+  end
+
   def add_to_option_data optdata
     optdata << {
       :tags => tags,
-      :arg  => [ :integer ],
-      :set  => Proc.new { |val| set val }
+      :arg  => [ argtype ],
+      :set  => Proc.new { |pat| set pat }
     }
-  end
-
-  def tags
-    %w{ --size-limit }
-  end
-
-  def set val
-    @criteria.add :size, :negative, SizeLimitFilter.new(val.to_i)
-  end
-
-  def match_rc name, values
-    set values.last
-    true
   end
 end
 
-class Glark::ExtOption < Glark::Option
-  def postags
-    %w{ --match-ext }
+class Glark::SizeLimitOption < Glark::Option
+  def argtype
+    :integer
   end
 
-  def negtags
-    %w{ --not-ext }
-  end
-  
-  def posrc
-    'match-ext'
+  def posneg
+    :negative
   end
 
-  def negrc
-    'not-ext'
+  def field
+    :size
   end
 
+  def set val
+    @criteria.add field, posneg, SizeLimitFilter.new(val.to_i)
+  end
+
+  def rcfield
+    'size-limit'
+  end
+end
+
+class Glark::RegexpOption < Glark::Option
+  def set val
+    @criteria.add field, posneg, cls.new(Regexp.create val)
+  end
+
+  def argtype
+    :string
+  end
+end
+
+module Glark::MatchRegexpOption
+  def rcfield
+    'match-' + field.to_s
+  end
+
+  def posneg
+    :positive
+  end
+end
+
+module Glark::NotRegexpOption
+  def rcfield
+    'not-' + field.to_s
+  end
+
+  def posneg
+    :negative
+  end
+end
+
+class Glark::ExtOption < Glark::RegexpOption
   def cls
     ExtFilter
   end
@@ -63,45 +98,66 @@ class Glark::ExtOption < Glark::Option
   def field
     :ext
   end
+end
 
-  def add_to_option_data optdata
-    [ [ postags, :positive ], 
-      [ negtags, :negative ] ].each do |tags, posneg|
-      next unless tags
-      optdata << {
-        :tags => tags,
-        :arg  => [ :string ],
-        :set  => Proc.new { |pat| set posneg, pat }
-      }
-    end
+class Glark::MatchExtOption < Glark::ExtOption
+  include Glark::MatchRegexpOption
+end
+
+class Glark::NotExtOption < Glark::ExtOption
+  include Glark::NotRegexpOption
+end
+
+class Glark::NameOption < Glark::RegexpOption
+  def cls
+    BaseNameFilter
   end
 
-  def set posneg, val
-    info "posneg: #{posneg}"
-    info "val: #{val}"
-    @criteria.add field, posneg, cls.new(Regexp.create val)
-  end
-
-  def match_rc name, values
-    if name == 'match-ext'
-      info "name: #{name}".blue
-      values.each do |val|
-        set :positive, val
-      end
-      true
-    elsif name == 'not-ext'
-      info "name: #{name}".red
-      values.each do |val|
-        set :negative, val
-      end
-      true
-    else
-      false
-    end
+  def field
+    :name
   end
 end
 
-class Glark::PathnameOption
+class Glark::MatchNameOption < Glark::NameOption
+  include Glark::MatchRegexpOption
+
+  def tags
+    %w{ --basename --name --with-basename --with-name --match-name }
+  end
+end
+
+class Glark::NotNameOption < Glark::NameOption
+  include Glark::NotRegexpOption
+
+  def tags
+    %w{ --without-basename --without-name --not-name }
+  end
+end
+
+class Glark::PathOption < Glark::RegexpOption
+  def cls
+    FullNameFilter
+  end
+
+  def field
+    :path
+  end
+end
+
+class Glark::MatchPathOption < Glark::PathOption
+  include Glark::MatchRegexpOption
+
+  def tags
+    %w{ --fullname --path --with-fullname --with-path --match-path }
+  end
+end
+
+class Glark::NotPathOption < Glark::PathOption
+  include Glark::NotRegexpOption
+
+  def tags
+    %w{ --without-fullname --without-path --not-path }
+  end
 end
 
 class Glark::FileCriteria < Glark::Criteria
@@ -112,28 +168,32 @@ class Glark::FileCriteria < Glark::Criteria
 
     @szlimit_opt = Glark::SizeLimitOption.new self
 
-    @basename_opt = { :field => :name, :cls => BaseNameFilter }
-    @basename_opt[:postags] = %w{ --basename --name --with-basename --with-name --match-name }
-    @basename_opt[:negtags] = %w{ --without-basename --without-name --not-name }
-    @basename_opt[:posrc] = 'match-name'
-    @basename_opt[:negrc] = 'not-name'
-    
-    @pathname_opt = { :field => :path, :cls => FullNameFilter }
-    @pathname_opt[:postags] = %w{ --fullname --path --with-fullname --with-path --match-path }
-    @pathname_opt[:negtags] = %w{ --without-fullname --without-path --not-path }
-    @pathname_opt[:posrc] = 'match-path'
-    @pathname_opt[:negrc] = 'not-path'
+    @match_name_opt = Glark::MatchNameOption.new self
+    @not_name_opt = Glark::NotNameOption.new self
 
-    @ext_opt = Glark::ExtOption.new self
+    @match_path_opt = Glark::MatchPathOption.new self
+    @not_path_opt = Glark::NotPathOption.new self
+
+    @match_ext_opt = Glark::MatchExtOption.new self
+    @not_ext_opt = Glark::NotExtOption.new self
+  end
+
+  def all_options
+    [
+     @szlimit_opt,
+     @match_name_opt,
+     @not_name_opt,
+     @match_ext_opt,
+     @not_ext_opt,
+     @match_path_opt,
+     @not_path_opt,
+    ]
   end
 
   def add_as_options optdata
-    @szlimit_opt.add_to_option_data optdata
-
-    add_opt_filter_pat optdata, @basename_opt
-    add_opt_filter_pat optdata, @pathname_opt
-
-    @ext_opt.add_to_option_data optdata
+    all_options.each do |opt|
+      opt.add_to_option_data optdata
+    end
   end
 
   def config_fields
@@ -144,11 +204,11 @@ class Glark::FileCriteria < Glark::Criteria
   end
 
   def update_fields rcfields
-    process_rcfields rcfields, [ @basename_opt, @pathname_opt ]
+    # process_rcfields rcfields, [ @pathname_opt ]
 
     rcfields.each do |name, values|
       info "name: #{name}".cyan
-      [ @szlimit_opt, @ext_opt ].each do |opt|
+      all_options.each do |opt|
         opt.match_rc name, values
       end
     end
