@@ -38,7 +38,8 @@ class Glark::ArchiveFile
 
   def search_archive_file expr, entry, output_type_cls, output_opts
     name = entry_name entry
-    contents = StringIO.new(read(entry))
+    data = read entry
+    contents = StringIO.new data
 
     file = Glark::File.new name + " (in #{@fname})", contents, @range
     output = output_type_cls.new file, output_opts

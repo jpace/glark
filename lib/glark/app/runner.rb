@@ -34,7 +34,7 @@ class Glark::Runner
 
     @exclude_matching = @opts.input_options.exclude_matching
 
-    @range = @opts.range
+    @range = @opts.input_options.range
     @output_opts = @opts.output_options
     @invert_match = @output_opts.invert_match
 
@@ -59,8 +59,7 @@ class Glark::Runner
     end
   end
 
-  def search_text fname
-    io = fname == "-" ? $stdin : File.new(fname)
+  def search_text fname, io
     file = Glark::File.new fname, io, @range
     search_file file
   end
@@ -70,28 +69,10 @@ class Glark::Runner
     update_status file.search_as_binary @expr, @output_opts
   end
 
-  def search_read_tar_gz_file fname
+  def search_read_archive_file fname, cls
     @output_opts.show_file_names = true
-    tgzfile = Glark::TarGzFile.new fname, @range
-    update_status tgzfile.search @expr, @output_type_cls, @output_opts
-  end
-
-  def search_read_tar_file fname
-    @output_opts.show_file_names = true
-    tarfile = Glark::TarFile.new fname, @range
-    tarfile.search @expr, @output_type_cls, @output_opts
-  end
-
-  def search_read_gz_file fname
-    gzfile = Glark::GzFile.new fname, @range
-    output_type = @output_type_cls.new gzfile, @output_opts
-    update_status gzfile.search @expr, output_type
-  end
-
-  def search_read_zip_file fname
-    @output_opts.show_file_names = true
-    zipfile = Glark::ZipFile.new fname, @range
-    update_status zipfile.search @expr, @output_type_cls, @output_opts
+    file = cls.new fname, @range
+    update_status file.search @expr, @output_type_cls, @output_opts
   end
 
   def search_read fname
@@ -99,13 +80,13 @@ class Glark::Runner
     
     case
     when TAR_GZ_RE.match(fstr)
-      search_read_tar_gz_file fname
+      search_read_archive_file fname, Glark::TarGzFile
     when GZ_RE.match(fstr)
-      search_read_gz_file fname
+      search_file Glark::GzFile.new(fname, @range)
     when TAR_RE.match(fstr)
-      search_read_tar_file fname
+      search_read_archive_file fname, Glark::TarFile
     when ZIP_RE.match(fstr)
-      search_read_zip_file fname
+      search_read_archive_file fname, Glark::ZipFile
     else
       raise "file '#{fname}' does not have a handled extension"
     end
@@ -137,13 +118,13 @@ class Glark::Runner
     
     if name == "-" 
       write "reading standard input..."
-      search_text "-"
+      search_text name, $stdin
     else
       case type
       when FileType::BINARY
         search_binary name 
       when FileType::TEXT
-        search_text name 
+        search_text name, File.new(name)
       when :decompress, :read
         search_read name 
       when :list

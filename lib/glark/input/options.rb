@@ -25,7 +25,7 @@ class InputOptions < Glark::Options
     @directory = "list"
     @exclude_matching = false      # exclude files whose names match the expression
 
-    @range = Glark::Range.new 
+    @range = Glark::Range.new
     @split_as_path = true
     
     @file_criteria = Glark::FileCriteria.new

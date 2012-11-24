@@ -522,7 +522,8 @@ class Glark::OptionsTestCase < Glark::AppTestCase
 
   def run_range_test expfrom, expto, args
     run_test(args + %w{ foo },
-             :app => { :range => Glark::Range.new(expfrom, expto), :expr => RegexpExpression.new(%r{foo}, 0) })
+             :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
+             :input => { :range => Glark::Range.new(expfrom, expto) })
   end
 
   def test_range_start

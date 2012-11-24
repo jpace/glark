@@ -8,7 +8,6 @@ require 'glark/app/rcfile'
 require 'glark/input/fileset'
 require 'glark/input/options'
 require 'glark/match/options'
-require 'glark/output/context'
 require 'glark/output/options'
 require 'glark/util/colors'
 require 'glark/util/options'
@@ -51,10 +50,6 @@ class Glark::AppOptions < Glark::Options
     @local_config_files = false      # use local .glarkrc files
     
     @output_options.style = "glark"
-  end
-
-  def range
-    @input_options.range
   end
 
   def add_input_options optdata
@@ -104,7 +99,7 @@ class Glark::AppOptions < Glark::Options
   end
 
   def read_home_rcfile
-    if hdir = Env.home_directory
+    if hdir = Dir.home
       hdpn = Pathname.new hdir
       homerc = hdpn + ".glarkrc"
       read_rcfile homerc
@@ -112,7 +107,7 @@ class Glark::AppOptions < Glark::Options
   end
 
   def read_local_rcfiles
-    hdir = Env.home_directory
+    hdir = Dir.home
     dir = Pathname.new(".").expand_path
     while !dir.root? && dir != hdir
       rcfile = dir + ".glarkrc"

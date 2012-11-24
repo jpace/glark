@@ -9,8 +9,6 @@ module Glark; end
 
 # Lines of input. Handles non-default ("\n") record separator.
 class Glark::Lines
-  include Loggable
-
   def initialize fname
     @fname = fname
     @count = nil
@@ -48,7 +46,6 @@ class Glark::LinesCR < Glark::Lines
       @lines << line
       blk.call line
     end
-    info "@io: #{@io}".on_red
     @io.close
   end
 

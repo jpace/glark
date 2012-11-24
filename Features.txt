@@ -108,3 +108,6 @@ Thu Nov 22 09:46:16 2012
 Fri Nov 23 15:31:12 2012
 
   Added to readme that '-' is the argument for standard input.
+
+  Removed the options to unsuppress warnings, since they are enabled by default.
+

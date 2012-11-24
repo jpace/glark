@@ -268,11 +268,8 @@ used instead.
     Write the expression in a more legible format, useful for debugging complex
     expressions.
 
-  * `-q`, `-s`, `--quiet`, `--no-messages`:
-    Suppress warnings.
-
-  * `-Q`, `--no-quiet`:
-    Enable warnings. This is the default.
+  * `-q`, `--quiet`, `--no-messages`:
+    Suppress warnings. By default, warnings are enabled.
 
   * `-V`, `--version`:
     Display version information.
@@ -749,10 +746,10 @@ for files with suffixes associated with text files:
     c
     cpp
     css
-    h
     f
     for
     fpp
+    h
     hpp
     html
     java
@@ -812,6 +809,8 @@ equivalent:
     foo/        "foo/"
 
 The code to detect nontext files assumes ASCII, not Unicode.
+
+Glark runs an order of magniude faster under Ruby 1.8 than 1.9.
 
 ## AUTHOR
 

@@ -3,6 +3,7 @@
 # vim: set filetype=ruby : set sw=2
 
 require 'glark/output/binary_file_summary'
+require 'glark/output/context'
 require 'glark/output/file_name_only'
 require 'glark/output/glark_count'
 require 'glark/output/glark_lines'
