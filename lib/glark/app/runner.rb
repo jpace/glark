@@ -72,40 +72,25 @@ class Glark::Runner
 
   def search_read_tar_gz_file fname
     @output_opts.show_file_names = true
-    Glark::GzFile.new(fname) do |file, io|
-      tarfile = Glark::TarFile.new fname, io
-      search_read_tar_entries fname, tarfile
-    end
+    tgzfile = Glark::TarGzFile.new fname, @range
+    update_status tgzfile.search @expr, @output_type_cls, @output_opts
   end
 
   def search_read_tar_file fname
     @output_opts.show_file_names = true
-    tarfile = Glark::TarFile.new fname
+    tarfile = Glark::TarFile.new fname, @range
     tarfile.search @expr, @output_type_cls, @output_opts
   end
 
-  def search_read_archive_file fname, name, contents
-    file = Glark::File.new name + " (in #{fname})", contents, nil
-    search_file file
-  end
-
-  def search_read_tar_entries fname, tarfile
-    @output_opts.show_file_names = true
-    tarfile.each_file do |entry|
-      contents = StringIO.new entry.read
-      search_read_archive_file fname, entry.full_name, contents
-    end
-  end
-
   def search_read_gz_file fname
-    gzfile = Glark::GzFile.new fname
+    gzfile = Glark::GzFile.new fname, @range
     output_type = @output_type_cls.new gzfile, @output_opts
     update_status gzfile.search @expr, output_type
   end
 
   def search_read_zip_file fname
     @output_opts.show_file_names = true
-    zipfile = Glark::ZipFile.new fname
+    zipfile = Glark::ZipFile.new fname, @range
     update_status zipfile.search @expr, @output_type_cls, @output_opts
   end
 
@@ -132,16 +117,16 @@ class Glark::Runner
     file = nil
     case
     when TAR_RE.match(fstr)
-      file = Glark::TarFile.new fname
+      file = Glark::TarFile.new fname, @range
     when ZIP_RE.match(fstr)
-      file = Glark::ZipFile.new fname
+      file = Glark::ZipFile.new fname, @range
     when TAR_GZ_RE.match(fstr)
-      file = Glark::TarGzFile.new fname
+      file = Glark::TarGzFile.new fname, @range
     else
       raise "file '#{fname}' does not have a handled extension"
     end
 
-    update_status file.search_list(@expr, @output_type_cls, @output_opts, @range)
+    update_status file.search_list(@expr, @output_type_cls, @output_opts)
   end
   
   def search type, name

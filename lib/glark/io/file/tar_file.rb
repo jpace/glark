@@ -5,8 +5,8 @@ require 'glark/io/file/file'
 require 'glark/io/file/archive_file'
 
 class Glark::TarFile < Glark::ArchiveFile
-  def initialize fname, io = nil, &blk
-    super fname
+  def initialize fname, range, io = nil, &blk
+    super fname, range
 
     # Given that this is a gem, I'm not sure if it is installed with other
     # package managers. So the require is down here, used only if needed.
