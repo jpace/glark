@@ -95,17 +95,18 @@ class Glark::Runner
   def search_list fname
     fstr = fname.to_s
 
-    file = nil
-    case
-    when TAR_RE.match(fstr)
-      file = Glark::TarFile.new fname, @range
-    when ZIP_RE.match(fstr)
-      file = Glark::ZipFile.new fname, @range
-    when TAR_GZ_RE.match(fstr)
-      file = Glark::TarGzFile.new fname, @range
-    else
-      raise "file '#{fname}' does not have a handled extension"
-    end
+    cls = case
+          when TAR_RE.match(fstr)
+            Glark::TarFile
+          when ZIP_RE.match(fstr)
+            Glark::ZipFile
+          when TAR_GZ_RE.match(fstr)
+            Glark::TarGzFile
+          else
+            raise "file '#{fname}' does not have a handled extension"
+          end
+
+    file = cls.new fname, @range
 
     update_status file.search_list(@expr, @output_type_cls, @output_opts)
   end
@@ -121,11 +122,11 @@ class Glark::Runner
       search_text name, $stdin
     else
       case type
-      when FileType::BINARY
+      when :binary
         search_binary name 
-      when FileType::TEXT
+      when :text
         search_text name, File.new(name)
-      when :decompress, :read
+      when :read
         search_read name 
       when :list
         search_list name 

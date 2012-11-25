@@ -10,19 +10,19 @@ require 'glark/input/filter/file_criteria'
 class Glark::InputSpec  
   VALID_BINARY_FILE_TYPES = [ 'text', 'without-match', 'skip', 'binary', 'list', 'decompress', 'read' ]
 
-  attr_reader :binary_files
-  attr_reader :directory        # read, skip, or recurse, a la grep
-  attr_reader :exclude_matching # exclude files whose names match the expression
-  attr_reader :range            # range to start and stop searching; nil => the entire file
-  attr_reader :split_as_path    # use file arguments as path elements
+  attr_accessor :binary_files
+  attr_accessor :directory        # read, skip, or recurse, a la grep
+  attr_accessor :exclude_matching # exclude files whose names match the expression
+  attr_accessor :range            # range to start and stop searching; nil => the entire file
+  attr_accessor :split_as_path    # use file arguments as path elements
 
-  attr_reader :dir_criteria
-  attr_reader :file_criteria
+  attr_accessor :dir_criteria
+  attr_accessor :file_criteria
 
   def initialize
     @binary_files = 'skip'
-    @directory = "list"
-    @exclude_matching = false      # exclude files whose names match the expression
+    @directory = 'list'
+    @exclude_matching = false
 
     @range = Glark::Range.new
     @split_as_path = true
@@ -31,18 +31,5 @@ class Glark::InputSpec
     @dir_criteria = Glark::DirCriteria.new
 
     $/ = "\n"
-  end
-
-  def set_record_separator sep
-    $/ = if sep && sep.to_i > 0
-           begin
-             sep.oct.chr
-           rescue RangeError => e
-             # out of range (e.g., 777) means nil:
-             nil
-           end
-         else
-           "\n\n"
-         end
   end
 end

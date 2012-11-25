@@ -46,9 +46,7 @@ class Glark::RcfileTestCase < Glark::AppTestCase
     run_option_test(%w{ foo }, []) do |opts|
       # default values
       assert_equal "glark", opts.output_options.style
-
       opts.read_rcfile Pathname.new '/proj/org/incava/glark/test/resources/rcgrep.txt'
-
       assert_equal "grep", opts.output_options.style
     end
   end

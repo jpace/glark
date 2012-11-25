@@ -91,7 +91,7 @@ class Glark::AppOptions < Glark::Options
 
     validate!
 
-    @files = Glark::FileSet.new @args, @input_options, Hash.new
+    @files = Glark::FileSet.new @args, @input_options
 
     if @output_options.show_file_names.nil?
       @output_options.show_file_names = @output_options.label || !@files.one_file?

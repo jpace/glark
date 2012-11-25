@@ -4,11 +4,11 @@
 
 require 'rubygems'
 require 'riel'
-require 'glark/input/options'
+require 'glark/input/spec'
 
 module Glark; end
 
-# Files and directories. And standard output, just for fun.
+# Files and directories. And standard input, just for fun.
 
 class Glark::FileSet
   include Loggable, Enumerable
@@ -16,14 +16,13 @@ class Glark::FileSet
   DEPTH_RE = Regexp.new '\.\.\.(\d*)$'
   INFINITY = Object.new
   
-  def initialize fnames, input_options, args
-    @maxdepth = input_options.directory == "list" ? 0 : nil
-
-    @binary_files = input_options.binary_files
-    @dir_criteria = input_options.dir_criteria
-    @file_criteria = input_options.file_criteria
-    @skip_dirs = input_options.directory == "skip"
-    @split_as_path = input_options.split_as_path
+  def initialize fnames, input_spec
+    @maxdepth = input_spec.directory == "list" ? 0 : nil
+    @binary_files = input_spec.binary_files
+    @dir_criteria = input_spec.dir_criteria
+    @file_criteria = input_spec.file_criteria
+    @skip_dirs = input_spec.directory == "skip"
+    @split_as_path = input_spec.split_as_path
 
     @dir_to_maxdepth = Hash.new
     @files = Array.new
@@ -166,8 +165,7 @@ class Glark::FileSet
 
   def handle_text pn, &blk
     return if file_skipped? pn
-
-    blk.call [ FileType::TEXT, pn ]
+    blk.call [ :text, pn ]
   end
 
   def handle_binary pn, &blk
@@ -175,15 +173,15 @@ class Glark::FileSet
 
     type = case @binary_files
            when 'binary'
-             FileType::BINARY
+             :binary
            when 'skip', 'without-match'
              return
            when 'decompress', 'read'
-             :decompress
+             :read
            when 'list'
              :list
            else
-             FileType::TEXT
+             :text
            end
     blk.call [ type, pn ]
   end

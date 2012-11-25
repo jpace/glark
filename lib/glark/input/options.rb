@@ -16,6 +16,19 @@ class InputOptions < Glark::InputSpec
     add_as_options optdata
   end
 
+  def set_record_separator sep
+    $/ = if sep && sep.to_i > 0
+           begin
+             sep.oct.chr
+           rescue RangeError => e
+             # out of range (e.g., 777) means nil:
+             nil
+           end
+         else
+           "\n\n"
+         end
+  end
+
   def config_fields
     fields = {
       "binary-files" => binary_files,
