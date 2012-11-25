@@ -6,6 +6,7 @@
 
 require 'rubygems'
 require 'glark/input/spec'
+require 'glark/input/fileset'
 require 'glark/util/options'
 
 class InputOptions < Glark::InputSpec
@@ -14,6 +15,18 @@ class InputOptions < Glark::InputSpec
   def initialize optdata
     super()
     add_as_options optdata
+  end
+
+  def create_fileset files
+    fsargs = Hash.new
+    fsargs[:maxdepth] = @directory == 'list' ? 0 : nil
+    fsargs[:binary_files] = @binary_files
+    fsargs[:dir_criteria] = @dir_criteria
+    fsargs[:file_criteria] = @file_criteria
+    fsargs[:skip_dirs] = @directory == 'skip'
+    fsargs[:split_as_path] = @split_as_path
+    
+    Glark::FileSet.new files, fsargs
   end
 
   def set_record_separator sep

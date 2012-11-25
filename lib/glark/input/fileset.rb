@@ -4,7 +4,6 @@
 
 require 'rubygems'
 require 'riel'
-require 'glark/input/spec'
 
 module Glark; end
 
@@ -16,13 +15,13 @@ class Glark::FileSet
   DEPTH_RE = Regexp.new '\.\.\.(\d*)$'
   INFINITY = Object.new
   
-  def initialize fnames, input_spec
-    @maxdepth = input_spec.directory == "list" ? 0 : nil
-    @binary_files = input_spec.binary_files
-    @dir_criteria = input_spec.dir_criteria
-    @file_criteria = input_spec.file_criteria
-    @skip_dirs = input_spec.directory == "skip"
-    @split_as_path = input_spec.split_as_path
+  def initialize fnames, args
+    @maxdepth = args[:maxdepth] || nil
+    @binary_files = args[:binary_files] || 'skip'
+    @dir_criteria = args[:dir_criteria]
+    @file_criteria = args[:file_criteria]
+    @skip_dirs = args[:skip_dirs]
+    @split_as_path = args[:split_as_path]
 
     @dir_to_maxdepth = Hash.new
     @files = Array.new
