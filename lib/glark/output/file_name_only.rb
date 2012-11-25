@@ -5,9 +5,9 @@
 require 'glark/output/common'
 
 class FileNameOnly < Common
-  def initialize fname, opts
+  def initialize fname, spec
     super
-    @write_null = opts.write_null
+    @write_null = spec.write_null
   end
 
   def at_match_limit?

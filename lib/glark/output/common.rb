@@ -8,16 +8,16 @@ require 'glark/io/file/file'
 require 'glark/output/formatted'
 
 class Common < Formatted
-  def initialize file, opts
+  def initialize file, spec
     super()
 
     @file = file
-    @invert_match = opts.invert_match
-    @label = opts.label
-    @match_limit = opts.match_limit
-    @out = opts.out
-    @show_file_name = opts.show_file_names
-    @show_line_numbers = opts.show_line_numbers
+    @invert_match = spec.invert_match
+    @label = spec.label
+    @match_limit = spec.match_limit
+    @out = spec.out
+    @show_file_name = spec.show_file_names
+    @show_line_numbers = spec.show_line_numbers
   end
 
   def display_matches?

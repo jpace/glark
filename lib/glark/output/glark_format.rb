@@ -10,10 +10,10 @@ module Glark
   module Format
     include Loggable
     
-    def initialize file, opts
+    def initialize file, spec
       @file_header = nil        # not nil after file header written
-      @fname_highlighter = opts.highlight && opts.file_highlight
-      @lnum_highlighter = opts.line_number_highlight
+      @fname_highlighter = spec.highlight && spec.file_highlight
+      @lnum_highlighter = spec.line_number_highlight
 
       super
     end
@@ -40,7 +40,7 @@ module Glark
         print_line_number ln 
       end
       
-      if ch && @has_context
+      if ch && @print_context
         @out.printf "%s ", ch
       end
 

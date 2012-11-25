@@ -87,9 +87,19 @@ class Glark::OptionsTestCase < Glark::AppTestCase
     %w{ -C --context }.each do |ctx|
       args = [ ctx, 'foo' ]
       run_test(args,
-               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-               :output => { :after => 2, :before => 2 }
-               )
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
+        assert_context 2, 2, opts
+      end
+    end
+  end
+
+  def assert_context expbefore, expafter, opts
+    context = opts.output_options.context
+    if expafter
+      assert_equal expafter, context.after
+    end
+    if expbefore
+      assert_equal expbefore, context.before
     end
   end
 
@@ -102,9 +112,9 @@ class Glark::OptionsTestCase < Glark::AppTestCase
        [ '--context=' + vstr,      ]
       ].each do |args|
         run_test(args + %w{ foo },
-                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                 :output => { :after => val, :before => val }
-                 )
+                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
+          assert_context val, val, opts
+        end
       end
     end
     
@@ -112,9 +122,9 @@ class Glark::OptionsTestCase < Glark::AppTestCase
     vals.each do |val|
       args = [ '-' + val.to_s, 'foo' ]
       run_test(args,
-               :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-               :output => { :after => val, :before => val }
-               )
+               :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
+        assert_context val, val, opts
+      end
     end
   end
 
@@ -127,8 +137,9 @@ class Glark::OptionsTestCase < Glark::AppTestCase
        [ '--after-context=' + vstr ]
       ].each do |args|
         run_test(args + %w{ foo },
-                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                 :output => { :after => val })
+                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
+          assert_context nil, val, opts
+        end
       end
     end
   end
@@ -142,8 +153,9 @@ class Glark::OptionsTestCase < Glark::AppTestCase
        [ '--before-context=' + vstr ]
       ].each do |args|
         run_test(args + %w{ foo },
-                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
-                 :output => { :before => val })
+                 :app => { :expr => RegexpExpression.new(%r{foo}, 0) }) do |opts|
+          assert_context val, nil, opts
+        end
       end
     end
   end
@@ -257,8 +269,10 @@ class Glark::OptionsTestCase < Glark::AppTestCase
       run_test([ opt, 'foo' ],
                :app => { :expr => RegexpExpression.new(%r{foo}, 0) },
                :match => { :text_highlights => [] },
-               :output => { :after => 0, :before => 0, :show_line_numbers => false, :style => "grep" },
-               :colors => { :text_color_style => false })
+               :output => { :show_line_numbers => false, :style => "grep" },
+               :colors => { :text_color_style => false }) do |opts|
+        assert_context 0, 0, opts
+      end
     end
   end
   

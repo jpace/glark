@@ -12,9 +12,9 @@ require 'glark/output/glark_format'
 class GlarkLines < Lines
   include Glark::Format
 
-  def initialize file, opts
+  def initialize file, spec
     super
-    @has_context = opts.after != 0 || opts.before != 0    
+    @print_context = @after != 0 || @before != 0
   end
 
   def write_matching from, to

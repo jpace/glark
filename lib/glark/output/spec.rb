@@ -59,14 +59,6 @@ class OutputSpec
     @colors.text_color_style
   end
 
-  def after
-    @context && @context.after
-  end
-
-  def before
-    @context && @context.before
-  end
-
   def style= style
     @style = style
     if @style == "glark"

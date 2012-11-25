@@ -11,8 +11,8 @@ class FileHeader
   end
 
   def print out
-    fname = @name
-    fname = @highlighter.highlight(fname.to_s) if @highlighter
-    out.puts fname.to_s
+    name = @name.to_s
+    fname = @highlighter ? @highlighter.highlight(name) : name
+    out.puts fname
   end
 end

@@ -20,11 +20,11 @@ class Glark::Context
   def update_fields fields
     fields.each do |name, values|
       case name
-      when "context"
+      when 'context'
         @after = @before = values.last.to_i
-      when "after"
+      when 'after', 'after-context'
         @after = values.last.to_i
-      when "before"
+      when 'before', 'before-context'
         @before = values.last.to_i 
       end
     end

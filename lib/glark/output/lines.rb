@@ -9,12 +9,15 @@ require 'glark/output/line_status'
 require 'glark/output/common'
 
 class Lines < Common
-  def initialize file, opts
+  def initialize file, spec
     super
 
-    @has_context = false
-    @after = opts.after
-    @before = opts.before
+    @print_context = false
+    
+    context = spec.context
+    @after = context && context.after
+    @before = context && context.before
+
     @stati = Glark::LineStatus.new
   end
 
@@ -47,7 +50,7 @@ class Lines < Common
       next unless @stati.char(ln) && !@stati.is_written?(ln)
 
       # this used to be conditional on show_break, but no more
-      if from > 0 && !@stati.char(ln - 1) && @has_context
+      if from > 0 && !@stati.char(ln - 1) && @print_context
         @out.puts "  ---"
       end
       
@@ -58,7 +61,7 @@ class Lines < Common
 
   def write_nonmatching from, to
     (from .. to).each do |ln|
-      next if @stati.is_written?(ln) || @stati.char(ln) == ":"
+      next if @stati.is_written?(ln) || @stati.char(ln) == ':'
       print_line ln 
       @stati.set_as_written ln
     end
@@ -90,7 +93,8 @@ class Lines < Common
   end
 
   def set_status startline, endline
-    st = [0, startline - @before].max
-    @stati.set_match startline - @before, startline, endline, endline + @after
+    fromline = [0, startline - @before].max
+    toline = endline + @after
+    @stati.set_match fromline, startline, endline, toline
   end
 end

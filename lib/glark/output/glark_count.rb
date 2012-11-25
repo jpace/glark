@@ -5,9 +5,9 @@
 require 'glark/output/count'
 
 class GlarkCount < Count
-  def initialize fname, opts
+  def initialize fname, spec
     super
-    @fname_highlighter = opts.highlight && opts.file_highlight
+    @fname_highlighter = spec.highlight && spec.file_highlight
   end
 
   def print_file_name
