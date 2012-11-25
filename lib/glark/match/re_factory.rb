@@ -15,12 +15,12 @@ class RegexpExpressionFactory
 
   def initialize exprspec
     @count           = 0
-    @extended        = exprspec.extended
-    @extract_matches = exprspec.extract_matches
-    @ignorecase      = exprspec.ignorecase
-    @text_highlights = exprspec.text_highlights
-    @wholelines      = exprspec.whole_lines
-    @wholewords      = exprspec.whole_words
+    @extended        = exprspec[:extended]
+    @extract_matches = exprspec[:extract_matches]
+    @ignorecase      = exprspec[:ignorecase]
+    @text_highlights = exprspec[:text_highlights]
+    @wholelines      = exprspec[:whole_lines]
+    @wholewords      = exprspec[:whole_words]
   end
 
   def create_expression pattern, negated = false

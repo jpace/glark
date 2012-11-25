@@ -36,7 +36,7 @@ class Glark::MatchSpec
     exprargs[:whole_lines] = @whole_lines
     exprargs[:whole_words] = @whole_words
     
-    ExpressionFactory.new self
+    ExpressionFactory.new exprargs
   end
   
   def read_expression args, warn_option = false
