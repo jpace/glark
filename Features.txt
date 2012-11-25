@@ -114,3 +114,7 @@ Fri Nov 23 15:31:12 2012
 Sat Nov 24 18:47:11 2012
 
   Added .git as excluded. Added commentary as such to the readme.
+
+Sun Nov 25 17:54:59 2012
+
+  --match-x, --not-x: changed --not to more intuitive --skip.
