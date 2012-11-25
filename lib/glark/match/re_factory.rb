@@ -13,14 +13,14 @@ class RegexpExpressionFactory
 
   attr_reader :count
 
-  def initialize expropts
+  def initialize exprspec
     @count           = 0
-    @ignorecase      = expropts.ignorecase
-    @wholewords      = expropts.whole_words
-    @wholelines      = expropts.whole_lines
-    @extended        = expropts.extended
-    @text_highlights = expropts.text_highlights
-    @extract_matches = expropts.extract_matches
+    @extended        = exprspec.extended
+    @extract_matches = exprspec.extract_matches
+    @ignorecase      = exprspec.ignorecase
+    @text_highlights = exprspec.text_highlights
+    @wholelines      = exprspec.whole_lines
+    @wholewords      = exprspec.whole_words
   end
 
   def create_expression pattern, negated = false

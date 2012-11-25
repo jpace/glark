@@ -17,8 +17,8 @@ class ExpressionFactory
 
   attr_reader :expr
 
-  def initialize matchopts
-    @regexp_factory = RegexpExpressionFactory.new matchopts
+  def initialize matchspec
+    @regexp_factory = RegexpExpressionFactory.new matchspec
   end
 
   # reads a file containing one regular expression per line.

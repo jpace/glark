@@ -6,44 +6,16 @@
 
 require 'rubygems'
 require 'riel/log'
-require 'glark/match/factory'
+require 'glark/match/spec'
 require 'glark/util/colors'
 require 'glark/util/options'
 
-class MatchOptions < Glark::Options
-  attr_accessor :expr           # the expression to be evaluated
-  attr_accessor :extended       # whether to use extended regular expressions
-  attr_accessor :extract_matches
-  attr_accessor :ignorecase     # match case
-  attr_accessor :whole_lines    # true means patterns must match the entire line
-  attr_accessor :whole_words    # true means all patterns are '\b'ed front and back
-
+class MatchOptions < Glark::MatchSpec
+  include Glark::OptionUtil
+  
   def initialize colors, optdata
-    @colors = colors
-    @expr = nil
-    @extended = false
-    @extract_matches = false
-    @ignorecase = false
-    @whole_lines = false
-    @whole_words = false
-
+    super colors    
     add_as_options optdata
-  end
-
-  def read_expression args, warn_option = false
-    @expr = ExpressionFactory.new(self).make_expression args, warn_option
-  end
-
-  def text_highlights
-    @colors.text_highlights
-  end
-
-  def set_text_highlights text_colors
-    @colors.text_highlights = text_colors
-  end
-
-  def set_text_highlight index, text_color
-    @colors.text_highlights[index] = text_color
   end
 
   def config_fields
@@ -82,12 +54,12 @@ class MatchOptions < Glark::Options
     optdata << expr_file_option = {
       :tags => %w{ -f --file },
       :arg  => [ :string ],
-      :set  => Proc.new { |fname| @expr = ExpressionFactory.new(self).read_file fname }
+      :set  => Proc.new { |fname| @expr = create_expression_factory.read_file fname }
     }
 
     add_opt_blk(optdata, %w{ -o -a }) do |md, opt, args|
       args.unshift opt
-      @expr = ExpressionFactory.new(self).make_expression args
+      @expr = create_expression_factory.make_expression args
     end
 
     optdata << text_color_option = {
