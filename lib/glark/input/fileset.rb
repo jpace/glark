@@ -16,11 +16,10 @@ class Glark::FileSet
   DEPTH_RE = Regexp.new '\.\.\.(\d*)$'
   INFINITY = Object.new
   
-  def initialize fnames, input_options, &blk
+  def initialize fnames, input_options, args
     @maxdepth = input_options.directory == "list" ? 0 : nil
 
-    # bin_as should be binary (read), text (readlines), uncompress, unarchive
-    @binary_file_process_as = input_options.binary_files
+    @binary_files = input_options.binary_files
     @dir_criteria = input_options.dir_criteria
     @file_criteria = input_options.file_criteria
     @skip_dirs = input_options.directory == "skip"
@@ -33,7 +32,7 @@ class Glark::FileSet
       @files << '-'
     else
       add_files fnames
-    end    
+    end
   end
 
   def one_file?
@@ -174,7 +173,7 @@ class Glark::FileSet
   def handle_binary pn, &blk
     return if file_skipped? pn
 
-    type = case @binary_file_process_as
+    type = case @binary_files
            when 'binary'
              FileType::BINARY
            when 'skip', 'without-match'

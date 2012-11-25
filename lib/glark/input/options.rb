@@ -5,52 +5,19 @@
 # Options for input.
 
 require 'rubygems'
-require 'glark/input/range'
-require 'glark/input/binary_files_option'
-require 'glark/input/filter/dir_criteria'
-require 'glark/input/filter/file_criteria'
+require 'glark/input/spec'
 require 'glark/util/options'
 
-class InputOptions < Glark::Options
-  attr_reader :directory        # read, skip, or recurse, a la grep
-  attr_reader :exclude_matching # exclude files whose names match the expression
-  attr_reader :range            # range to start and stop searching; nil => the entire file
-  attr_reader :split_as_path    # use file arguments as path elements
-
-  attr_reader :file_criteria
-  attr_reader :dir_criteria
-
+class InputOptions < Glark::InputSpec
+  include Glark::OptionUtil
+  
   def initialize optdata
-    @binary_files_option = BinaryFilesOption.new
-    @directory = "list"
-    @exclude_matching = false      # exclude files whose names match the expression
-
-    @range = Glark::Range.new
-    @split_as_path = true
-    
-    @file_criteria = Glark::FileCriteria.new
-    @dir_criteria = Glark::DirCriteria.new
-
-    $/ = "\n"
-
+    super()
     add_as_options optdata
   end
 
   def binary_files
-    @binary_files_option.process_as
-  end
-
-  def set_record_separator sep
-    $/ = if sep && sep.to_i > 0
-           begin
-             sep.oct.chr
-           rescue RangeError => e
-             # out of range (e.g., 777) means nil:
-             nil
-           end
-         else
-           "\n\n"
-         end
+    @binary_files
   end
 
   def config_fields
@@ -100,9 +67,15 @@ class InputOptions < Glark::Options
     }
 
     add_opt_str optdata, :directory, %w{ -d --directories }
-    
-    @binary_files_option.add_as_option optdata
 
+    re = Regexp.new '^[\'\"]?(' + VALID_BINARY_FILE_TYPES.join('|') + ')[\'\"]?$'
+    optdata << binary_files_option = {
+      :tags => %w{ --binary-files },
+      :arg  => [ :required, :regexp, re ],
+      :set  => Proc.new { |md| @binary_files = md[1] },
+      :rc   => %w{ binary-files },
+    }
+    
     @file_criteria.add_as_options optdata
     @dir_criteria.add_as_options optdata
 

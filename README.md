@@ -16,7 +16,8 @@ in Perl, Python or Ruby.
 ## OPTIONS
 
 For each option of the type `--option=ARG`, the equivalent `--option ARG` can be
-used instead.
+used instead. Options can also be specified with their unambiguous leading
+substrings, such as `--rec` for `--recurse`.
 
 ### INPUT
 
