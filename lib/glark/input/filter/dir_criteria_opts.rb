@@ -20,9 +20,9 @@ class Glark::DirCriteriaOpts < Glark::CriteriaOpts
   def opt_classes
     [
      Glark::MatchDirNameOption,
-     Glark::NotDirNameOption,
+     Glark::SkipDirNameOption,
      Glark::MatchDirPathOption,
-     Glark::NotDirPathOption,
+     Glark::SkipDirPathOption,
     ]
   end
 end

@@ -37,7 +37,7 @@ class Glark::RegexpOption < Glark::Option
   end
 end
 
-module Glark::MatchRegexpOption
+module Glark::MatchOption
   def rcfield
     'match-' + field.to_s
   end
@@ -47,7 +47,7 @@ module Glark::MatchRegexpOption
   end
 end
 
-module Glark::NotRegexpOption
+module Glark::SkipOption
   def rcfield
     'not-' + field.to_s
   end
@@ -68,11 +68,11 @@ class Glark::ExtOption < Glark::RegexpOption
 end
 
 class Glark::MatchExtOption < Glark::ExtOption
-  include Glark::MatchRegexpOption
+  include Glark::MatchOption
 end
 
-class Glark::NotExtOption < Glark::ExtOption
-  include Glark::NotRegexpOption
+class Glark::SkipExtOption < Glark::ExtOption
+  include Glark::SkipOption
 end
 
 class Glark::NameOption < Glark::RegexpOption
@@ -86,15 +86,15 @@ class Glark::NameOption < Glark::RegexpOption
 end
 
 class Glark::MatchNameOption < Glark::NameOption
-  include Glark::MatchRegexpOption
+  include Glark::MatchOption
 
   def tags
     %w{ --basename --name --with-basename --with-name --match-name }
   end
 end
 
-class Glark::NotNameOption < Glark::NameOption
-  include Glark::NotRegexpOption
+class Glark::SkipNameOption < Glark::NameOption
+  include Glark::SkipOption
 
   def tags
     %w{ --without-basename --without-name --not-name }
@@ -109,18 +109,14 @@ class Glark::DirNameOption < Glark::RegexpOption
   def field
     :dirname
   end
-
-  def rcfield
-    :dirname
-  end
 end
 
 class Glark::MatchDirNameOption < Glark::DirNameOption
-  include Glark::MatchRegexpOption
+  include Glark::MatchOption
 end
 
-class Glark::NotDirNameOption < Glark::DirNameOption
-  include Glark::NotRegexpOption
+class Glark::SkipDirNameOption < Glark::DirNameOption
+  include Glark::SkipOption
 end
 
 class Glark::PathOption < Glark::RegexpOption
@@ -134,15 +130,15 @@ class Glark::PathOption < Glark::RegexpOption
 end
 
 class Glark::MatchPathOption < Glark::PathOption
-  include Glark::MatchRegexpOption
+  include Glark::MatchOption
 
   def tags
     %w{ --fullname --path --with-fullname --with-path --match-path }
   end
 end
 
-class Glark::NotPathOption < Glark::PathOption
-  include Glark::NotRegexpOption
+class Glark::SkipPathOption < Glark::PathOption
+  include Glark::SkipOption
 
   def tags
     %w{ --without-fullname --without-path --not-path }
@@ -161,9 +157,9 @@ class Glark::DirPathOption < Glark::RegexpOption
 end
 
 class Glark::MatchDirPathOption < Glark::DirPathOption
-  include Glark::MatchRegexpOption
+  include Glark::MatchOption
 end
 
-class Glark::NotDirPathOption < Glark::DirPathOption
-  include Glark::NotRegexpOption
+class Glark::SkipDirPathOption < Glark::DirPathOption
+  include Glark::SkipOption
 end

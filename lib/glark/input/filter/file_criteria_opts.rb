@@ -16,11 +16,11 @@ class Glark::FileCriteriaOpts < Glark::CriteriaOpts
     [
      Glark::SizeLimitOption,
      Glark::MatchNameOption,
-     Glark::NotNameOption,
+     Glark::SkipNameOption,
      Glark::MatchPathOption,
-     Glark::NotPathOption,
+     Glark::SkipPathOption,
      Glark::MatchExtOption,
-     Glark::NotExtOption,
+     Glark::SkipExtOption,
     ]
   end
 
