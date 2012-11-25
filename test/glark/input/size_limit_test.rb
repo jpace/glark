@@ -36,13 +36,11 @@ class Glark::SizeLimitTestCase < Glark::AppTestCase
                 "[1m/proj/org/incava/glark/test/resources/rcext.txt[0m",
                 "    1 ma[30m[43mtch-e[0mxt: rb",
                 "    2 ma[30m[43mtch-e[0mxt: pl",
-                "    4 no[30m[43mt-e[0mxt: txt",
                 "[1m/proj/org/incava/glark/test/resources/rcgrep.txt[0m",
                 "    1 grep: [30m[43mtrue[0m",
                 "[1m/proj/org/incava/glark/test/resources/rcmatch.txt[0m",
                 "    1 ma[30m[43mtch-name[0m: \\w+.java",
                 "    2 ma[30m[43mtch-name[0m: \\w+.rb",
-                "    4 no[30m[43mt-name[0m: zxcdjlk",
                 "[1m/proj/org/incava/glark/test/resources/rcpath.txt[0m",
                 "    2 ma[30m[43mtch-dirpath: src/te[0mst/ruby",
                ]

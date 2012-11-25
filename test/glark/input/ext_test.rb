@@ -30,7 +30,7 @@ class Glark::ExtTestCase < Glark::AppTestCase
                 "[1m/proj/org/incava/glark/test/resources/canterbury/prologue.txt[0m",
                 "  192 This ilke te[30m[43mxt held he not worth an oy[0mster;",
                ]
-    run_app_test expected, [ '-r', '--not-ext', 'rb', 'x.*y' ], dirname
+    run_app_test expected, [ '-r', '--skip-ext', 'rb', 'x.*y' ], dirname
   end
 
   def test_match_multiple
@@ -58,6 +58,6 @@ class Glark::ExtTestCase < Glark::AppTestCase
                 "[1m/proj/org/incava/glark/test/resources/cat.pl[0m",
                 "    6 [30m[43mprint[0m <>;",
                ]
-    run_app_test expected, [ '-r', '--not-ext', 'rb', '--not-ext', 'txt', 'p.*t' ], dirname
+    run_app_test expected, [ '-r', '--skip-ext', 'rb', '--not-ext', 'txt', 'p.*t' ], dirname
   end
 end

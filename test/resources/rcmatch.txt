@@ -1,4 +1,4 @@
 match-name: \w+.java
 match-name: \w+.rb
 
-not-name: zxcdjlk
+skip-name: zxcdjlk

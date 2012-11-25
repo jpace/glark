@@ -33,7 +33,7 @@ class Glark::PathTestCase < Glark::AppTestCase
                 "[1m/proj/org/incava/glark/test/resources/spaces.txt[0m",
                 "    2 01 The Kni[30m[43mghts Tale[0m.txt",
                ]
-    run_app_test expected, [ '-r', '--not-path', 'test/resources/.*e.txt$', 'g.*t.*e\b' ], dirname
+    run_app_test expected, [ '-r', '--skip-path', 'test/resources/.*e.txt$', 'g.*t.*e\b' ], dirname
   end
 
   def test_match_multiple
@@ -65,6 +65,6 @@ class Glark::PathTestCase < Glark::AppTestCase
                 "   11   -rw-r--r--   1 jpace jpace   65852 2010-12-04 15:24 10-TheMerchan[30m[43mtsTale[0m.txt",
                 "   21   -rw-r--r--   1 jpace jpace   45326 2010-12-04 15:24 20-TheNunsPries[30m[43mtsTale[0m.txt",
                ]
-    run_app_test expected, [ '-r', '--not-path', 'test/resources/\d.*e.txt$', '--not-path', 'test/resources/canterbury/.*.txt$', 't\W*s\w*e' ], dirname
+    run_app_test expected, [ '-r', '--skip-path', 'test/resources/\d.*e.txt$', '--skip-path', 'test/resources/canterbury/.*.txt$', 't\W*s\w*e' ], dirname
   end
 end

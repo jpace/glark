@@ -36,7 +36,7 @@ class Glark::NameTestCase < Glark::AppTestCase
                 "[1m/proj/org/incava/glark/test/resources/spaces.txt[0m",
                 "    2 01 The Kni[30m[43mghts Tale[0m.txt",
                ]
-    run_app_test expected, [ '-r', '--not-name', '^\w+e.txt$', 'g.*t.*e\b' ], dirname
+    run_app_test expected, [ '-r', '--skip-name', '^\w+e.txt$', 'g.*t.*e\b' ], dirname
   end
 
   def test_match_multiple
@@ -68,6 +68,6 @@ class Glark::NameTestCase < Glark::AppTestCase
                 "[1m/proj/org/incava/glark/test/resources/spaces.txt[0m",
                 "    2 01 The Kni[30m[43mghts Tale[0m.txt",
                ]
-    run_app_test expected, [ '-r', '--not-name', '^\w+e.txt$', '--not-name', '04.*', 'g.*t.*e\b' ], dirname
+    run_app_test expected, [ '-r', '--skip-name', '^\w+e.txt$', '--skip-name', '04.*', 'g.*t.*e\b' ], dirname
   end
 end

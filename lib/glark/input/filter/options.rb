@@ -48,8 +48,12 @@ module Glark::MatchOption
 end
 
 module Glark::SkipOption
+  def tags
+     %w{ not skip }.collect { |x| '--' + x + '-' + field.to_s }
+  end
+
   def rcfield
-    'not-' + field.to_s
+    'skip-' + field.to_s
   end
 
   def posneg
@@ -89,7 +93,7 @@ class Glark::MatchNameOption < Glark::NameOption
   include Glark::MatchOption
 
   def tags
-    %w{ --basename --name --with-basename --with-name --match-name }
+    %w{ --basename --name --with-basename --with-name } + super
   end
 end
 
@@ -97,7 +101,7 @@ class Glark::SkipNameOption < Glark::NameOption
   include Glark::SkipOption
 
   def tags
-    %w{ --without-basename --without-name --not-name }
+    %w{ --without-basename --without-name } + super
   end
 end
 
@@ -133,7 +137,7 @@ class Glark::MatchPathOption < Glark::PathOption
   include Glark::MatchOption
 
   def tags
-    %w{ --fullname --path --with-fullname --with-path --match-path }
+    %w{ --fullname --path --with-fullname --with-path } + super
   end
 end
 
@@ -141,7 +145,7 @@ class Glark::SkipPathOption < Glark::PathOption
   include Glark::SkipOption
 
   def tags
-    %w{ --without-fullname --without-path --not-path }
+    %w{ --without-fullname --without-path } + super
   end
 end
 

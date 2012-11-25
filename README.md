@@ -54,11 +54,11 @@ substrings, such as `--rec` for `--recurse`.
     Search only files with names that match the given regular expression. As in
     find(1), this works on the basename of the file. The expression can be
     negated and modified with `!` and `i`, such as `!/io\.[hc]$/i`. This option,
-    and all `--match-` and `--not-` options, can be specified multiple times, in
+    and all `--match-` and `--skip-` options, can be specified multiple times, in
     which case only files matching *any* of the given expressions will be
     searched.
 
-  * `--not-name`=REGEXP:
+  * `--skip-name`=REGEXP:
     Do not search files with base names matching the given regular expression.
     If this option is specified multiple times, only files matching *none* of
     the given expressions will be searched.
@@ -67,26 +67,26 @@ substrings, such as `--rec` for `--recurse`.
     Search only files with full names that match the given regular expression.
     As in find(1), this works on the path of the file.
 
-  * `--not-path`=REGEXP:
+  * `--skip-path`=REGEXP:
     Skip files with full names matching the given regular expression.
 
   * `--match-dirname`=REGEXP:
     Search only directories with basenames matching the given expression.
 
-  * `--not-dirname`=REGEXP:
+  * `--skip-dirname`=REGEXP:
     Skip directories with basenames not matching the given expression.
     Subdirectories of skipped directories will not be recursed.
 
   * `--match-dirpath`=REGEXP:
     Search in and under directories with paths matching the given expression.
 
-  * `--not-dirpath`=REGEXP:
+  * `--skip-dirpath`=REGEXP:
     Skip directories with paths matching the given expression.
 
   * `--match-ext`=REGEXP:
     Search only files with extensions that match the given regular expression.
 
-  * `--not-ext`=REGEXP:
+  * `--skip-ext`=REGEXP:
     Skip files with extensions that match the given regular expression.
 
   * `-M`, `--exclude-matching`:
@@ -710,10 +710,10 @@ reversed bold text.
     The configuration file ~/.glarkrc is read first, so the definitions in the
     local configuration file will override those settings.
     
-  * `match-name`, `not-name`, `match-path`, `not-path`, `match-ext`, `not-ext`, `match-dirname`, `not-dirname`, `match-dirpath`, `not-dirpath`:
+  * `match-name`, `skip-name`, `match-path`, `skip-path`, `match-ext`, `skip-ext`, `match-dirname`, `skip-dirname`, `match-dirpath`, `skip-dirpath`:
     See the equivalent options. For example, to omit CVS files:
     
-        not-dirname: CVS
+        skip-dirname: CVS
 
     These fields can be specified multiple times.
     

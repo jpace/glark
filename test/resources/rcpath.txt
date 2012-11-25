@@ -1,4 +1,4 @@
 match-dirpath: src/main/java
 match-dirpath: src/test/ruby
 
-not-dirpath: org/incava/util
+skip-dirpath: org/incava/util

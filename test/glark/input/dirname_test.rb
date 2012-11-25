@@ -38,7 +38,7 @@ class Glark::DirNameTestCase < Glark::AppTestCase
                 "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
                 "   10 te[30m[43mxt-color-3: underline mage[0mnta",
                ]
-    run_app_test expected, [ '-r', '--not-dirname=glark', 'xt.*e' ], *dirnames
+    run_app_test expected, [ '-r', '--skip-dirname=glark', 'xt.*e' ], *dirnames
   end
 
   def test_match_pathname
@@ -62,6 +62,6 @@ class Glark::DirNameTestCase < Glark::AppTestCase
                 "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
                 "   10 te[30m[43mxt-color-3: underline mage[0mnta",
                ]
-    run_app_test expected, [ '-r', '--not-dirpath', 'test/glark', 'xt.*e' ], *dirnames
+    run_app_test expected, [ '-r', '--skip-dirpath', 'test/glark', 'xt.*e' ], *dirnames
   end
 end
