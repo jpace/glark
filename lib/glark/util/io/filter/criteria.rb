@@ -2,6 +2,8 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
+require 'glark/util/io/filter/filter'
+
 module Glark; end
 
 class Glark::Criteria
@@ -10,11 +12,6 @@ class Glark::Criteria
   def initialize
     # by type (hash) => by positive/negative (hash) => filter list (array)
     @type_to_posneg = Hash.new
-    @options = opt_classes.collect { |optcls| optcls.new self }
-  end
-
-  def opt_classes
-    Array.new
   end
 
   def add type, posneg, filter
@@ -48,28 +45,5 @@ class Glark::Criteria
       end
     end
     true
-  end
-
-  def config_fields
-    fields = {
-    }
-  end
-
-  def dump_fields
-    config_fields
-  end
-
-  def update_fields rcfields
-    rcfields.each do |name, values|
-      @options.each do |opt|
-        opt.match_rc name, values
-      end
-    end
-  end
-
-  def add_as_options optdata
-    @options.each do |opt|
-      opt.add_to_option_data optdata
-    end
   end
 end

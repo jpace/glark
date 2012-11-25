@@ -3,37 +3,7 @@
 # vim: set filetype=ruby : set sw=2
 
 require 'glark/input/filter/filter'
-
-module Glark; end
-
-class Glark::Option
-  include Loggable
-  
-  def initialize criteria
-    @criteria = criteria
-  end
-
-  def tags
-    [ '--' + rcfield ]
-  end  
-  
-  def match_rc name, values
-    if name == rcfield
-      values.each do |val|
-        set val
-      end
-      true
-    end
-  end
-
-  def add_to_option_data optdata
-    optdata << {
-      :tags => tags,
-      :arg  => [ argtype ],
-      :set  => Proc.new { |pat| set pat }
-    }
-  end
-end
+require 'glark/util/option'
 
 class Glark::SizeLimitOption < Glark::Option
   def argtype
@@ -49,7 +19,7 @@ class Glark::SizeLimitOption < Glark::Option
   end
 
   def set val
-    @criteria.add field, posneg, SizeLimitFilter.new(val.to_i)
+    @optee.add field, posneg, SizeLimitFilter.new(val.to_i)
   end
 
   def rcfield
@@ -59,8 +29,7 @@ end
 
 class Glark::RegexpOption < Glark::Option
   def set val
-    info "field: #{field}".cyan
-    @criteria.add field, posneg, cls.new(Regexp.create val)
+    @optee.add field, posneg, cls.new(Regexp.create val)
   end
 
   def argtype
@@ -193,16 +162,8 @@ end
 
 class Glark::MatchDirPathOption < Glark::DirPathOption
   include Glark::MatchRegexpOption
-
-  def rcfield
-    'match-dirpath'
-  end
 end
 
 class Glark::NotDirPathOption < Glark::DirPathOption
   include Glark::NotRegexpOption
-
-  def rcfield
-    'not-dirpath'
-  end
 end

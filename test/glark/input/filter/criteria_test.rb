@@ -2,7 +2,7 @@
 # -*- ruby -*-
 
 require 'glark/app/tc'
-require 'glark/input/filter/criteria'
+require 'glark/util/io/filter/criteria'
 require 'glark/input/filter/filter'
 
 class Glark::CriteriaTestCase < Glark::AppTestCase

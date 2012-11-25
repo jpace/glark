@@ -2,13 +2,13 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'glark/input/filter/criteria'
+require 'glark/input/filter/criteria_opts'
 require 'glark/input/filter/options'
 require 'glark/util/optutil'
 
 module Glark; end
 
-class Glark::DirCriteria < Glark::Criteria
+class Glark::DirCriteriaOpts < Glark::CriteriaOpts
   include Glark::OptionUtil
 
   def initialize 

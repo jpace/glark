@@ -2,17 +2,9 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'rubygems'
-require 'riel/log'
+require 'glark/util/io/filter/filter'
 
-class Filter
-  include Loggable
-
-  def match? pn
-  end
-end
-
-class PatternFilter
+class PatternFilter < Glark::Filter
   include Loggable
 
   attr_reader :pattern
@@ -46,7 +38,7 @@ class FullNameFilter < PatternFilter
   end
 end
 
-class SizeLimitFilter < Filter
+class SizeLimitFilter < Glark::Filter
   attr_reader :max_size
   
   def initialize maxsize
