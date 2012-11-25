@@ -10,13 +10,14 @@ require 'glark/input/filter/file_criteria'
 class Glark::InputSpec  
   VALID_BINARY_FILE_TYPES = [ 'text', 'without-match', 'skip', 'binary', 'list', 'decompress', 'read' ]
 
+  attr_reader :binary_files
   attr_reader :directory        # read, skip, or recurse, a la grep
   attr_reader :exclude_matching # exclude files whose names match the expression
   attr_reader :range            # range to start and stop searching; nil => the entire file
   attr_reader :split_as_path    # use file arguments as path elements
 
-  attr_reader :file_criteria
   attr_reader :dir_criteria
+  attr_reader :file_criteria
 
   def initialize
     @binary_files = 'skip'

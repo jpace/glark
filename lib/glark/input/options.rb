@@ -16,10 +16,6 @@ class InputOptions < Glark::InputSpec
     add_as_options optdata
   end
 
-  def binary_files
-    @binary_files
-  end
-
   def config_fields
     fields = {
       "binary-files" => binary_files,
