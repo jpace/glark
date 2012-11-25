@@ -6,7 +6,7 @@
 
 require 'rubygems'
 require 'glark/input/spec'
-require 'glark/input/fileset'
+require 'glark/util/io/fileset'
 require 'glark/util/options'
 
 class InputOptions < Glark::InputSpec

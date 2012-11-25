@@ -4,7 +4,7 @@
 
 require 'rubygems'
 require 'riel'
-require 'glark/input/lines/lines'
+require 'glark/util/io/lines'
 
 module Glark; end
 
@@ -41,14 +41,13 @@ class Glark::File
     @lines.get_line lnum
   end
 
-  # returns the region/range that is represented by the region number
+  # Returns the region/range that is represented by the region number.
   def get_region rnum
     @lines.get_region rnum
   end
 
   def get_range_start
-    st = @range && @range.from && @range.to_line(@range.from, linecount)
-    st
+    @range && @range.from && @range.to_line(@range.from, linecount)
   end
 
   def get_range_end

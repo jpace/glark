@@ -5,7 +5,7 @@
 # Output for displayed lines.
 
 require 'glark/io/file/file'
-require 'glark/input/line_status'
+require 'glark/output/line_status'
 require 'glark/output/common'
 
 class Lines < Common
