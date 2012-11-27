@@ -5,65 +5,44 @@ require 'rubygems'
 require 'riel'
 require 'glark/app/info/options'
 require 'glark/app/rcfile'
+require 'glark/app/spec'
 require 'glark/input/options'
 require 'glark/match/options'
 require 'glark/output/options'
 require 'glark/util/colors'
 require 'glark/util/options'
+require 'glark/util/optutil'
 
 module Glark
   PACKAGE = 'glark'
   VERSION = '1.9.1'
 end
 
-class Glark::AppOptions < Glark::Options
-  attr_accessor :local_config_files
-
+class Glark::AppOptions < Glark::AppSpec
+  include Glark::OptionUtil
+  
   attr_reader :colors
   attr_reader :fileset
   attr_reader :info_options
-  attr_reader :input_options
-  attr_reader :match_options
   attr_reader :output_options
-
-  def out= io
-    @output_options.out = io
-  end
   
   def initialize
     optdata = Array.new
 
     @colors = Glark::Colors.new    
 
-    add_input_options optdata
-    add_match_options optdata
-    add_output_options optdata
-    add_info_options optdata
-    
-    @optset = OptProc::OptionSet.new optdata
-    
-    @local_config_files = false      # use local .glarkrc files
-    
-    @output_options.style = "glark"
-  end
-
-  def add_input_options optdata
     @input_options = InputOptions.new optdata
-  end
-  
-  def add_match_options optdata
     @match_options = MatchOptions.new @colors, optdata
-  end
-
-  def add_output_options optdata
     @output_options = OutputOptions.new @colors, optdata
-  end
 
-  def add_info_options optdata
     @info_options = Glark::InfoOptions.new @colors, optdata
 
     add_opt_blk(optdata, %w{ --config }) { write_configuration; exit }
     add_opt_blk(optdata, %w{ --dump }) { dump_all_fields; exit 0 }
+
+    super @input_options, @match_options, @output_options
+    
+    @optset = OptProc::OptionSet.new optdata
   end
   
   def run args
@@ -127,16 +106,13 @@ class Glark::AppOptions < Glark::Options
 
   def read_rcfile rcfname
     rcfile = Glark::RCFile.new rcfname
-
     rcvalues = rcfile.names.collect { |name| [ name, rcfile.values(name) ] }
 
     all_option_sets.each do |opts|
       opts.update_fields rcvalues
     end
     
-    rcfile.names.each do |name|
-      values = rcfile.values name
-      
+    rcvalues.each do |name, values|
       case name
       when "local-config-files"
         @local_config_files = to_boolean values.last

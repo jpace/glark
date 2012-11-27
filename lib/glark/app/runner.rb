@@ -29,12 +29,12 @@ class Glark::Runner
   
   def initialize opts, files
     @opts = opts
-    @expr = opts.match_options.expr
+    @expr = opts.match_spec.expr
     @searched_files = Array.new          # files searched, so we don't cycle through links
 
-    @exclude_matching = @opts.input_options.exclude_matching
+    @exclude_matching = @opts.input_spec.exclude_matching
 
-    @range = @opts.input_options.range
+    @range = @opts.input_spec.range
     @output_opts = @opts.output_options
     @invert_match = @output_opts.invert_match
 
@@ -113,7 +113,7 @@ class Glark::Runner
   
   def search type, name
     if @exclude_matching
-      expr = @opts.match_options.expr
+      expr = @opts.match_spec.expr
       return if expr.respond_to?(:re) && expr.re.match(name.to_s)
     end
     

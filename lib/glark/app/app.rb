@@ -18,12 +18,12 @@ class Glark::App
       
       opts = Glark::AppOptions.new      
       opts.run ARGV
-
+      
       # To get rid of the annoying stack trace on ctrl-C:
       trap("INT") { abort }
       
       if opts.info_options.explain
-        puts opts.match_options.expr.explain
+        puts opts.match_spec.expr.explain
       end
 
       files = ARGV.size > 0 ? ARGV : [ '-' ]

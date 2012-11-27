@@ -16,7 +16,7 @@ class Glark::AppTestCase < Glark::TestCase
     gopt = Glark::AppOptions.new
     sio = StringIO.new
     gopt.run(args + files)
-    gopt.out = sio
+    gopt.output_options.out = sio
 
     Log.verbose = true
 
@@ -45,23 +45,21 @@ class Glark::AppTestCase < Glark::TestCase
 
   def assert_file_filter_pattern_eq exppat, opts, field, posneg, cls
     expre = Regexp.new exppat
-    criteria = opts.input_options.file_criteria
-    assert_filter_eq expre, criteria, field, posneg, cls, :pattern
+    assert_file_filter_eq expre, opts, field, posneg, cls, :pattern
   end
 
   def assert_file_filter_eq expval, opts, field, posneg, cls, matchfield
-    criteria = opts.input_options.file_criteria
+    criteria = opts.input_spec.file_criteria
     assert_filter_eq expval, criteria, field, posneg, cls, matchfield
   end
 
   def assert_directory_filter_pattern_eq exppat, opts, field, posneg, cls
     expre = Regexp.new exppat
-    criteria = opts.input_options.dir_criteria
-    assert_filter_eq expre, criteria, field, posneg, cls, :pattern
+    assert_directory_filter_eq expre, opts, field, posneg, cls, :pattern
   end
 
   def assert_directory_filter_eq expval, opts, field, posneg, cls, matchfield
-    criteria = opts.input_options.dir_criteria
+    criteria = opts.input_spec.dir_criteria
     assert_filter_eq expval, criteria, field, posneg, cls, matchfield
   end
   

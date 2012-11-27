@@ -45,6 +45,8 @@ class OutputSpec
     @write_null = false
 
     @output_cls = nil
+
+    self.style = "glark"
   end
 
   def line_number_highlight
@@ -70,6 +72,7 @@ class OutputSpec
     else
       raise "error: unrecognized style '" + style + "'"
     end
+    @output_cls = nil
   end
 
   def create_output_type file

@@ -26,11 +26,11 @@ class Glark::OptionsTestCase < Glark::AppTestCase
     outputopts = gopt.output_options
     
     assert_method_values gopt, expected[:app]
-    assert_method_values gopt.match_options, expected[:match]
+    assert_method_values gopt.match_spec, expected[:match]
     assert_method_values gopt.colors, expected[:colors]
     assert_method_values gopt.output_options, expected[:output]
     assert_method_values gopt.info_options, expected[:info]
-    assert_method_values gopt.input_options, expected[:input]
+    assert_method_values gopt.input_spec, expected[:input]
     
     blk.call(gopt) if blk
   end
