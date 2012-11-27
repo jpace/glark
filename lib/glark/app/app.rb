@@ -23,7 +23,7 @@ class Glark::App
       trap("INT") { abort }
       
       if opts.info_options.explain
-        puts opts.expr.explain
+        puts opts.match_options.expr.explain
       end
 
       files = ARGV.size > 0 ? ARGV : [ '-' ]

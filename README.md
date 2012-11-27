@@ -290,19 +290,20 @@ or more of any of the following:
     `list` value), or to match all files *under* the given directory,
     recursively.
 
-    Files within a directory are listed in sorted order.
+    Files within and subdirectories of a directory are listed in sorted order.
 
-    Directories can also be of the form </usr/lib/...>, which means to recurse
-    under the given directory. This can also be <...>, meaning to recurse under
+    Directories can also be of the form **/usr/lib/...**, which means to recurse
+    under the given directory. This can also be **...**, meaning to recurse under
     the current directory.
 
-    The form </usr/lib/...N>, where N is a number, restrains recursive searching
+    The form **/usr/lib/...N**, where N is a number, restrains recursive searching
     to the given depth. A value of 0 means to search only the files in the given
     directory; a value of 1 means to search the files in the given directory and
     the immediate subdirectories.
 
   * `-`:
-    Read from standard input. With no file arguments, this is the default.
+    Read from standard input. If no file arguments are specified this is the
+    default.
 
   * `path`:
     This is a path, using the path separator for the current OS (':' for Linux,
@@ -492,7 +493,7 @@ reversed bold text.
     glark -3 -a 0 printf format *.c
     
   * `glark -8 -i -a 15 -a 2 pthx '\.\.\.' -o 'va_\w+t' die *.c`:
-    (In order of the options:) Produces 8 lines of context around case insensitive
+    In order of the options: produces 8 lines of context around case insensitive
     matches of ("phtx" within 2 lines of '...' (literal)) within 15 lines of (either
     "va_\w+t" or "die").
     
@@ -539,21 +540,21 @@ reversed bold text.
     Search for "main" in files no larger than 1024 bytes.
 
   * `glark Regexp /usr/lib/ruby/1.9.1/...`:
-    Search for "Regexp" in all files under </usr/lib/ruby/1.9.1>, with no depth
-    limit.
+    Search for "Regexp" in all files _in_ and _under_ /usr/lib/ruby/1.9.1, with
+    no depth limit.
 
   * `glark Regexp /usr/lib/ruby/1.9.1/...0`:
-    Search for "Regexp" in all files in </usr/lib/ruby/1.9.1>. This is
+    Search for "Regexp" in all files _in_ /usr/lib/ruby/1.9.1. This is
     equivalent to:
 
     % glark Regexp /usr/lib/ruby/1.9.1
 
   * `glark Regexp /usr/lib/ruby/1.9.1/...2`:
-    Search for "Regexp" in all files in </usr/lib/ruby/1.9.1> and two levels of
+    Search for "Regexp" in all files _in_ /usr/lib/ruby/1.9.1 and two levels of
     subdirectories underneath.
 
   * `glark --match-name 'http.*' Regexp /usr/lib/ruby/1.9.1/...`:
-    Search for "Regexp" in all files under </usr/lib/ruby/1.9.1> with a name
+    Search for "Regexp" in all files _under_ /usr/lib/ruby/1.9.1 with a name
     starting with 'http'.
 
   * `glark connect -
@@ -711,7 +712,7 @@ reversed bold text.
     local configuration file will override those settings.
     
   * `match-name`, `skip-name`, `match-path`, `skip-path`, `match-ext`, `skip-ext`, `match-dirname`, `skip-dirname`, `match-dirpath`, `skip-dirpath`:
-    See the equivalent options. For example, to omit CVS files:
+    See the equivalent options. For example, to omit files under CVS directories:
     
         skip-dirname: CVS
 

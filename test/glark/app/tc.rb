@@ -13,7 +13,6 @@ class Glark::AppTestCase < Glark::TestCase
   end
 
   def run_glark args, *files
-    info "files: #{files}"
     gopt = Glark::AppOptions.new
     sio = StringIO.new
     gopt.run(args + files)
@@ -21,12 +20,12 @@ class Glark::AppTestCase < Glark::TestCase
 
     Log.verbose = true
 
-    glark = Glark::Runner.new gopt, gopt.files
+    glark = Glark::Runner.new gopt, gopt.fileset
     
     sio.close
-    puts ">>>>>"
+    puts "....."
     puts sio.string
-    puts "<<<<<"
+    puts "....."
     
     sio.string
   end

@@ -118,3 +118,8 @@ Sat Nov 24 18:47:11 2012
 Sun Nov 25 17:54:59 2012
 
   --match-x, --not-x: changed --not to more intuitive --skip.
+
+Mon Nov 26 15:41:01 2012
+
+  Refined documentation, eliminating misleading angle brackets around values.
+

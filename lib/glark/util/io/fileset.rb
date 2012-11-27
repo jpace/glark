@@ -12,6 +12,8 @@ module Glark; end
 class Glark::FileSet
   include Loggable, Enumerable
 
+  attr_reader :files
+
   DEPTH_RE = Regexp.new '\.\.\.(\d*)$'
   INFINITY = Object.new
   
@@ -33,10 +35,8 @@ class Glark::FileSet
     end
   end
 
-  def one_file?
-    return false if @files.size > 1
-    first = @files.first
-    first.to_s != '-' && first.file?
+  def size
+    @files.size
   end
 
   def add_files fnames

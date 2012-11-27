@@ -20,15 +20,11 @@ class Glark::AppOptions < Glark::Options
   attr_accessor :local_config_files
 
   attr_reader :colors
-  attr_reader :files
+  attr_reader :fileset
   attr_reader :info_options
   attr_reader :input_options
   attr_reader :match_options
   attr_reader :output_options
-
-  def expr
-    @match_options.expr
-  end
 
   def out= io
     @output_options.out = io
@@ -90,11 +86,17 @@ class Glark::AppOptions < Glark::Options
 
     validate!
 
-    @files = @input_options.create_fileset @args
+    @fileset = @input_options.create_fileset @args
 
     if @output_options.show_file_names.nil?
-      @output_options.show_file_names = @output_options.label || !@files.one_file?
+      @output_options.show_file_names = @output_options.label || !one_file?
     end
+  end
+
+  def one_file?
+    return false if @fileset.size > 1
+    first = @fileset.files.first
+    first.to_s != '-' && first.file?
   end
 
   def read_home_rcfile

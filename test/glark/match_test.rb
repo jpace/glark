@@ -19,7 +19,7 @@ class Glark::MatchTestCase < Glark::TestCase
     sio = StringIO.new
     opts.out = sio
 
-    files = opts.files
+    files = opts.fileset
     glark = Glark::Runner.new opts, files
     
     result = sio.string
