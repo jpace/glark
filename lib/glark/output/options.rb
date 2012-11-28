@@ -5,7 +5,7 @@
 require 'glark/output/spec'
 require 'glark/util/options'
 
-class OutputOptions < OutputSpec
+class Glark::OutputOptions < Glark::OutputSpec
   include Glark::OptionUtil
   
   def initialize colors, optdata

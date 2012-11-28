@@ -13,11 +13,6 @@ require 'glark/util/colors'
 require 'glark/util/options'
 require 'glark/util/optutil'
 
-module Glark
-  PACKAGE = 'glark'
-  VERSION = '1.9.1'
-end
-
 class Glark::AppOptions < Glark::AppSpec
   include Glark::OptionUtil
   
@@ -31,9 +26,9 @@ class Glark::AppOptions < Glark::AppSpec
 
     @colors = Glark::Colors.new    
 
-    @input_options = InputOptions.new optdata
-    @match_options = MatchOptions.new @colors, optdata
-    @output_options = OutputOptions.new @colors, optdata
+    @input_options = Glark::InputOptions.new optdata
+    @match_options = Glark::MatchOptions.new @colors, optdata
+    @output_options = Glark::OutputOptions.new @colors, optdata
 
     @info_options = Glark::InfoOptions.new @colors, optdata
 
@@ -111,8 +106,22 @@ class Glark::AppOptions < Glark::AppSpec
     all_option_sets.each do |opts|
       opts.update_fields rcvalues
     end
-    
-    rcvalues.each do |name, values|
+
+    update_fields rcvalues
+  end
+
+  def config_fields
+    fields = {
+      "local-config-files" => @local_config_files,
+    }
+  end
+
+  def dump_fields
+    config_fields
+  end
+
+  def update_fields fields
+    fields.each do |name, values|
       case name
       when "local-config-files"
         @local_config_files = to_boolean values.last
@@ -164,9 +173,7 @@ class Glark::AppOptions < Glark::AppSpec
   end
 
   def write_configuration
-    fields = {
-      "local-config-files" => @local_config_files,
-    }
+    fields = config_fields
     all_option_sets.each do |opts|
       fields.merge! opts.config_fields
     end
@@ -177,9 +184,7 @@ class Glark::AppOptions < Glark::AppSpec
   end
 
   def dump_all_fields
-    fields = {
-      "local_config_files" => @local_config_files,
-    }
+    fields = dump_fields
     all_option_sets.each do |opts|
       fields.merge! opts.dump_fields
     end

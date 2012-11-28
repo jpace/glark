@@ -9,7 +9,7 @@ require 'glark/input/spec'
 require 'glark/util/io/fileset'
 require 'glark/util/options'
 
-class InputOptions < Glark::InputSpec
+class Glark::InputOptions < Glark::InputSpec
   include Glark::OptionUtil
   
   def initialize optdata

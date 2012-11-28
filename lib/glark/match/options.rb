@@ -10,7 +10,7 @@ require 'glark/match/spec'
 require 'glark/util/colors'
 require 'glark/util/options'
 
-class MatchOptions < Glark::MatchSpec
+class Glark::MatchOptions < Glark::MatchSpec
   include Glark::OptionUtil
   
   def initialize colors, optdata

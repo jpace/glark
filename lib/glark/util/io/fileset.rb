@@ -4,6 +4,7 @@
 
 require 'rubygems'
 require 'riel'
+require 'glark/util/io/depth'
 
 module Glark; end
 
@@ -77,7 +78,9 @@ class Glark::FileSet
     @file_criteria.skipped? pn
   end
 
-  def directory_skipped? pn
+  def directory_skipped? pn, depth
+    return true if @skip_dirs
+    return true if depth != INFINITY && depth && depth < 0
     @dir_criteria.skipped? pn
   end
 
@@ -126,13 +129,8 @@ class Glark::FileSet
   end
 
   def handle_directory pn, depth, &blk
-    return if @skip_dirs
-    return if directory_skipped? pn
-
-    if depth != INFINITY && depth && depth < 0
-      return
-    end
-
+    return if directory_skipped? pn, depth
+    
     subdepth = depth == INFINITY ? INFINITY : depth && depth - 1
 
     pn.children.sort.each do |entry|

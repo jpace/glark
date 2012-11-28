@@ -118,7 +118,8 @@ substrings, such as `--rec` for `--recurse`.
     `EXPRESSIONS` section for more information.
 
   * `( expr1 --and=NUM expr2 )`:
-    Same as the above, using infix notation instead of prefix.
+    Same as the above, using infix notation instead of prefix. Note that
+    depending on your shell, you may have to escape the parentheses.
 
   * `--after`=NUM[%]:
     Restrict the search to after the given section, which represents either the
@@ -326,14 +327,16 @@ can provide the "ignore case" modifier, thus matching "someThing" and
 
 This is redundant with the `-i` (`--ignore-case`) option.
 
-All regular expression characters and options are available, such as "\w" and
+All regular expression characters and sequences are available, such as "\w" and
 ".*?". For example:
 
     % glark '\b[a-z][^\d]\d{1,3}.*\s*>>\s*\d+\s*.*& +\d{3}'
 
 If the `--and` and `--or` options are not used, the last non-option is
 considered to be the expression to be matched. In the following, "printf" is
-used as the expression.
+used as the expression. Note that in non-quiet mode, a warning will result if
+the expression exists as a file, to show when the expression may have been
+erroneously omitted.
 
     % glark -w printf *.c
 
@@ -347,7 +350,7 @@ notations are supported.
 
   * `-a` NUM expr1 expr2, `--and=NUM` expr1 expr2, `--end-of-and`, `( expr1 --and NUM expr2 )`:
     Match both of the two expressions, within `NUM` lines of each other. The
-    forms `-aNUM` and `--and=NUM` are also supported. In the infix syntax,
+    forms `-aNUM` and `--and=NUM` are also supported. In the prefix syntax,
     `--end-of-and` is optional.
 
     If `NUM` is -1 (negative one), the distance is considered "infinite", so the

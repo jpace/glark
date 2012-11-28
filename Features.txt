@@ -123,3 +123,7 @@ Mon Nov 26 15:41:01 2012
 
   Refined documentation, eliminating misleading angle brackets around values.
 
+Tue Nov 27 19:54:43 2012
+
+  Refined documentation to explain that a warning will result if the expression
+  is also a file.

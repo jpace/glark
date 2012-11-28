@@ -11,7 +11,7 @@ require 'glark/output/grep_count'
 require 'glark/output/grep_lines'
 require 'glark/output/unfiltered_lines'
 
-class OutputSpec
+class Glark::OutputSpec
   attr_accessor :context           # lines before and after
   attr_accessor :count             # only count the matches
   attr_accessor :file_names_only   # display only the file names
