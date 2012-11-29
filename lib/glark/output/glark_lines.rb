@@ -9,26 +9,28 @@ require 'glark/output/glark_format'
 # Glark output format
 # -------------------------------------------------------
 
-class GlarkLines < Lines
-  include Glark::Format
+module Glark
+  class Lines < ::Lines
+    include Format
 
-  def initialize file, spec
-    super
-    @print_context = @after != 0 || @before != 0
-  end
+    def initialize file, spec
+      super
+      @print_context = @after != 0 || @before != 0
+    end
 
-  def write_matching from, to
-    show_file_header
-    super
-  end
+    def write_matching from, to
+      show_file_header
+      super
+    end
 
-  def write_nonmatching from, to
-    show_file_header
-    super
-  end
+    def write_nonmatching from, to
+      show_file_header
+      super
+    end
 
-  def add_match startline, endline
-    super
-    set_status startline, endline
+    def add_match startline, endline
+      super
+      set_status startline, endline
+    end
   end
 end

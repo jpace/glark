@@ -83,18 +83,18 @@ module Glark
     def output_type_cls
       @output_cls ||= if @count
                         if @style == "grep" 
-                          GrepCount
+                          Grep::Count
                         else
-                          GlarkCount
+                          Glark::Count
                         end
                       elsif @file_names_only
                         FileNameOnly
                       elsif !@filter
                         UnfilteredLines
                       elsif @style == "grep"
-                        GrepLines
+                        Grep::Lines
                       else
-                        GlarkLines
+                        Glark::Lines
                       end
     end
     

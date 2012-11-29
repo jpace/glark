@@ -4,13 +4,15 @@
 
 require 'glark/output/count'
 
-class GrepCount < Count
-  def print_file_name
-    fname = displayed_name
-    @out.print fname, ":"
-  end
+module Grep
+  class Count < ::Count
+    def print_file_name
+      fname = displayed_name
+      @out.print fname, ":"
+    end
 
-  def print_count ct
-    @out.puts ct
+    def print_count ct
+      @out.puts ct
+    end
   end
 end
