@@ -11,33 +11,35 @@ require 'riel'
 require 'glark/app/options'
 require 'glark/app/runner'
 
-class Glark::App
-  def initialize
-    begin
-      Log.set_widths(-15, -40, -40)
-      
-      opts = Glark::AppOptions.new      
-      opts.run ARGV
-      
-      # To get rid of the annoying stack trace on ctrl-C:
-      trap("INT") { abort }
-      
-      if opts.info_options.explain
-        puts opts.match_spec.expr.explain
-      end
+module Glark
+  class App
+    def initialize
+      begin
+        Log.set_widths(-15, -40, -40)
+        
+        opts = AppOptions.new
+        opts.run ARGV
+        
+        # To get rid of the annoying stack trace on ctrl-C:
+        trap("INT") { abort }
+        
+        if opts.info_options.explain
+          puts opts.match_spec.expr.explain
+        end
 
-      files = ARGV.size > 0 ? ARGV : [ '-' ]
-      runner = Glark::Runner.new opts, files
-      
-      exit runner.exit_status
-    rescue => e
-      # show the message, and the stack trace only if verbose:
-      $stderr.puts "error: #{e}"
-      if Log.verbose || true
-        $stderr.puts e.backtrace
-        raise
-      else
-        exit 2
+        files = ARGV.size > 0 ? ARGV : [ '-' ]
+        runner = Runner.new opts, files
+        
+        exit runner.exit_status
+      rescue => e
+        # show the message, and the stack trace only if verbose:
+        $stderr.puts "error: #{e}"
+        if Log.verbose || true
+          $stderr.puts e.backtrace
+          raise
+        else
+          exit 2
+        end
       end
     end
   end

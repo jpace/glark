@@ -7,27 +7,27 @@ require 'glark/input/filter/filter'
 require 'glark/input/filter/options'
 require 'glark/util/optutil'
 
-module Glark; end
+module Glark
+  class FileCriteriaOpts < CriteriaOpts
+    include OptionUtil
 
-class Glark::FileCriteriaOpts < Glark::CriteriaOpts
-  include Glark::OptionUtil
+    def opt_classes
+      [
+       SizeLimitOption,
+       MatchNameOption,
+       SkipNameOption,
+       MatchPathOption,
+       SkipPathOption,
+       MatchExtOption,
+       SkipExtOption,
+      ]
+    end
 
-  def opt_classes
-    [
-     Glark::SizeLimitOption,
-     Glark::MatchNameOption,
-     Glark::SkipNameOption,
-     Glark::MatchPathOption,
-     Glark::SkipPathOption,
-     Glark::MatchExtOption,
-     Glark::SkipExtOption,
-    ]
-  end
-
-  def config_fields
-    maxsize = (filter = find_by_class(:size, :negative, SizeLimitFilter)) && filter.max_size
-    fields = {
-      "size-limit" => maxsize
-    }
+    def config_fields
+      maxsize = (filter = find_by_class(:size, :negative, SizeLimitFilter)) && filter.max_size
+      fields = {
+        "size-limit" => maxsize
+      }
+    end
   end
 end

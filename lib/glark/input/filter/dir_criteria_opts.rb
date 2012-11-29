@@ -6,23 +6,23 @@ require 'glark/input/filter/criteria_opts'
 require 'glark/input/filter/options'
 require 'glark/util/optutil'
 
-module Glark; end
+module Glark
+  class DirCriteriaOpts < CriteriaOpts
+    include OptionUtil
 
-class Glark::DirCriteriaOpts < Glark::CriteriaOpts
-  include Glark::OptionUtil
+    def initialize 
+      super
+      add :name, :negative, BaseNameFilter.new('.svn')
+      add :name, :negative, BaseNameFilter.new('.git')
+    end
 
-  def initialize 
-    super
-    add :name, :negative, BaseNameFilter.new('.svn')
-    add :name, :negative, BaseNameFilter.new('.git')
-  end
-
-  def opt_classes
-    [
-     Glark::MatchDirNameOption,
-     Glark::SkipDirNameOption,
-     Glark::MatchDirPathOption,
-     Glark::SkipDirPathOption,
-    ]
+    def opt_classes
+      [
+       MatchDirNameOption,
+       SkipDirNameOption,
+       MatchDirPathOption,
+       SkipDirPathOption,
+      ]
+    end
   end
 end

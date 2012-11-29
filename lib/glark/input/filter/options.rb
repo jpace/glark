@@ -5,165 +5,167 @@
 require 'glark/input/filter/filter'
 require 'glark/util/option'
 
-class Glark::SizeLimitOption < Glark::Option
-  def argtype
-    :integer
+module Glark
+  class SizeLimitOption < Option
+    def argtype
+      :integer
+    end
+
+    def posneg
+      :negative
+    end
+
+    def field
+      :size
+    end
+
+    def set val
+      @optee.add field, posneg, SizeLimitFilter.new(val.to_i)
+    end
+
+    def rcfield
+      'size-limit'
+    end
   end
 
-  def posneg
-    :negative
+  class RegexpOption < Glark::Option
+    def set val
+      @optee.add field, posneg, cls.new(Regexp.create val)
+    end
+
+    def argtype
+      :string
+    end
   end
 
-  def field
-    :size
+  module MatchOption
+    def rcfield
+      'match-' + field.to_s
+    end
+
+    def posneg
+      :positive
+    end
   end
 
-  def set val
-    @optee.add field, posneg, SizeLimitFilter.new(val.to_i)
+  module SkipOption
+    def tags
+      %w{ not skip }.collect { |x| '--' + x + '-' + field.to_s }
+    end
+
+    def rcfield
+      'skip-' + field.to_s
+    end
+
+    def posneg
+      :negative
+    end
   end
 
-  def rcfield
-    'size-limit'
-  end
-end
+  class ExtOption < RegexpOption
+    def cls
+      ExtFilter
+    end
 
-class Glark::RegexpOption < Glark::Option
-  def set val
-    @optee.add field, posneg, cls.new(Regexp.create val)
-  end
-
-  def argtype
-    :string
-  end
-end
-
-module Glark::MatchOption
-  def rcfield
-    'match-' + field.to_s
+    def field
+      :ext
+    end
   end
 
-  def posneg
-    :positive
-  end
-end
-
-module Glark::SkipOption
-  def tags
-     %w{ not skip }.collect { |x| '--' + x + '-' + field.to_s }
+  class MatchExtOption < ExtOption
+    include MatchOption
   end
 
-  def rcfield
-    'skip-' + field.to_s
+  class SkipExtOption < ExtOption
+    include SkipOption
   end
 
-  def posneg
-    :negative
-  end
-end
+  class NameOption < RegexpOption
+    def cls
+      BaseNameFilter
+    end
 
-class Glark::ExtOption < Glark::RegexpOption
-  def cls
-    ExtFilter
-  end
-
-  def field
-    :ext
-  end
-end
-
-class Glark::MatchExtOption < Glark::ExtOption
-  include Glark::MatchOption
-end
-
-class Glark::SkipExtOption < Glark::ExtOption
-  include Glark::SkipOption
-end
-
-class Glark::NameOption < Glark::RegexpOption
-  def cls
-    BaseNameFilter
+    def field
+      :name
+    end
   end
 
-  def field
-    :name
-  end
-end
+  class MatchNameOption < NameOption
+    include MatchOption
 
-class Glark::MatchNameOption < Glark::NameOption
-  include Glark::MatchOption
-
-  def tags
-    %w{ --basename --name --with-basename --with-name } + super
-  end
-end
-
-class Glark::SkipNameOption < Glark::NameOption
-  include Glark::SkipOption
-
-  def tags
-    %w{ --without-basename --without-name } + super
-  end
-end
-
-class Glark::DirNameOption < Glark::RegexpOption
-  def cls
-    BaseNameFilter
+    def tags
+      %w{ --basename --name --with-basename --with-name } + super
+    end
   end
 
-  def field
-    :dirname
-  end
-end
+  class SkipNameOption < NameOption
+    include SkipOption
 
-class Glark::MatchDirNameOption < Glark::DirNameOption
-  include Glark::MatchOption
-end
-
-class Glark::SkipDirNameOption < Glark::DirNameOption
-  include Glark::SkipOption
-end
-
-class Glark::PathOption < Glark::RegexpOption
-  def cls
-    FullNameFilter
+    def tags
+      %w{ --without-basename --without-name } + super
+    end
   end
 
-  def field
-    :path
-  end
-end
+  class DirNameOption < RegexpOption
+    def cls
+      BaseNameFilter
+    end
 
-class Glark::MatchPathOption < Glark::PathOption
-  include Glark::MatchOption
-
-  def tags
-    %w{ --fullname --path --with-fullname --with-path } + super
-  end
-end
-
-class Glark::SkipPathOption < Glark::PathOption
-  include Glark::SkipOption
-
-  def tags
-    %w{ --without-fullname --without-path } + super
-  end
-end
-
-
-class Glark::DirPathOption < Glark::RegexpOption
-  def cls
-    FullNameFilter
+    def field
+      :dirname
+    end
   end
 
-  def field
-    :dirpath
+  class MatchDirNameOption < DirNameOption
+    include MatchOption
   end
-end
 
-class Glark::MatchDirPathOption < Glark::DirPathOption
-  include Glark::MatchOption
-end
+  class SkipDirNameOption < DirNameOption
+    include SkipOption
+  end
 
-class Glark::SkipDirPathOption < Glark::DirPathOption
-  include Glark::SkipOption
+  class PathOption < RegexpOption
+    def cls
+      FullNameFilter
+    end
+
+    def field
+      :path
+    end
+  end
+
+  class MatchPathOption < PathOption
+    include MatchOption
+
+    def tags
+      %w{ --fullname --path --with-fullname --with-path } + super
+    end
+  end
+
+  class SkipPathOption < PathOption
+    include SkipOption
+
+    def tags
+      %w{ --without-fullname --without-path } + super
+    end
+  end
+
+
+  class DirPathOption < RegexpOption
+    def cls
+      FullNameFilter
+    end
+
+    def field
+      :dirpath
+    end
+  end
+
+  class MatchDirPathOption < DirPathOption
+    include MatchOption
+  end
+
+  class SkipDirPathOption < DirPathOption
+    include SkipOption
+  end
 end

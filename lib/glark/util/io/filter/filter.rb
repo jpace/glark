@@ -5,9 +5,11 @@
 require 'rubygems'
 require 'riel/log'
 
-class Glark::Filter
-  include Loggable
+module Glark
+  class Filter
+    include Loggable
 
-  def match? pn
+    def match? pn
+    end
   end
 end
