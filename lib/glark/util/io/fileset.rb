@@ -111,7 +111,7 @@ module Glark
           next
         end
         
-        dirmax = @dir_to_maxdepth[pn] || @maxdepth
+        dirmax = Depth.new @dir_to_maxdepth[pn] || @maxdepth
         handle_pathname pn, dirmax, &blk
       end
     end
