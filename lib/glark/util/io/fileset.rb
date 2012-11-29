@@ -14,7 +14,6 @@ module Glark
     attr_reader :files
 
     DEPTH_RE = Regexp.new '\.\.\.(\d*)$'
-    INFINITY = Object.new
     
     def initialize fnames, args
       @maxdepth = args[:maxdepth] || nil
@@ -59,7 +58,7 @@ module Glark
       pn = nil
 
       if md = DEPTH_RE.match(fname)
-        depth = md[1].empty? ? INFINITY : md[1].to_i
+        depth = md[1].empty? ? Depth::INFINITY : md[1].to_i
         fname.sub! DEPTH_RE, ''
         fname = '.' if fname.empty?
         pn = Pathname.new fname
@@ -77,8 +76,7 @@ module Glark
     end
 
     def directory_skipped? pn, depth
-      return true if @skip_dirs
-      return true if depth != INFINITY && depth && depth < 0
+      return true if @skip_dirs || !depth.nonzero?
       @dir_criteria.skipped? pn
     end
 
@@ -111,7 +109,7 @@ module Glark
           next
         end
         
-        dirmax = Depth.new @dir_to_maxdepth[pn] || @maxdepth
+        dirmax = Depth.new(@dir_to_maxdepth[pn] || @maxdepth)
         handle_pathname pn, dirmax, &blk
       end
     end
@@ -129,7 +127,7 @@ module Glark
     def handle_directory pn, depth, &blk
       return if directory_skipped? pn, depth
       
-      subdepth = depth == INFINITY ? INFINITY : depth && depth - 1
+      subdepth = depth - 1
 
       pn.children.sort.each do |entry|
         next if @yielded_files.include?(entry)

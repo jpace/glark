@@ -84,7 +84,8 @@ substrings, such as `--rec` for `--recurse`.
     Skip directories with paths matching the given expression.
 
   * `--match-ext`=REGEXP:
-    Search only files with extensions that match the given regular expression.
+    Search only files with extensions that match the given regular expression,
+    which should not include the leading dot.
 
   * `--skip-ext`=REGEXP:
     Skip files with extensions that match the given regular expression.

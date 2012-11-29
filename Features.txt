@@ -127,3 +127,9 @@ Tue Nov 27 19:54:43 2012
 
   Refined documentation to explain that a warning will result if the expression
   is also a file.
+
+Wed Nov 28 19:57:29 2012
+
+  Refined documentation to denote that the leading dot should not be included
+  in the regular expression argument to the --match-ext and --skip-ext options.
+
