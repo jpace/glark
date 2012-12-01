@@ -138,3 +138,8 @@ Thu Nov 29 19:57:47 2012
   Fixed so that invalid extensions are ignored with --binary-files=read (and
   =list), when globbing from a directory.
 
+Fri Nov 30 20:20:13 2012
+
+  Worked around an erroneous warning from zlib regarding reading some tarballs.
+
+  Added directories as searched for --binary-files=list.

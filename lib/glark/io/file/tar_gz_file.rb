@@ -6,6 +6,8 @@ require 'glark/io/file/tar_file'
 
 module Glark
   class TarGzFile
+    include Loggable
+    
     def initialize fname, range
       @fname = fname
       @range = range
@@ -19,17 +21,29 @@ module Glark
       contents
     end
 
-    def search_list expr, output_cls, output_opts
+    def run_search &blk
+      # a glitch with zlib results in a warning ("attempt to close unfinished
+      # zstream; reset forced.") for some tarballs, so we turn off warnings for
+      # a moment:
+      $-w = false
+      
       Zlib::GzipReader.open(@fname) do |gzio|
         tarfile = Glark::TarFile.new @fname, @range, gzio
+        blk.call tarfile
+      end
+
+      $-w = true
+    end
+
+    def search_list expr, output_cls, output_opts
+      run_search do |tarfile|
         tarfile.search_list expr, output_cls, output_opts
       end
     end
 
     def search expr, output_type_cls, output_opts
       matched = nil
-      Zlib::GzipReader.open(@fname) do |gzio|
-        tarfile = Glark::TarFile.new @fname, @range, gzio
+      run_search do |tarfile|
         matched = tarfile.search(expr, output_type_cls, output_opts) || matched
       end
       matched
