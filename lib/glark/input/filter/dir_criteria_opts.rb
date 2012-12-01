@@ -10,10 +10,19 @@ module Glark
   class DirCriteriaOpts < CriteriaOpts
     include OptionUtil
 
-    def initialize 
-      super
+    attr_accessor :skip_all
+
+    def initialize skip_all
+      super()
+      @skip_all = skip_all
+      
       add :name, :negative, BaseNameFilter.new('.svn')
       add :name, :negative, BaseNameFilter.new('.git')
+    end
+
+    def skipped? pn, depth
+      return true if @skip_all || !depth.nonzero?
+      super pn
     end
 
     def opt_classes

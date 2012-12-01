@@ -93,7 +93,7 @@ substrings, such as `--rec` for `--recurse`.
   * `-M`, `--exclude-matching`:
     Do not search files whose names match the primary expression. This can be
     useful for finding external references to a file, or to a class, assuming
-    that class names match file names
+    that class names match file names.
 
   * `-r`, `--recurse`:
     Recurse through directories. Equivalent to `--directories=recurse`.

@@ -163,5 +163,40 @@ module Glark
       run_app_test expected, [ '-r', 'The.*Y.*Tale' ], dirname
       Dir.chdir origdir
     end
+
+    def test_list_with_binaries_read_skip_unreadable
+      dirname = '/proj/org/incava/glark/test/resources/...'
+      expected = [ 
+                  '[1m/proj/org/incava/glark/test/resources/filelist.txt[0m',
+                  '   23 22-[30m[43mThe_Canons_Yeomans_Tale[0m.txt',
+                  '[1m/proj/org/incava/glark/test/resources/spaces.txt[0m',
+                  '   23 22 [30m[43mThe Canons Yeomans Tale[0m.txt',
+                  '[1m/proj/org/incava/glark/test/resources/textfile.txt[0m',
+                  '   23   -rw-r--r--   1 jpace jpace   52953 2010-12-04 15:24 22-[30m[43mTheCanonsYeomansTale[0m.txt',
+                  '[1m/proj/org/incava/glark/test/resources/textfile.txt.gz[0m',
+                  '   23   -rw-r--r--   1 jpace jpace   52953 2010-12-04 15:24 22-[30m[43mTheCanonsYeomansTale[0m.txt',
+                  '[1mfilelist.txt (in /proj/org/incava/glark/test/resources/txt.tgz)[0m',
+                  '   23 22-[30m[43mThe_Canons_Yeomans_Tale[0m.txt',
+                 ]
+      run_app_test expected, [ '-r', '--binary-files=read', 'The.*Y.*Tale' ], dirname
+    end
+
+    def test_list_with_binaries_list_skip_unreadable
+      dirname = '/proj/org/incava/glark/test/resources/...'
+      expected = [ 
+                  '[1m/proj/org/incava/glark/test/resources/aaa.zip[0m',
+                  '    1 [30m[43mabcfile.txt[0m',
+                  '[1m/proj/org/incava/glark/test/resources/rc.tar[0m',
+                  '    1 [30m[43mrcext.txt[0m',
+                  '    2 [30m[43mrcfile.txt[0m',
+                  '    3 [30m[43mrcgrep.txt[0m',
+                  '    4 [30m[43mrcmatch.txt[0m',
+                  '    5 [30m[43mrcpath.txt[0m',
+                  '[1m/proj/org/incava/glark/test/resources/txt.tgz[0m',
+                  '    1 [30m[43mfilelist.txt[0m',
+                  '    2 [30m[43mrcext.txt[0m',
+                 ]
+      run_app_test expected, [ '-r', '--binary-files=list', '^\w+\.txt$' ], dirname
+    end
   end
 end

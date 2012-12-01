@@ -19,6 +19,7 @@ module Glark
 
     attr_accessor :dir_criteria
     attr_accessor :file_criteria
+    attr_accessor :max_depth    
 
     def initialize
       @binary_files = 'skip'
@@ -29,7 +30,9 @@ module Glark
       @split_as_path = true
       
       @file_criteria = FileCriteriaOpts.new
-      @dir_criteria = DirCriteriaOpts.new
+      @dir_criteria = DirCriteriaOpts.new nil
+
+      @max_depth = 0            # list directories
 
       $/ = "\n"
     end

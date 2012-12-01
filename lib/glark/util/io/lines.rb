@@ -65,7 +65,7 @@ module Glark
         @regions = nil
         @lines = ::IO::readlines fname
       end
-      
+
       def each_line &blk
         @lines.each do |line|
           blk.call line
@@ -74,45 +74,46 @@ module Glark
       
       # Returns the lines for this file, separated by end of line sequences.
       def get_lines
-        unless @extracted
-          # This is much easier. Just resplit the whole thing at end of line
-          # sequences.
-          
-          eoline    = "\n"             # should be OS-dependent
-          srclines  = @lines
-          reallines = @lines.join("").split ANY_END_OF_LINE
-
-          # "\n" after all but the last line
-          @extracted = (0 ... (reallines.length - 1)).collect { |lnum| reallines[lnum] + eoline }
-          @extracted << reallines[-1]
-
-          if Log.verbose
-            @extracted.each_with_index { |line, idx| puts "@extracted[#{idx}]: #{@extracted[idx]}" }
-          end
-          @extracted
-        end
-        @extracted
+        @extracted ||= create_extracted
       end
       
       # returns the region/range that is represented by the region number
       def get_region rnum
-        unless @regions
-          @regions = []           # keys = region number; values = range of lines
-
-          lstart = 0
-          @lines.each do |line|
-            lend = lstart
-            line.scan(ANY_END_OF_LINE).each do |cr|
-              lend += 1
-            end
-
-            @regions << ::Range.new(lstart, lend - 1)
-
-            lstart = lend
-          end
-        end
-
+        @regions ||= create_regions
         @regions[rnum]
+      end
+
+      private
+      def create_extracted
+        # This is much easier. Just resplit the whole thing at end of line
+        # sequences.
+        
+        eoline    = "\n"             # should be OS-dependent
+        srclines  = @lines
+        reallines = @lines.join("").split ANY_END_OF_LINE
+
+        # "\n" after all but the last line
+        @extracted = (0 ... (reallines.length - 1)).collect { |lnum| reallines[lnum] + eoline }
+        @extracted << reallines[-1]
+
+        @extracted
+      end
+
+      def create_regions
+        @regions = []           # keys = region number; values = range of lines
+
+        lstart = 0
+        @lines.each do |line|
+          lend = lstart
+          line.scan(ANY_END_OF_LINE).each do |cr|
+            lend += 1
+          end
+
+          @regions << ::Range.new(lstart, lend - 1)
+
+          lstart = lend
+        end
+        @regions
       end
     end
   end

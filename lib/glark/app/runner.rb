@@ -87,7 +87,8 @@ module Glark
       when ZIP_RE.match(fstr)
         search_read_archive_file fname, Glark::ZipFile
       else
-        raise "file '#{fname}' does not have a handled extension"
+        write "file '#{fname}' does not have a handled extension"
+        return
       end
     end
 
@@ -102,7 +103,8 @@ module Glark
             when TAR_GZ_RE.match(fstr)
               Glark::TarGzFile
             else
-              raise "file '#{fname}' does not have a handled extension"
+              write "file '#{fname}' does not have a handled extension"
+              return
             end
 
       file = cls.new fname, @range

@@ -74,7 +74,10 @@ module Glark
         run_test(args + %w{ foo },
                  :match => { :ignorecase => true, :expr => RegexpExpression.new(%r{foo}i, 0) },
                  :output => { :file_names_only => true },
-                 :input => { :directory => "recurse" })
+                 :input => { :max_depth => nil }) do |opts|
+          dircrit = opts.input_spec.dir_criteria
+          assert_equal false, dircrit.skip_all
+        end
       end
     end
 
@@ -196,7 +199,6 @@ module Glark
     
     def test_verbose
       if origverb = Log.verbose
-
         %w{ --verbose }.each do |vtag|
           [ nil, 1, 2, 3, 4 ].each do |num|
             vopt = vtag
@@ -347,17 +349,36 @@ module Glark
       end
     end
 
-    def test_directory_short
-      %w{ list find recurse skip }.each do |opt|
-        run_test([ '-d', opt, 'foo' ],
-                 :input => { :directory => opt })
+    def run_directory_test expmaxdepth, expskipall, args
+      run_test(args, :input => { :max_depth => expmaxdepth }) do |opts|
+        dircrit = opts.input_spec.dir_criteria
+        assert_equal expskipall, dircrit.skip_all
       end
+    end
+
+    def run_directory_d_test expmaxdepth, expskipall, arg
+      run_directory_test expmaxdepth, expskipall, [ '-d', arg, 'foo' ]
+    end
+
+    def test_directory_d_list
+      run_directory_d_test 0, false, 'list'
+    end
+
+    def test_directory_d_find
+      run_directory_d_test nil, false, 'find'
+    end
+
+    def test_directory_d_recurse
+      run_directory_d_test nil, false, 'recurse'
+    end
+
+    def test_directory_d_skip
+      run_directory_d_test nil, true, 'skip'
     end
     
     def test_recurse
       %w{ -r --recurse }.each do |opt|
-        run_test([ opt, 'foo' ],
-                 :input => { :directory => 'recurse' })
+        run_directory_test nil, false, [ opt, 'foo' ]
       end
     end
 
@@ -382,16 +403,29 @@ module Glark
       end
     end
 
-    def test_directory_long
-      %w{ list find recurse skip }.each do |val|
-        [
-         [ '--directories=' + val ],
-         [ '--directories',   val ]
-        ].each do |args|
-          run_test(args + %w{ foo },
-                   :input => { :directory => val })
-        end
+    def run_directories_test expmaxdepth, expskipall, arg
+      [
+       [ '--directories=' + arg ],
+       [ '--directories',   arg ]
+      ].each do |args|
+        run_directory_test expmaxdepth, expskipall, args + %w{ foo }
       end
+    end
+
+    def test_directory_list
+      run_directories_test 0, false, 'list'
+    end
+
+    def test_directory_find
+      run_directories_test nil, false, 'find'
+    end
+
+    def test_directory_recurse
+      run_directories_test nil, false, 'recurse'
+    end
+
+    def test_directory_skip
+      run_directories_test nil, true, 'skip'
     end
 
     def test_no_show_file_names

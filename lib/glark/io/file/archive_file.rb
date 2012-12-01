@@ -13,7 +13,7 @@ module Glark
     def search_list expr, output_cls, output_opts
       contents = StringIO.new list.collect { |x| x + "\n" }.join('')
       contents.rewind
-
+      
       file = Glark::File.new @fname, contents, @range
       output_type = output_cls.new file, output_opts
       file.search expr, output_type
@@ -41,7 +41,7 @@ module Glark
       name = entry_name entry
       data = read entry
       contents = StringIO.new data
-
+      
       file = Glark::File.new name + " (in #{@fname})", contents, @range
       output = output_type_cls.new file, output_opts
       file.search expr, output

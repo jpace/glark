@@ -16,14 +16,13 @@ module Glark
     DEPTH_RE = Regexp.new '\.\.\.(\d*)$'
     
     def initialize fnames, args
-      @maxdepth = args[:maxdepth] || nil
+      @max_depth = Depth.new args[:max_depth]
       @binary_files = args[:binary_files] || 'skip'
       @dir_criteria = args[:dir_criteria]
       @file_criteria = args[:file_criteria]
-      @skip_dirs = args[:skip_dirs]
       @split_as_path = args[:split_as_path]
 
-      @dir_to_maxdepth = Hash.new
+      @dir_to_max_depth = Hash.new
       @files = Array.new
       
       if fnames.size == 0
@@ -58,42 +57,26 @@ module Glark
       pn = nil
 
       if md = DEPTH_RE.match(fname)
-        depth = md[1].empty? ? Depth::INFINITY : md[1].to_i
+        val = md[1].empty? ? nil : md[1].to_i
         fname.sub! DEPTH_RE, ''
         fname = '.' if fname.empty?
         pn = Pathname.new fname
-        @dir_to_maxdepth[pn] = depth
+        @dir_to_max_depth[pn] = Depth.new val
       else
         pn = Pathname.new fname
       end
 
-      return if pn.file? && file_skipped?(pn)
+      return if pn.file? && @file_criteria.skipped?(pn)
       @files << pn
-    end
-
-    def file_skipped? pn
-      @file_criteria.skipped? pn
-    end
-
-    def directory_skipped? pn, depth
-      return true if @skip_dirs || !depth.nonzero?
-      @dir_criteria.skipped? pn
     end
 
     def stdin?
       @files.size == 1 && @files.first == '-'
     end
 
-    def directory? idx
-      pn = @files[idx]
-      pn && FileType.type(pn) == FileType::DIRECTORY
-    end
-
     def each &blk
       # to keep from cycling through links:
       @yielded_files = Array.new
-
-      depth = 0
 
       (0 ... @files.size).each do |idx|
         pn = @files[idx]
@@ -109,7 +92,7 @@ module Glark
           next
         end
         
-        dirmax = Depth.new(@dir_to_maxdepth[pn] || @maxdepth)
+        dirmax = @dir_to_max_depth[pn] || @max_depth
         handle_pathname pn, dirmax, &blk
       end
     end
@@ -125,7 +108,7 @@ module Glark
     end
 
     def handle_directory pn, depth, &blk
-      return if directory_skipped? pn, depth
+      return if @dir_criteria.skipped? pn, depth
       
       subdepth = depth - 1
 
@@ -133,7 +116,7 @@ module Glark
         next if @yielded_files.include?(entry)
         if entry.file?
           type = FileType.type entry.to_s
-          next if type == FileType::BINARY
+          next if type == FileType::BINARY && @binary_files == 'skip'
         end
         @yielded_files << entry
         handle_pathname entry, subdepth, &blk
@@ -141,7 +124,7 @@ module Glark
     end
 
     def handle_file pn, &blk
-      return if file_skipped? pn
+      return if @file_criteria.skipped? pn
 
       type = FileType.type pn.to_s
       case type
@@ -157,13 +140,10 @@ module Glark
     end
 
     def handle_text pn, &blk
-      return if file_skipped? pn
       blk.call [ :text, pn ]
     end
 
     def handle_binary pn, &blk
-      return if file_skipped? pn
-
       type = case @binary_files
              when 'binary'
                :binary

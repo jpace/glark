@@ -11,7 +11,7 @@ require 'glark/util/options'
 
 module Glark
   class InputOptions < InputSpec
-    include OptionUtil
+    include OptionUtil, Loggable
     
     def initialize optdata
       super()
@@ -20,11 +20,10 @@ module Glark
 
     def create_fileset files
       fsargs = Hash.new
-      fsargs[:maxdepth] = @directory == 'list' ? 0 : nil
+      fsargs[:max_depth] = @max_depth
       fsargs[:binary_files] = @binary_files
       fsargs[:dir_criteria] = @dir_criteria
       fsargs[:file_criteria] = @file_criteria
-      fsargs[:skip_dirs] = @directory == 'skip'
       fsargs[:split_as_path] = @split_as_path
       
       FileSet.new files, fsargs
@@ -70,10 +69,16 @@ module Glark
 
       fields.each do |name, value|
         case name
-        when "split-as-path"
+        when 'split-as-path'
           @split_as_path = to_boolean value
         end
       end
+    end
+
+    def set_directory val
+      @max_depth = val == 'list' ? 0 : nil
+      @dir_criteria.skip_all = val == 'skip'
+      # otherwise, it's recurse
     end
     
     def add_as_options optdata    
@@ -86,10 +91,14 @@ module Glark
 
       optdata << recurse_option = {
         :tags => %w{ -r --recurse },
-        :set  => set(:directory, "recurse")
+        :set  => Proc.new { set_directory("recurse") }
       }
 
-      add_opt_str optdata, :directory, %w{ -d --directories }
+      optdata << directories_option = {
+        :tags => %w{ --directories -d },
+        :arg  => [ :string ],
+        :set  => Proc.new { |val| set_directory val },
+      }
 
       re = Regexp.new '^[\'\"]?(' + VALID_BINARY_FILE_TYPES.join('|') + ')[\'\"]?$'
       optdata << binary_files_option = {
