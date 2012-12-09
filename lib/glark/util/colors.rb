@@ -99,10 +99,18 @@ module Glark
 
     def dump_fields
       fields = {
-        "file_highlight" => @file_highlight ? @file_highlight.highlight("filename") : "filename",
+        "file_highlight" => colorize(@file_highlight, "filename"),
         "highlight" => @text_color_style,
-        "line_number_highlight" => @line_number_highlight ? @line_number_highlight.highlight("12345") : "12345",
+        "line_number_highlight" => colorize(@line_number_highlight, "12345"),
       }
+    end
+
+    def colorize field, str
+      if field
+        field + str + Text::Color::RESET
+      else
+        str
+      end
     end
 
     def update_fields fields

@@ -71,9 +71,6 @@ class RegexpExpression < Expression
         lastcapts = Regexp.last_match.captures
         # find the index of the first non-nil capture:
         miidx = (0 ... lastcapts.length).find { |mi| lastcapts[mi] } || @hlidx
-
-        info "@text_highlights[miidx]: #{@text_highlights[miidx].inspect}"
-
         @text_highlights[miidx] + m + Text::Color::RESET
       end
     end

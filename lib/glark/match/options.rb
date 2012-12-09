@@ -31,7 +31,7 @@ module Glark
         "expr" => @expr,
         "extract_matches" => @extract_matches,
         "ignorecase" => @ignorecase,
-        "text_highlights" => text_highlights.compact.collect { |hl| hl.highlight("text") }.join(", "),
+        "text_highlights" => text_highlights.compact.collect { |hl| colorize(hl, "text") }.join(", "),
         "whole_lines" => @whole_lines,
         "whole_words" => @whole_words,
       }

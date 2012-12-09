@@ -3,6 +3,7 @@
 
 require 'rubygems'
 require 'riel'
+require 'riel/text/ansi/color'
 
 module Glark
   module OptionUtil
@@ -57,6 +58,14 @@ module Glark
         :tags => tags,
         :set  => blk
       }
+    end
+
+    def colorize field, str
+      if field
+        field + str + Text::Color::RESET
+      else
+        str
+      end
     end
   end
 end

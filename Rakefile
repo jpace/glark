@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'fileutils'
-require './lib/glark'
+require 'lib/glark'
 require 'rake/testtask'
 require 'rubygems/package_task'
 require 'rbconfig'
