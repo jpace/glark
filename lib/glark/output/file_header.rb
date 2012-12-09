@@ -12,7 +12,7 @@ class FileHeader
 
   def print out
     name = @name.to_s
-    fname = @highlighter ? @highlighter.highlight(name) : name
+    fname = @highlighter ? @highlighter + name + Text::Color::RESET : name
     out.puts fname
   end
 end

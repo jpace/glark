@@ -29,7 +29,7 @@ module Glark
       if @lnum_highlighter
         lnumstr = (lnum + 1).to_s
         pad = " " * ([5 - lnumstr.length, 0].max)
-        @out.print pad + " " + @lnum_highlighter.highlight(lnumstr) + " "
+        @out.print pad + " " + @lnum_highlighter + lnumstr + Text::Color::RESET + " "
       else
         super
       end

@@ -3,6 +3,14 @@
 
 require 'rubygems'
 require 'riel'
+require 'riel/text/ansi/ansi_color'
+
+class Text::ANSIHighlighter
+  def default_codes limit = -1
+    @default_codes ||= Text::Highlighter::DEFAULT_COLORS.collect { |color| to_codes color }
+    @default_codes[0 .. limit]
+  end
+end
 
 module Glark
   class Colors
@@ -26,7 +34,7 @@ module Glark
     def make_highlight opt, value
       if @highlighter
         if value
-          @highlighter.make value
+          make_color value
         else
           raise "error: '" + opt + "' requires a color"
         end
@@ -35,8 +43,12 @@ module Glark
       end
     end
 
+    def make_color color
+      result = @highlighter.to_codes color
+    end
+
     def make_colors limit = -1
-      Text::Highlighter::DEFAULT_COLORS[0 .. limit].collect { |color| @highlighter.make color }
+      @highlighter.default_codes limit
     end
 
     def multi_colors 
@@ -50,7 +62,7 @@ module Glark
     def text_color_style= tcstyle
       @text_color_style = tcstyle
       if @text_color_style
-        @highlighter = @text_color_style && Text::ANSIHighlighter
+        @highlighter = @text_color_style && Text::ANSIHighlighter.instance
         @text_highlights = case @text_color_style
                            when highlight_multi?(@text_color_style), true
                              multi_colors
@@ -59,7 +71,7 @@ module Glark
                            else
                              raise "highlight format '" + @text_color_style.to_s + "' not recognized"
                            end
-        @file_highlight = @highlighter.make "reverse bold"
+        @file_highlight = make_color "reverse bold"
         @line_number_highlight = nil
       else
         @highlighter = nil

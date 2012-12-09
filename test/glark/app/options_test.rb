@@ -8,16 +8,20 @@ require 'glark/app/options'
 
 module Glark
   class OptionsTestCase < AppTestCase
+    def str_to_color_codes str
+      Text::ANSIHighlighter.instance.to_codes str
+    end
+    
     def setup
       # ignore what they have in ENV[HOME]    
       ENV['HOME'] = '/this/should/not/exist'
     end
 
-    def assert_method_values opts, exp
+    def assert_method_values opts, exp, args
       return unless exp
       exp.each do |name, expval|
         val = opts.method(name).call
-        assert_equal expval, val
+        assert_equal expval, val, "args: #{args}"
       end
     end
 
@@ -26,12 +30,12 @@ module Glark
       gopt.run args + Array.new
       outputopts = gopt.output_options
       
-      assert_method_values gopt, expected[:app]
-      assert_method_values gopt.match_spec, expected[:match]
-      assert_method_values gopt.colors, expected[:colors]
-      assert_method_values gopt.output_options, expected[:output]
-      assert_method_values gopt.info_options, expected[:info]
-      assert_method_values gopt.input_spec, expected[:input]
+      assert_method_values gopt, expected[:app], args
+      assert_method_values gopt.match_spec, expected[:match], args
+      assert_method_values gopt.colors, expected[:colors], args
+      assert_method_values gopt.output_options, expected[:output], args
+      assert_method_values gopt.info_options, expected[:info], args
+      assert_method_values gopt.input_spec, expected[:input], args
       
       blk.call(gopt) if blk
     end
@@ -169,7 +173,7 @@ module Glark
         end
       end
 
-      singlecolor = Text::ANSIHighlighter.make(Text::Highlighter::DEFAULT_COLORS[0])
+      singlecolor = str_to_color_codes Text::Highlighter::DEFAULT_COLORS[0]
 
       %w{ single }.each do |val|
         [
@@ -603,7 +607,7 @@ module Glark
          [ '--text-color=' + color ],
         ].each do |opt|
           run_test(opt + [ 'foo' ],
-                   :match => { :text_highlights => [ Text::ANSIHighlighter.make(color) ] })
+                   :match => { :text_highlights => [ str_to_color_codes(color) ] })
         end
       end
     end
@@ -616,7 +620,7 @@ module Glark
          [ '--file-color='  + color ],
         ].each do |opt|
           run_test(opt + [ 'foo' ],
-                   :colors => { :file_highlight => Text::ANSIHighlighter.make(color) })
+                   :colors => { :file_highlight => str_to_color_codes(color) })
         end
       end
     end
