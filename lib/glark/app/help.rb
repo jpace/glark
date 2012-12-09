@@ -92,7 +92,7 @@ module Glark
       if dir
         manfile = dir + "doc/glark.1"
         cmd     = "man #{manfile.to_s}"
-        IO.popen(cmd) do |io|
+        ::IO.popen(cmd) do |io|
           puts io.readlines
         end
       else

@@ -143,3 +143,7 @@ Fri Nov 30 20:20:13 2012
   Worked around an erroneous warning from zlib regarding reading some tarballs.
 
   Added directories as searched for --binary-files=list.
+
+Sun Dec  9 10:49:18 2012
+
+  Fixed --man option.
