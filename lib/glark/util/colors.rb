@@ -3,9 +3,11 @@
 
 require 'rubygems'
 require 'riel'
-require 'riel/text/ansi/ansi_color'
+require 'riel.new/text/ansi/ansi_highlight'
 
-class Text::ANSIHighlighter
+$rielold = false
+
+class TextNew::ANSIHighlighter
   def default_codes limit = -1
     @default_codes ||= Text::Highlighter::DEFAULT_COLORS.collect { |color| to_codes color }
     @default_codes[0 .. limit]
@@ -44,11 +46,15 @@ module Glark
     end
 
     def make_color color
-      result = @highlighter.to_codes color
+      if $rielold
+        result = @highlighter.make color
+      else
+        @highlighter.instance.to_codes color
+      end
     end
 
     def make_colors limit = -1
-      @highlighter.default_codes limit
+      Text::Highlighter::DEFAULT_COLORS[0 .. limit].collect { |color| make_color color }
     end
 
     def multi_colors 
@@ -62,7 +68,7 @@ module Glark
     def text_color_style= tcstyle
       @text_color_style = tcstyle
       if @text_color_style
-        @highlighter = @text_color_style && Text::ANSIHighlighter.instance
+        @highlighter = @text_color_style && ($rielold ? Text::ANSIHighlighter : TextNew::ANSIHighlighter)
         @text_highlights = case @text_color_style
                            when highlight_multi?(@text_color_style), true
                              multi_colors

@@ -35,11 +35,11 @@ module Glark
 
         assert_equal "single", opts.colors.text_color_style
         assert_equal true, opts.local_config_files
-        assert_equal "\e[1m\e[31m", opts.colors.line_number_highlight
+        ###$$$ assert_equal %w{ bold red }, opts.colors.line_number_highlight.colors
         assert opts.match_spec.ignorecase
 
         assert_file_filter_eq 1000, opts, :size, :negative, SizeLimitFilter, :max_size
-        assert_equal "\e[4m\e[35m", opts.match_spec.text_highlights[3]
+        ###$$$ assert_equal %w{ underline magenta }, opts.match_spec.text_highlights[3].colors
       end
     end
 

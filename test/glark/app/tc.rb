@@ -3,6 +3,7 @@
 
 require 'pathname'
 require 'tempfile'
+require 'stringio'
 require 'glark/tc'
 require 'glark/app/options'
 

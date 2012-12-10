@@ -10,9 +10,17 @@ class FileHeader
     @highlighter = highlighter
   end
 
+  def adorn str
+    if $rielold
+      @highlighter.highlight str
+    else
+      @highlighter + str + TextNew::Color::RESET
+    end
+  end
+
   def print out
     name = @name.to_s
-    fname = @highlighter ? @highlighter + name + Text::Color::RESET : name
+    fname = @highlighter ? adorn(name) : name
     out.puts fname
   end
 end

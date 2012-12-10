@@ -3,7 +3,7 @@
 
 require 'rubygems'
 require 'riel'
-require 'riel/text/ansi/color'
+# require 'riel/text/ansi/color'
 
 module Glark
   module OptionUtil

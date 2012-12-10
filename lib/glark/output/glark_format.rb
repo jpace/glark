@@ -25,11 +25,19 @@ module Glark
       end
     end
 
+    def adorn str
+      if $rielold
+        @lnum_highlighter.highlight str
+      else
+        @lnum_highlighter + str + TextNew::Color::RESET
+      end
+    end
+
     def print_line_number lnum 
       if @lnum_highlighter
         lnumstr = (lnum + 1).to_s
         pad = " " * ([5 - lnumstr.length, 0].max)
-        @out.print pad + " " + @lnum_highlighter + lnumstr + Text::Color::RESET + " "
+        @out.print pad + " " + adorn(lnumstr) + " "
       else
         super
       end
