@@ -36,4 +36,8 @@ class HlWrapper
       @hl.instance.to_codes color
     end
   end
+  
+  def make_rgb_color color
+    @hl.instance.to_codes color
+  end
 end

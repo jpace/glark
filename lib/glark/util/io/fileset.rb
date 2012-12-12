@@ -5,6 +5,7 @@
 require 'rubygems'
 require 'riel'
 require 'glark/util/io/depth'
+require 'riel/filetype'
 
 module Glark
   # Files and directories. And standard input, just for fun.

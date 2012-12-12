@@ -2,7 +2,7 @@
 # -*- ruby -*-
 
 require 'rubygems'
-require 'riel'
+require 'riel/dir'
 require 'riel/optproc'
 require 'glark/app/info/options'
 require 'glark/app/rcfile'
