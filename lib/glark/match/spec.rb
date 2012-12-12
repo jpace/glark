@@ -33,7 +33,7 @@ module Glark
       exprargs[:extended] = @extended
       exprargs[:extract_matches] = @extract_matches
       exprargs[:ignorecase] = @ignorecase
-      exprargs[:text_highlights] = text_highlights
+      exprargs[:text_colors] = text_colors
       exprargs[:whole_lines] = @whole_lines
       exprargs[:whole_words] = @whole_words
       
@@ -44,16 +44,16 @@ module Glark
       @expr = create_expression_factory.make_expression args, warn_option
     end
 
-    def text_highlights
-      @colors.text_highlights
+    def text_colors
+      @colors.text_colors
     end
 
-    def set_text_highlights text_colors
-      @colors.text_highlights = text_colors
+    def set_text_colors text_colors
+      @colors.text_colors = text_colors
     end
 
-    def set_text_highlight index, text_color
-      @colors.text_highlights[index] = text_color
+    def set_text_color index, text_color
+      @colors.text_colors[index] = text_color
     end
   end
 end

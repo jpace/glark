@@ -22,7 +22,7 @@ module Glark
     def config_fields
       fields = {
         "ignore-case" => @ignorecase,
-        "text-color" => text_highlights.join(' '),
+        "text-color" => text_colors.join(' '),
       }
     end
 
@@ -31,7 +31,7 @@ module Glark
         "expr" => @expr,
         "extract_matches" => @extract_matches,
         "ignorecase" => @ignorecase,
-        "text_highlights" => text_highlights.compact.collect { |hl| colorize(hl, "text") }.join(", "),
+        "text_colors" => text_colors.compact.collect { |hl| colorize(hl, "text") }.join(", "),
         "whole_lines" => @whole_lines,
         "whole_words" => @whole_words,
       }
@@ -66,7 +66,7 @@ module Glark
       optdata << text_color_option = {
         :tags => %w{ --text-color },
         :arg  => [ :string ],
-        :set  => Proc.new { |val| @colors.text_highlights = [ @colors.make_highlight("text-color", val) ] }
+        :set  => Proc.new { |val| @colors.text_colors = [ @colors.create_color("text-color", val) ] }
       }
 
       add_opt_true optdata, :extract_matches, %w{ -y --extract-matches }

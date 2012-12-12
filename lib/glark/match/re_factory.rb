@@ -14,13 +14,13 @@ class RegexpExpressionFactory
   attr_reader :count
 
   def initialize exprspec
-    @count           = 0
-    @extended        = exprspec[:extended]
+    @count = 0
+    @extended = exprspec[:extended]
     @extract_matches = exprspec[:extract_matches]
-    @ignorecase      = exprspec[:ignorecase]
-    @text_highlights = exprspec[:text_highlights]
-    @wholelines      = exprspec[:whole_lines]
-    @wholewords      = exprspec[:whole_words]
+    @ignorecase = exprspec[:ignorecase]
+    @text_colors = exprspec[:text_colors]
+    @wholelines = exprspec[:whole_lines]
+    @wholewords = exprspec[:whole_words]
   end
 
   def create_expression pattern, negated = false
@@ -37,7 +37,7 @@ class RegexpExpressionFactory
                           :wholelines => @wholelines,
                           :extended   => @extended)
 
-    re = RegexpExpression.new regex, @count, @text_highlights, @extract_matches
+    re = RegexpExpression.new regex, @count, @text_colors, @extract_matches
     @count += 1
     re
   end

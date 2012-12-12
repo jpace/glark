@@ -11,12 +11,12 @@ class RegexpExpression < Expression
   
   attr_reader :re
 
-  def initialize re, hlidx, text_highlights = nil, extract_matches = false
+  def initialize re, hlidx, text_colors = nil, extract_matches = false
     @re = re
 
-    if @text_highlights = text_highlights
-      @hlidx = if @text_highlights.length > 0
-                 hlidx % @text_highlights.length
+    if @text_colors = text_colors
+      @hlidx = if @text_colors.length > 0
+                 hlidx % @text_colors.length
                else
                  0
                end 
@@ -52,7 +52,7 @@ class RegexpExpression < Expression
     
     @match_line_number = lnum
 
-    if @text_highlights && @text_highlights.size > 0
+    if @text_colors && @text_colors.size > 0
       highlight_match lnum, file, formatter
     end
     
@@ -74,7 +74,7 @@ class RegexpExpression < Expression
         lastcapts = Regexp.last_match.captures
         # the index of the first non-nil capture:
         miidx = (0 ... lastcapts.length).find { |mi| lastcapts[mi] } || @hlidx
-        adorn(@text_highlights[miidx], m)
+        adorn(@text_colors[miidx], m)
       end
     end
   end

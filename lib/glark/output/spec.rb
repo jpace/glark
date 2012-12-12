@@ -32,7 +32,6 @@ module Glark
       @colors = colors
       @context = Glark::Context.new
       @count = false
-      @file_highlight = nil
       @file_names_only = false
       @filter = true
       @highlight = nil
@@ -51,11 +50,11 @@ module Glark
     end
 
     def line_number_highlight
-      @colors.line_number_highlight
+      @colors.line_number_color
     end
 
     def file_highlight 
-      @colors.file_highlight
+      @colors.file_name_color
     end
 
     def highlight

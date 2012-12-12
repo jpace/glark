@@ -18,7 +18,7 @@ module Glark
     def assert_method_values opts, exp, args
       return unless exp
       exp.each do |name, expval|
-        if name.to_s == 'text_highlights'
+        if name.to_s == 'text_colors'
           assert_color opts, name, expval, args
         else
           val = opts.method(name).call
@@ -202,14 +202,14 @@ module Glark
          [ '--highlight',   val ],
         ].each do |opt|
           run_test(opt + [ 'foo' ],
-                   :match => { :text_highlights => [ singlecolor ] },
+                   :match => { :text_colors => [ singlecolor ] },
                    :color => { :text_color_style => val })
         end
       end
 
       %w{ none }.each do |val|
         run_test([ '--highlight=' + val, 'foo' ],
-                 :match => { :text_highlights => [] },
+                 :match => { :text_colors => [] },
                  :color => { :text_color_style => nil })
       end
     end
@@ -217,7 +217,7 @@ module Glark
     def test_no_highlight
       %w{ -U --no-highlight }.each do |hlopt|
         run_test([ hlopt, 'foo' ],
-                 :match => { :text_highlights => [] },
+                 :match => { :text_colors => [] },
                  :color => { :text_color_style => nil })
       end
     end
@@ -274,7 +274,7 @@ module Glark
     def test_output_type
       %w{ -g --grep }.each do |opt|
         run_test([ opt, 'foo' ],
-                 :match => { :text_highlights => [] },
+                 :match => { :text_colors => [] },
                  :output => { :show_line_numbers => false, :style => "grep" },
                  :colors => { :text_color_style => false }) do |opts|
           assert_context 0, 0, opts
@@ -628,7 +628,7 @@ module Glark
          [ '--text-color=' + color ],
         ].each do |opt|
           run_test(opt + [ 'foo' ],
-                   :match => { :text_highlights => [ str_to_color_codes(color) ] })
+                   :match => { :text_colors => [ str_to_color_codes(color) ] })
         end
       end
     end
@@ -641,7 +641,7 @@ module Glark
          [ '--file-color='  + color ],
         ].each do |opt|
           run_test(opt + [ 'foo' ],
-                   :colors => { :file_highlight => str_to_color_codes(color) })
+                   :colors => { :file_name_color => str_to_color_codes(color) })
         end
       end
     end

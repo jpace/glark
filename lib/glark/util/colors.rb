@@ -9,21 +9,22 @@ module Glark
     include Loggable
     
     attr_accessor :highlighter
-    attr_accessor :text_highlights
-    attr_accessor :file_highlight
-    attr_accessor :line_number_highlight
+    attr_accessor :text_colors
+    attr_accessor :file_name_color
+    attr_accessor :line_number_color
+    
     attr_reader :text_color_style # single, multi, or nil (no text highlights)
 
     def initialize hl = nil
       @highlighter = nil
-      @text_highlights = Array.new
-      @file_highlight = nil
-      @line_number_highlight = nil
+      @text_colors = Array.new
+      @file_name_color = nil
+      @line_number_color = nil
       @text_color_style = "multi"
     end
 
     # creates a color for the given option, based on its value
-    def make_highlight opt, value
+    def create_color opt, value
       if @highlighter
         if value
           make_color value
@@ -55,7 +56,7 @@ module Glark
       @text_color_style = tcstyle
       if @text_color_style
         @highlighter = @text_color_style && HlWrapper.new
-        @text_highlights = case @text_color_style
+        @text_colors = case @text_color_style
                            when highlight_multi?(@text_color_style), true
                              multi_colors
                            when "single"
@@ -63,18 +64,18 @@ module Glark
                            else
                              raise "highlight format '" + @text_color_style.to_s + "' not recognized"
                            end
-        @file_highlight = make_color "reverse bold"
-        @line_number_highlight = nil
+        @file_name_color = make_color "reverse bold"
+        @line_number_color = nil
       else
         @highlighter = nil
-        @text_highlights = Array.new
-        @file_highlight = nil
-        @line_number_highlight = nil
+        @text_colors = Array.new
+        @file_name_color = nil
+        @line_number_color = nil
       end
     end
 
-    def set_text_highlight index, color
-      @text_highlights[index] = color
+    def set_text_color index, color
+      @text_colors[index] = color
     end
 
     def highlight_multi? str
@@ -83,17 +84,17 @@ module Glark
 
     def config_fields
       fields = {
-        "file-color" => @file_highlight,
+        "file-color" => @file_name_color,
         "highlight" => @text_color_style,
-        "line-number-color" => @line_number_highlight,
+        "line-number-color" => @line_number_color,
       }
     end
 
     def dump_fields
       fields = {
-        "file_highlight" => colorize(@file_highlight, "filename"),
+        "file_name_color" => colorize(@file_name_color, "filename"),
         "highlight" => @text_color_style,
-        "line_number_highlight" => colorize(@line_number_highlight, "12345"),
+        "line_number_color" => colorize(@line_number_color, "12345"),
       }
     end
 
@@ -104,20 +105,20 @@ module Glark
         str
       end
     end
-
+    
     def update_fields fields
       fields.each do |name, values|
         case name
         when "file-color"
-          set_file_highlight make_highlight name, values.last
+          @file_name_color = create_color name, values.last
         when "highlight"
           self.text_color_style = values.last
         when "line-number-color"
-          @line_number_highlight = make_highlight name, values.last
+          @line_number_color = create_color name, values.last
         when "text-color"
-          @text_highlights = [ make_highlight(name, values.last) ]
+          @text_colors = [ create_color(name, values.last) ]
         when %r{^text\-color\-(\d+)$}
-          set_text_highlight $1.to_i, make_highlight(name, values.last)
+          set_text_color $1.to_i, create_color(name, values.last)
         end
       end
     end

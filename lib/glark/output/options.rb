@@ -79,7 +79,7 @@ module Glark
       optdata << lnum_color_option = {
         :tags => %w{ --line-number-color },
         :arg  => [ :string ],
-        :set  => Proc.new { |val| @colors.line_number_highlight = @colors.make_highlight "line-number-color", val },
+        :set  => Proc.new { |val| @colors.line_number_color = @colors.create_color "line-number-color", val },
       }
 
       add_opt_true optdata, :count, %w{ -c --count }
@@ -96,7 +96,7 @@ module Glark
       optdata << file_color_option = {
         :tags => %w{ --file-color },
         :arg  => [ :string ],
-        :set  => Proc.new { |val| @colors.file_highlight = @colors.make_highlight "file-color", val }
+        :set  => Proc.new { |val| @colors.file_name_color = @colors.create_color "file-color", val }
       }
     end
   end
