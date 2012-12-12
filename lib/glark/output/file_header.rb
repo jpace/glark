@@ -2,25 +2,19 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
+require 'glark/util/highlight'
+
 class FileHeader
-  include Loggable
+  include Loggable, Highlight
   
   def initialize name, highlighter
     @name = name
     @highlighter = highlighter
   end
 
-  def adorn str
-    if $rielold
-      @highlighter.highlight str
-    else
-      @highlighter + str + TextNew::Color::RESET
-    end
-  end
-
   def print out
     name = @name.to_s
-    fname = @highlighter ? adorn(name) : name
+    fname = @highlighter ? adorn(@highlighter, name) : name
     out.puts fname
   end
 end

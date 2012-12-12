@@ -3,6 +3,7 @@
 
 require 'rubygems'
 require 'riel'
+require 'riel/optproc'
 require 'glark/app/info/options'
 require 'glark/app/rcfile'
 require 'glark/app/spec'

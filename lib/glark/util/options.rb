@@ -3,6 +3,7 @@
 # vim: set filetype=ruby : set sw=2
 
 require 'glark/util/optutil'
+require 'riel/log/loggable'
 
 module Glark
   class Options

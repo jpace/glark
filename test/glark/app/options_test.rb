@@ -9,18 +9,13 @@ require 'glark/app/options'
 module Glark
   class OptionsTestCase < AppTestCase
     def str_to_color_codes str
-      if false
-        Text::ANSIHighlighter.instance.to_codes str
-      else
+      if $rielold
         Text::ANSIHighlighter.make str
+      else
+        Text::ANSIHighlighter.instance.to_codes str
       end
     end
     
-    def setup
-      # ignore what they have in ENV[HOME]    
-      ENV['HOME'] = '/this/should/not/exist'
-    end
-
     def assert_method_values opts, exp, args
       return unless exp
       exp.each do |name, expval|

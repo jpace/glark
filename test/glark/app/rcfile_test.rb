@@ -8,11 +8,6 @@ require 'glark/app/options'
 
 module Glark
   class RcfileTestCase < AppTestCase
-    def setup
-      # ignore what they have in ENV[HOME]    
-      ENV['HOME'] = '/this/should/not/exist'
-    end
-
     def run_option_test args, exp, &blk
       gopt = Glark::AppOptions.new
       gopt.run args

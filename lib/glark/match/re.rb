@@ -3,9 +3,12 @@
 # vim: set filetype=ruby : set sw=2
 
 require 'glark/match/expression'
+require 'glark/util/highlight'
 
 # Applies a regular expression against a File.
 class RegexpExpression < Expression
+  include Highlight
+  
   attr_reader :re
 
   def initialize re, hlidx, text_highlights = nil, extract_matches = false
@@ -43,7 +46,7 @@ class RegexpExpression < Expression
       if md.kind_of? MatchData
         line.replace md[-1] + "\n"
       else
-        warn "--not does not work with -v"
+        warn "--not is incompatible with -v"
       end
     end
     
@@ -61,14 +64,6 @@ class RegexpExpression < Expression
     " " * level + to_s + "\n"
   end
 
-  def adorn str
-    if $rielold
-      @text_highlights[miidx].highlight str
-    else
-      @text_highlights[miidx] + str + TextNew::Color::RESET
-    end
-  end
-
   def highlight_match lnum, file, formatter
     lnums = file.get_region lnum
     return unless lnums
@@ -77,14 +72,9 @@ class RegexpExpression < Expression
       str = formatter.formatted[ln] || file.get_line(ln)
       formatter.formatted[ln] = str.gsub(@re) do |m|
         lastcapts = Regexp.last_match.captures
-        # find the index of the first non-nil capture:
+        # the index of the first non-nil capture:
         miidx = (0 ... lastcapts.length).find { |mi| lastcapts[mi] } || @hlidx
-        ###$$$ puts "@text_highlights[miidx]: #{@text_highlights[miidx].inspect}"
-        if $rielold
-          @text_highlights[miidx].highlight m
-        else
-          @text_highlights[miidx] + m + TextNew::Color::RESET
-        end
+        adorn(@text_highlights[miidx], m)
       end
     end
   end

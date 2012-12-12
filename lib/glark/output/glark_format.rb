@@ -3,12 +3,13 @@
 # vim: set filetype=ruby : set sw=2
 
 require 'glark/output/file_header'
+require 'glark/util/highlight'
 
 module Glark; end
 
 module Glark
   module Format
-    include Loggable
+    include Loggable, Highlight
     
     def initialize file, spec
       @file_header = nil        # not nil after file header written
@@ -25,19 +26,11 @@ module Glark
       end
     end
 
-    def adorn str
-      if $rielold
-        @lnum_highlighter.highlight str
-      else
-        @lnum_highlighter + str + TextNew::Color::RESET
-      end
-    end
-
     def print_line_number lnum 
       if @lnum_highlighter
         lnumstr = (lnum + 1).to_s
         pad = " " * ([5 - lnumstr.length, 0].max)
-        @out.print pad + " " + adorn(lnumstr) + " "
+        @out.print pad + " " + adorn(@lnum_highlighter, lnumstr) + " "
       else
         super
       end

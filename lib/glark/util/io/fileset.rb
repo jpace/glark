@@ -81,14 +81,14 @@ module Glark
       (0 ... @files.size).each do |idx|
         pn = @files[idx]
         type = FileType.type pn.to_s
-
+        
         if stdin?
           blk.call [ :text, '-' ]
           next
         end
         
         unless pn.readable?
-          write "directory not readable: #{pn}"
+          ###$$$ write "directory not readable: #{pn}"
           next
         end
         
@@ -109,7 +109,7 @@ module Glark
 
     def handle_directory pn, depth, &blk
       return if @dir_criteria.skipped? pn, depth
-      
+
       subdepth = depth - 1
 
       pn.children.sort.each do |entry|

@@ -6,12 +6,20 @@ require 'tempfile'
 require 'stringio'
 require 'glark/tc'
 require 'glark/app/options'
+require 'glark/util/timestamper'
 
 module Glark
   class AppTestCase < Glark::TestCase
+    include TimeStamper
+    
     def setup
       # ignore what they have in ENV[HOME]    
       ENV['HOME'] = '/this/should/not/exist'
+      super
+    end
+
+    def teardown
+      super
     end
 
     def run_glark args, *files
@@ -25,9 +33,12 @@ module Glark
       glark = Runner.new gopt, gopt.fileset
       
       sio.close
-      puts "....."
-      puts sio.string
-      puts "....."
+
+      if false
+        puts "....."
+        puts sio.string
+        puts "....."
+      end
       
       sio.string
     end
