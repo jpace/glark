@@ -6,7 +6,6 @@ require 'rubygems'
 require 'riel'
 require 'glark/app/help'
 require 'glark/util/options'
-require 'glark'
 
 module Glark
   class InfoOptions < Options

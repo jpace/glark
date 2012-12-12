@@ -5,15 +5,14 @@ require 'pathname'
 require 'tempfile'
 require 'glark/app/tc'
 require 'glark/app/options'
+require 'glark/util/highlight'
 
 module Glark
   class OptionsTestCase < AppTestCase
+    @@hl = HlWrapper.new
+    
     def str_to_color_codes str
-      if $rielold
-        Text::ANSIHighlighter.make str
-      else
-        Text::ANSIHighlighter.instance.to_codes str
-      end
+      @@hl.make_color str
     end
     
     def assert_method_values opts, exp, args
