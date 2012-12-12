@@ -7,7 +7,7 @@
 require 'rubygems'
 require 'riel/log'
 require 'glark/match/factory'
-require 'glark/util/colors'
+require 'glark/util/colors/spec'
 
 module Glark
   class MatchSpec

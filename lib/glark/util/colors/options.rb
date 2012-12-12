@@ -3,23 +3,15 @@
 
 require 'rubygems'
 require 'riel'
+require 'glark/util/colors/spec'
 
 module Glark
-  class Colors
-    include Loggable
-    
-    attr_accessor :highlighter
-    attr_accessor :text_colors
-    attr_accessor :file_name_color
-    attr_accessor :line_number_color
-    
+  class ColorOptions < ColorSpec    
     attr_reader :text_color_style # single, multi, or nil (no text highlights)
 
-    def initialize hl = nil
+    def initialize
+      super
       @highlighter = nil
-      @text_colors = Array.new
-      @file_name_color = nil
-      @line_number_color = nil
       @text_color_style = "multi"
     end
 

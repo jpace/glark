@@ -7,7 +7,6 @@
 require 'rubygems'
 require 'riel/log'
 require 'glark/match/spec'
-require 'glark/util/colors'
 require 'glark/util/options'
 
 module Glark

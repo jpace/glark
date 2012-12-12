@@ -10,7 +10,7 @@ require 'glark/app/spec'
 require 'glark/input/options'
 require 'glark/match/options'
 require 'glark/output/options'
-require 'glark/util/colors'
+require 'glark/util/colors/options'
 require 'glark/util/options'
 require 'glark/util/optutil'
 
@@ -26,7 +26,7 @@ module Glark
     def initialize
       optdata = Array.new
 
-      @colors = Colors.new    
+      @colors = ColorOptions.new    
 
       @input_options = InputOptions.new optdata
       @match_options = MatchOptions.new @colors, optdata
