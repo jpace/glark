@@ -34,7 +34,7 @@ module Glark
       
       sio.close
 
-      if false
+      if true
         puts "....."
         puts sio.string
         puts "....."

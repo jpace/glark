@@ -2,7 +2,6 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'rubygems'
 require 'glark/input/range'
 require 'glark/input/filter/dir_criteria_opts'
 require 'glark/input/filter/file_criteria_opts'

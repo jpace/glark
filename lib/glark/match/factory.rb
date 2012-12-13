@@ -6,6 +6,7 @@
 
 require 'rubygems'
 require 'riel/regexp'
+require 'riel/log/loggable'
 require 'glark/match/and'
 require 'glark/match/and_distance'
 require 'glark/match/ior'
@@ -158,7 +159,7 @@ class ExpressionFactory
         args.shift
         make_infix_expression arg, args
       else
-        if warn_option && arg.index(/^\-{1,2}\w/)
+        if warn_option && arg.index(%r{^\-{1,2}\w})
           raise "option not understood: #{arg}"
         end
 

@@ -76,23 +76,19 @@ module Glark
     end
 
     def read_home_rcfile
-      if hdir = Dir.home
-        hdpn = Pathname.new hdir
-        homerc = hdpn + ".glarkrc"
-        read_rcfile homerc
-      end
+      return unless hdir = Dir.home
+      hdpn = Pathname.new hdir
+      homerc = hdpn + '.glarkrc'
+      read_rcfile homerc
     end
 
     def read_local_rcfiles
       hdir = Dir.home
-      dir = Pathname.new(".").expand_path
+      dir = Pathname.new('.').expand_path
       while !dir.root? && dir != hdir
-        rcfile = dir + ".glarkrc"
-        if rcfile.exist?
-          return read_rcfile rcfile
-        else
-          dir = dir.dirname
-        end
+        rcfile = dir + '.glarkrc'
+        return if read_rcfile rcfile
+        dir = dir.dirname
       end
     end
 
@@ -101,6 +97,7 @@ module Glark
     end
 
     def read_rcfile rcfname
+      return nil unless rcfname.exist?
       rcfile = RCFile.new rcfname
       rcvalues = rcfile.names.collect { |name| [ name, rcfile.values(name) ] }
 
@@ -108,6 +105,7 @@ module Glark
         opts.update_fields rcvalues
       end
       update_fields rcvalues
+      true
     end
 
     def config_fields

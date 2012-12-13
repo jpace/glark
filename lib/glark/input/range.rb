@@ -8,8 +8,7 @@ module Glark
   class Range
     include Loggable, Comparable
 
-    PCT_PAT = '([\.\d]+)%'
-    PCT_RE = Regexp.new PCT_PAT
+    PCT_RE = Regexp.new '([\.\d]+)%'
     
     attr_accessor :from
     attr_accessor :to
@@ -24,29 +23,30 @@ module Glark
     end
 
     def to_line var, linecount
-      if var
-        if md = PCT_RE.match(var) 
-          count = linecount
-          count * md[1].to_f / 100
-        else
-          var.to_f
-        end
+      return nil unless var
+
+      if pct = as_pct(var) 
+        count = linecount
+        count * pct.to_f / 100
       else
-        nil
+        var.to_f
       end
+    end
+
+    def as_pct val
+      (md = PCT_RE.match(val)) && md[1]
     end
 
     def validate!
       return true if @from.nil? || @to.nil?
 
-      smd = PCT_RE.match @from
-      emd = PCT_RE.match @to
+      frompct, topct = [ @from, @to ].collect { |val| as_pct val }
 
       # both or neither are percentages:
-      return true if smd.nil? != emd.nil?
-
-      if smd
-        check_range! smd[1], emd[1]
+      return true if frompct.nil? != topct.nil?
+      
+      if frompct
+        check_range! frompct, topct
       else
         check_range! @from, @to
       end

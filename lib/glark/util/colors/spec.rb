@@ -2,7 +2,7 @@
 # -*- ruby -*-
 
 require 'rubygems'
-require 'riel'
+require 'riel/log/loggable'
 
 module Glark
   class ColorSpec

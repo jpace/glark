@@ -1,8 +1,6 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-require 'rubygems'
-require 'riel'
 require 'glark/util/colors/spec'
 
 module Glark
@@ -32,12 +30,17 @@ module Glark
       @highlighter.make_color color
     end
 
+    def make_rgb_color red, green, blue, fgbg
+      @highlighter.make_rgb_color red, green, blue, fgbg
+    end
+
     def make_colors limit = -1
       Text::Highlighter::DEFAULT_COLORS[0 .. limit].collect { |color| make_color color }
     end
 
     def multi_colors 
       make_colors
+      # [ make_rgb_color(4, 3, 2, :bg) + make_rgb_color(0, 2, 1, :fg) ]
     end
 
     def single_color

@@ -89,7 +89,7 @@ module Glark
         end
         
         unless pn.readable?
-          ###$$$ write "directory not readable: #{pn}"
+          write "directory not readable: #{pn}"
           next
         end
         

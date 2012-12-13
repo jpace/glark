@@ -20,13 +20,17 @@ module Glark
       blk.call(gopt) if blk
     end
 
+    def read_rcfile opts, basename
+      opts.read_rcfile Pathname.new('/proj/org/incava/glark/test/resources') + basename
+    end
+
     def test_simple
       run_option_test(%w{ foo }, []) do |opts|
         # default values
         assert_equal "multi", opts.colors.text_color_style
         assert_equal false, opts.local_config_files
 
-        opts.read_rcfile Pathname.new '/proj/org/incava/glark/test/resources/rcfile.txt'
+        read_rcfile opts, 'rcfile.txt'
 
         assert_equal "single", opts.colors.text_color_style
         assert_equal true, opts.local_config_files
@@ -42,7 +46,7 @@ module Glark
       run_option_test(%w{ foo }, []) do |opts|
         # default values
         assert_equal "glark", opts.output_options.style
-        opts.read_rcfile Pathname.new '/proj/org/incava/glark/test/resources/rcgrep.txt'
+        read_rcfile opts, 'rcgrep.txt'
         assert_equal "grep", opts.output_options.style
       end
     end
@@ -72,7 +76,7 @@ module Glark
 
     def test_name
       run_option_test(%w{ foo }, []) do |opts|
-        opts.read_rcfile Pathname.new '/proj/org/incava/glark/test/resources/rcmatch.txt'
+        read_rcfile opts, 'rcmatch.txt'
 
         [ '\w+.java', '\w+.rb' ].each do |pat|
           assert_file_filter_pattern_eq pat, opts, :name, :positive, BaseNameFilter
@@ -84,7 +88,7 @@ module Glark
 
     def test_path
       run_option_test(%w{ foo }, []) do |opts|
-        opts.read_rcfile Pathname.new '/proj/org/incava/glark/test/resources/rcpath.txt'
+        read_rcfile opts, 'rcpath.txt'
 
         assert_directory_filter_pattern_eq 'src/main/java', opts, :dirpath, :positive, FullNameFilter
 
@@ -98,7 +102,7 @@ module Glark
 
     def test_ext
       run_option_test(%w{ foo }, []) do |opts|
-        opts.read_rcfile Pathname.new '/proj/org/incava/glark/test/resources/rcext.txt'
+        read_rcfile opts, 'rcext.txt'
 
         assert_file_filter_pattern_eq 'rb', opts, :ext, :positive, ExtFilter 
         assert_file_filter_pattern_eq 'pl', opts, :ext, :positive, ExtFilter
