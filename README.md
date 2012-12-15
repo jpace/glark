@@ -422,7 +422,7 @@ The foreground may have any number of the following modifiers applied:
     blink
     bold
     concealed
-    reverse
+    negative
     underline
     underscore
 
@@ -449,25 +449,25 @@ bold.
   * `glark --ignore-case format *.h`:
     Searches for "format" without regard to case. Short form:
 
-    glark -i format *.h
+    `glark -i format *.h`
     
   * `glark --context=6 format *.h`:
     Produces 6 lines of context around any match for "format". Short forms:
 
-    glark -C 6 format *.h
-    glark -6 format *.h
+    `glark -C 6 format *.h`
+    `glark -6 format *.h`
     
   * `glark --exclude-matching Object *.java`:
     Find references to "Object", excluding the files whose names match "Object".
     Thus, SessionBean.java would be searched; EJBObject.java would not. Short
     form:
 
-    glark -M Object *.java
+    `glark -M Object *.java`
     
   * `glark -N -h --context=0 --extract-matches '(\w+)\.printStackTrace\(.*\)' *.java`:
     Show only the variable name of exceptions that are dumped. Short form:
 
-    glark -gy '(\w+)\.printStackTrace\\(.\*\\)' *.java
+    `glark -gy '(\w+)\.printStackTrace\\(.\*\\)' *.java`
     
   * `% who| glark -gy '^(\S+)\s+\S+\s*May 15'`:
     Display only the names of users who logged in today.
@@ -480,7 +480,7 @@ bold.
     Display (only) the names of the files that do not contain strings consisting of
     a single word. Short form:
 
-    glark -L '"\w+"'
+    `glark -L '"\w+"'`
 
   * `glark --text-color "red on white" '\b[[:digit:]]{5}\b' *.c`:
     Display (in red text on a white background) occurrences of exactly 5 digits.
@@ -492,20 +492,20 @@ bold.
   * `glark --or format print *.h"`:
     Searches for either "printf" or "format". Short form:
 
-    glark -o format print *.h
+    `glark -o format print *.h`
     
   * `glark --and 4 printf format *.c *.h`:
     Searches for both "printf" or "format" within 4 lines of each other. Short
     form:
 
-    glark -a 4 printf format *.c *.h
+    `glark -a 4 printf format *.c *.h`
     
   * `glark --context=3 --and 0 printf format *.c"`:
     Searches for both "printf" or "format" on the same line ("within 0 lines of each
     other"). Three lines of context are displayed around any matches. Short
     form:
 
-    glark -3 -a 0 printf format *.c
+    `glark -3 -a 0 printf format *.c`
     
   * `glark -8 -i -a 15 -a 2 pthx '\.\.\.' -o 'va_\w+t' die *.c`:
     In order of the options: produces 8 lines of context around case insensitive
@@ -516,26 +516,26 @@ bold.
      Looks for "#define\s+YIELD" within the same file (-1 == "infinite distance") of
     "#define\s+dTHR". Short form:
 
-    glark -a -1 '#define\s+YIELD' '#define\s+dTHR' *.h
+    `glark -a -1 '#define\s+YIELD' '#define\s+dTHR' *.h`
 
 ### RANGE LIMITING
 
   * `glark --before 50% cout *.cpp`:
     Find references to "cout", within the first half of the file. Short form:
 
-    glark -b 50% cout *.cpp
+    `glark -b 50% cout *.cpp`
 
   * `glark --after 20 cout *.cpp`:
     Find references to "cout", starting at the 20th line in the file. Short
     form:
 
-    glark -b 50% cout *.cpp
+    `glark -b 50% cout *.cpp`
 
   * `glark --range 20,50% cout *.cpp`:
     Find references to "cout", in the first half of the file, after the 20th line.
     Short form:
 
-    glark -R 20,50% cout *.cpp
+    `glark -R 20,50% cout *.cpp`
 
 ### FILE PROCESSING
 
@@ -543,7 +543,7 @@ bold.
     Search for "print" in all files at and below the current directory.
     Equivalently, this can be:
 
-    % glark print ...
+    `glark print ...`
 
   * `glark --match-path='/\.java$/' -r println org`:
     Search for "println" in all Java files at and below the "org" directory.
@@ -562,7 +562,7 @@ bold.
     Search for "Regexp" in all files _in_ /usr/lib/ruby/1.9.1. This is
     equivalent to:
 
-    % glark Regexp /usr/lib/ruby/1.9.1
+    `glark Regexp /usr/lib/ruby/1.9.1`
 
   * `glark Regexp /usr/lib/ruby/1.9.1/...2`:
     Search for "Regexp" in all files _in_ /usr/lib/ruby/1.9.1 and two levels of
@@ -579,7 +579,7 @@ bold.
     Search the files for 'Exception', displaying the jar file name instead of the
     standard input marker ('-'). An equivalent is:
 
-    glark --binary-files=list Exception *.jar
+    `glark --binary-files=list Exception *.jar`
 
 ### ADVANCED USAGE
 
@@ -610,6 +610,7 @@ bold.
   * `$HOME/.glarkrc`:
     A resource file, containing name/value pairs, separated by either ':' or '='.
     The valid fields of a .glarkrc file are as follows, with example values:
+
         after-context:      1
         before-context:     6
         context:            5
@@ -628,6 +629,7 @@ bold.
     "yes" and "on" are synonymnous with "true". "no" and "off" signify "false".
     
     My ~/.glarkrc file contains:
+
         context: 3
         quiet: true
         local-config-files: true
