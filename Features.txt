@@ -156,4 +156,4 @@ Sat Dec 15 10:03:11 2012
 
   Added documentation. Added manpage to gem.
 
-  Fixed handling of -Xy option, such as -N -h.
+  Fixed handling of -Xy option, such as -N -h.	
