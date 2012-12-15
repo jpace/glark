@@ -383,7 +383,7 @@ notations are supported.
     Match either of the two expressions. As with the `--and` option, the two
     forms are equivalent, and `--end-of-or` is optional.
 
-  * `--xor` expr1 expr2 `--end-of-xor`, `( expr1 B<--xor> expr2 )`:
+  * `--xor` expr1 expr2 `--end-of-xor`, `( expr1 --xor expr2 )`:
     Match either of the two expressions, but not both. `--end-of-xor` is
     optional.
 
