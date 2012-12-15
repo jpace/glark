@@ -4,7 +4,8 @@
 $rielold = false
 
 require 'rubygems'
-require 'riel'
+require 'rainbow'
+require 'singleton'
 
 if $rielold
   require 'riel/ansicolor'
@@ -24,16 +25,77 @@ module Highlight
   end
 end
 
+module Sickill
+  module Rainbow
+    class AnsiColor
+      def validate_color_name #:nodoc:
+        color_names = TERM_COLORS.keys
+
+        unless color_names.include?(@color)
+          raise ArgumentError.new "Unknown color name: '#{@color}'; valid names: #{color_names.join(', ')}"
+        end
+      end
+    end
+  end
+end
+
+class RainbowHighlighter
+  include Singleton
+
+  COLORS      = %w{ black red green yellow blue magenta cyan white [\dA-Fa-f]{6} }
+  DECORATIONS = %w{ none reset bold underscore underline blink reverse inverse negative concealed }
+
+  BACKGROUND_COLORS = COLORS.collect { |color| "on_#{color}" }
+  FOREGROUND_COLORS = COLORS
+  
+  COLORS_RE = Regexp.new('(?: ' + 
+                         # background will be in capture 0
+                         'on(?:\s+|_) ( ' + COLORS.join(' | ') + ' ) | ' +
+                         # foreground will be in capture 1
+                         '( ' + (COLORS + DECORATIONS).join(' | ') + ' ) ' +
+                         ')', Regexp::EXTENDED)
+
+  def get_code color, type
+    case color
+    when 'bold', 'bright'
+      Sickill::Rainbow::TERM_EFFECTS[:bright]
+    when 'reverse', 'negative', 'inverse'
+      Sickill::Rainbow::TERM_EFFECTS[:inverse]
+    when 'underline'
+      Sickill::Rainbow::TERM_EFFECTS[:underline]
+    when 'blink'
+      Sickill::Rainbow::TERM_EFFECTS[:blink]
+    when %r{^[\dA-Fa-f]{6}$}
+      ac = Sickill::Rainbow::AnsiColor.new type, color
+      ac.code
+    else
+      ac = Sickill::Rainbow::AnsiColor.new type, color.to_sym
+      ac.code
+    end
+  end
+
+  def to_codes color
+    codes = ""
+    return codes unless Sickill::Rainbow.enabled
+    color.scan(COLORS_RE).collect do |md|
+      color, type = md[0] ? [ md[0], :background ] : [ md[1], :foreground ]
+      code = get_code color, type
+      "\e[#{code}m"
+    end.join ''
+  end
+end
+
 class HlWrapper
   def initialize
-    @hl = $rielold ? Text::ANSIHighlighter : Text::ANSIHighlighter
+    # @hl = $rielold ? Text::ANSIHighlighter : Text::ANSIHighlighter.instance
+    @hl = RainbowHighlighter.instance
   end
   
   def make_color color
     if $rielold
       result = @hl.make color
     else
-      @hl.instance.to_codes color
+      @hl.to_codes color
     end
   end
   

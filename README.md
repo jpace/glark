@@ -391,9 +391,9 @@ which means "match a line that has "this", but not "that".
 
 ## HIGHLIGHTING
 
-Matching patterns and file names can be highlighted using ANSI escape sequences.
-Both the foreground and the background colors may be specified, from the
-following:
+On terminals that support ANSI escape sequences, matching patterns and file
+names can be highlighted for the foreground and/or background. Colors are
+denoted by name, from the following list, or by RGB value, in the form RRGGBB.
 
     black
     blue
@@ -417,12 +417,14 @@ The format is "MODIFIERS FOREGROUND on BACKGROUND". For example:
 
     red
     black on yellow                    (the default for patterns)
-    reverse bold                       (the default for file names)
+    bold                               (the default for file names)
     green on white
-    bold underline red on cyan
+    AE22D9
+    f2331a on 2a3f44
+    bold underline red on 88a72d
 
 By default text is highlighted as black on yellow. File names are written in
-reversed bold text.
+bold.
 
 ## EXAMPLES
 
@@ -600,10 +602,11 @@ reversed bold text.
         highlight:         off
         ignore-case:       false
         quiet:             yes
-        text-color:        bold reverse
-        text-color-1:      yellow on black
-        text-color-2:      red on black
-        line-number-color: bold
+        text-color-0:      f2331a on 2a3f44
+        text-color-1:      bold underline red on 88a72d
+        text-color-2:      a85387 on e4d3d2
+        line-number-color: red
+        file-color:        bold magenta
         verbose:           false
         grep:              true
         
@@ -732,7 +735,9 @@ reversed bold text.
         text-color: bold blue on white
     
   * `text-color-NUM`:
-    Sets the color with which the NUMth regexp will be highlighted. Example:
+    Sets the color with which the NUMth regexp will be highlighted, for matching
+    with multiple regular expressions, such as with the `--or` or `--file`
+    option. Example:
     
         text-color-2: white on green
     

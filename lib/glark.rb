@@ -3,7 +3,7 @@ $:.unshift(File.dirname(__FILE__)) unless
 
 module Glark
   PACKAGE = 'glark'
-  VERSION = '1.9.1'
+  VERSION = '1.10.0'
 end
 
 require 'glark/app/app'

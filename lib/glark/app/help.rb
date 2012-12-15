@@ -77,7 +77,7 @@ module Glark
       puts "      --verbose                  Display normally suppressed output"
 
       puts ""
-      puts "On Unix systems, run glark --man for more information."
+      puts "Run gem man glark for more information. That requires the installation of the gem-man gem."
     end
     
     def show_man
@@ -90,8 +90,8 @@ module Glark
       end
 
       if dir
-        manfile = dir + "doc/glark.1"
-        cmd     = "man #{manfile.to_s}"
+        manfile = dir + "man/glark.1"
+        cmd = "gem man glark"
         ::IO.popen(cmd) do |io|
           puts io.readlines
         end

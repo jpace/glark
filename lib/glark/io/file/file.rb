@@ -2,15 +2,11 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'rubygems'
-require 'riel'
 require 'glark/util/io/lines'
 
 module Glark
   # A thing that can be grepped (er, glarked).
   class File
-    include Loggable
-
     attr_reader :fname
     
     def initialize fname, io, range

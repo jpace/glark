@@ -5,6 +5,25 @@ require 'glark/util/colors/spec'
 
 module Glark
   class ColorOptions < ColorSpec    
+    DEFAULT_COLORS = [
+                      # "FF88CC",
+                      "black on yellow",
+                      "black on green",
+                      "black on magenta",
+                      "yellow on black",
+                      "magenta on black",
+                      "green on black",
+                      "cyan on black",
+                      "blue on yellow",
+                      "blue on magenta",
+                      "blue on green",
+                      "blue on cyan",
+                      "yellow on blue",
+                      "magenta on blue",
+                      "green on blue",
+                      "cyan on blue",
+                     ]
+
     attr_reader :text_color_style # single, multi, or nil (no text highlights)
 
     def initialize
@@ -35,7 +54,9 @@ module Glark
     end
 
     def make_colors limit = -1
-      Text::Highlighter::DEFAULT_COLORS[0 .. limit].collect { |color| make_color color }
+      DEFAULT_COLORS[0 .. limit].collect do |color| 
+        make_color color
+      end
     end
 
     def multi_colors 
@@ -59,7 +80,8 @@ module Glark
                            else
                              raise "highlight format '" + @text_color_style.to_s + "' not recognized"
                            end
-        @file_name_color = make_color "reverse bold"
+
+        @file_name_color = make_color "bold"
         @line_number_color = nil
       else
         @highlighter = nil

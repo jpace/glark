@@ -147,3 +147,11 @@ Fri Nov 30 20:20:13 2012
 Sun Dec  9 10:49:18 2012
 
   Fixed --man option.
+
+Fri Dec 14 18:36:03 2012
+
+  Fixed alignment when line numbers are colorized.
+
+Sat Dec 15 10:03:11 2012
+
+  Added documentation. Added manpage to gem.

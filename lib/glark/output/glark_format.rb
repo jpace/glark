@@ -29,7 +29,7 @@ module Glark
     def print_line_number lnum 
       if @lnum_highlighter
         lnumstr = (lnum + 1).to_s
-        pad = " " * ([5 - lnumstr.length, 0].max)
+        pad = " " * ([4 - lnumstr.length, 0].max)
         @out.print pad + " " + adorn(@lnum_highlighter, lnumstr) + " "
       else
         super

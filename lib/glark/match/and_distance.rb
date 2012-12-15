@@ -5,7 +5,6 @@
 # Distance for and expression
 
 require 'rubygems'
-require 'riel/regexp'
 require 'riel/string'
 require 'glark/match/re'
 require 'glark/match/ior'
@@ -24,21 +23,20 @@ class AndDistance
   attr_reader :distance
 
   def initialize arg, args
-    @distance = nil
-    if arg == "-a"
-      @distance = args.shift
-    elsif arg == "--and"
-      if args.size > 0 && numeric?(args[0])
-        @distance = args.shift
-      else
-        @distance = "0"
-      end
-    elsif md = AND_EQ_NUM_RE.match(arg)
-      @distance = md[1]
-    else
-      raise "invalid 'and' option: '#{arg}'"
-    end
-
+    @distance = if arg == "-a"
+                  args.shift
+                elsif arg == "--and"
+                  if args.size > 0 && numeric?(args[0])
+                    args.shift
+                  else
+                    "0"
+                  end
+                elsif md = AND_EQ_NUM_RE.match(arg)
+                  md[1]
+                else
+                  raise "invalid 'and' option: '#{arg}'"
+                end
+    
     # check to ensure that this is numeric
     if !numeric? @distance
       raise "invalid distance for 'and' expression: '#{@distance}'\n" +
@@ -55,6 +53,6 @@ class AndDistance
   end
   
   def numeric? x
-    x && (x.kind_of?(Fixnum) || (x.to_i == INFINITE_DISTANCE || x.num))
+    x && (x.kind_of?(Fixnum) || x.to_i == INFINITE_DISTANCE || x.num)
   end  
 end

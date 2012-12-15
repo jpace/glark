@@ -6,8 +6,6 @@
 # expressions, contextual output, highlighting, detection and exclusion of
 # nontext files, and complex matching criteria.
 
-require 'rubygems'
-require 'riel'
 require 'glark/app/options'
 require 'glark/app/runner'
 
@@ -34,7 +32,7 @@ module Glark
       rescue => e
         # show the message, and the stack trace only if verbose:
         $stderr.puts "error: #{e}"
-        if Log.verbose || true
+        if Log.verbose
           $stderr.puts e.backtrace
           raise
         else

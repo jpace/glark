@@ -3,7 +3,7 @@
 # vim: set filetype=ruby : set sw=2
 
 require 'rubygems'
-require 'riel'
+require 'riel/log/loggable'
 require 'glark/app/options'
 require 'glark/io/file/binary_file'
 require 'glark/io/file/gz_file'

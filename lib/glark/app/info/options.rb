@@ -2,10 +2,9 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'rubygems'
-require 'riel'
 require 'glark/app/help'
 require 'glark/util/options'
+require 'glark'
 
 module Glark
   class InfoOptions < Options

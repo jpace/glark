@@ -1,9 +1,6 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-require 'rubygems'
-require 'riel'
-
 module Glark
   class AppSpec
     attr_reader :local_config_files

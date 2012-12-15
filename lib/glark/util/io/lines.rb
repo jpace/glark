@@ -2,9 +2,6 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
-require 'rubygems'
-require 'riel'
-
 module Glark
   module IO
     # Lines of input. Handles non-default ("\n") record separator.

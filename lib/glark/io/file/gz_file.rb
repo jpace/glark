@@ -1,8 +1,6 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-require 'rubygems'
-require 'riel'
 require 'glark/io/file/file'
 require 'zlib'
 

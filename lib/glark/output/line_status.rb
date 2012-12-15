@@ -1,9 +1,6 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-require 'rubygems'
-require 'riel'
-
 module Glark
   class LineStatus
     WRITTEN = Object.new
