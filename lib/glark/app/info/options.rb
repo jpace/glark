@@ -4,9 +4,11 @@
 
 require 'glark/app/help'
 require 'glark/util/options'
-require 'glark'
 
 module Glark
+  PACKAGE = 'glark'
+  VERSION = '1.10.0'
+  
   class InfoOptions < Options
     attr_reader :colors
     attr_reader :explain

@@ -7,11 +7,23 @@ glark(1) - Search text files for complex regular expressions
 
 ## DESCRIPTION
 
-Similar to `grep`, `glark` supports: Perl-compatible regular expressions, color
-highlighting of matches, context around matches, complex expressions ("and" and
-"or"), inclusion and exclusion of files by patterns, and automatic exclusion of
-non-text files. Its regular expressions should be familiar to those experienced
-in Perl, Python or Ruby.
+`Glark` searches files for regular expressions.
+
+Similar to `grep`, `glark` supports Perl-compatible regular expressions, color
+highlighting of matches, and context around matches.
+
+`Glark` extends `grep` by matching complex expressions, such as "and", "or", and
+"xor".
+
+`Glark` handles file, directory, and path arguments, optionally recursing
+directories to a certain depth, and processing path arguments as a set of files
+and directories. .svn and .git subdirectories are automatically excluded. Binary
+files are excluded (by default), but can, in the case of compressed or archived
+files, have their extracted contents be searched.
+
+`Glark` can use a per-project configuration file, so different projects can have
+their own `Glark` parameters, such as different files to include and exclude for
+searching, and different colors for pattern highlighting.
 
 ## OPTIONS
 
@@ -40,8 +52,8 @@ substrings, such as `--rec` for `--recurse`.
     `list`: binary files that contain lists of files (such as tar, tar.gz, zip
     and jar files) are searched such that the _file names_ are searched against.
 
-    `read`: the full contents of binary files will be searched. This supports
-    tar, jar, zip, tar.gz, tgz and gz files. Only one level of
+    `read`: the decompressed full contents of binary files will be searched.
+    This supports tar, jar, zip, tar.gz, tgz and gz files. Only one level of
     compression/archiving is handled; thus compressed files within other
     compressed files are not searched.
 
@@ -301,7 +313,8 @@ or more of any of the following:
     The form **/usr/lib/...N**, where N is a number, restrains recursive searching
     to the given depth. A value of 0 means to search only the files in the given
     directory; a value of 1 means to search the files in the given directory and
-    the immediate subdirectories.
+    the immediate subdirectories. What happens with a value of 2 is left as an
+    exercise for the reader.
 
   * `-`:
     Read from standard input. If no file arguments are specified this is the
@@ -451,7 +464,7 @@ bold.
 
     glark -M Object *.java
     
-  * `glark --grep --extract-matches '(\w+)\.printStackTrace\(.*\)' *.java`:
+  * `glark -N -h --context=0 --extract-matches '(\w+)\.printStackTrace\(.*\)' *.java`:
     Show only the variable name of exceptions that are dumped. Short form:
 
     glark -gy '(\w+)\.printStackTrace\\(.\*\\)' *.java
@@ -468,10 +481,6 @@ bold.
     a single word. Short form:
 
     glark -L '"\w+"'
-    
-  * `% for i in *.jar; do jar tvf $i | glark --LABEL=$i Exception; done`:
-    Search the files for 'Exception', displaying the jar file name instead of the
-    standard input marker ('-').
 
   * `glark --text-color "red on white" '\b[[:digit:]]{5}\b' *.c`:
     Display (in red text on a white background) occurrences of exactly 5 digits.
@@ -565,6 +574,12 @@ bold.
 
   * `glark connect -
     Search standard input for "connect".
+    
+  * `% for i in *.jar; do jar tf $i | glark --label=$i Exception; done`:
+    Search the files for 'Exception', displaying the jar file name instead of the
+    standard input marker ('-'). An equivalent is:
+
+    glark --binary-files=list Exception *.jar
 
 ### ADVANCED USAGE
 
@@ -595,26 +610,27 @@ bold.
   * `$HOME/.glarkrc`:
     A resource file, containing name/value pairs, separated by either ':' or '='.
     The valid fields of a .glarkrc file are as follows, with example values:
-        after-context:     1
-        before-context:    6
-        context:           5
-        file-color:        blue on yellow
-        highlight:         off
-        ignore-case:       false
-        quiet:             yes
-        text-color-0:      f2331a on 2a3f44
-        text-color-1:      bold underline red on 88a72d
-        text-color-2:      a85387 on e4d3d2
-        line-number-color: red
-        file-color:        bold magenta
-        verbose:           false
-        grep:              true
+        after-context:      1
+        before-context:     6
+        context:            5
+        file-color:         blue on yellow
+        grep:               true
+        highlight:          off
+        ignore-case:        false
+        line-number-color:  red
+        local-config-files: true
+        quiet:              yes
+        text-color-0:       f2331a on 2a3f44
+        text-color-1:       bold underline red on 88a72d
+        text-color-2:       a85387 on e4d3d2
+        verbose:            false
         
     "yes" and "on" are synonymnous with "true". "no" and "off" signify "false".
     
     My ~/.glarkrc file contains:
         context: 3
         quiet: true
+        local-config-files: true
     
   * `/path/.../.glarkrc`:
     See the `local-config-files` field below.
@@ -823,8 +839,6 @@ equivalent:
     foo/        "foo/"
 
 The code to detect nontext files assumes ASCII, not Unicode.
-
-Glark runs an order of magniude faster under Ruby 1.8 than 1.9.
 
 ## AUTHOR
 

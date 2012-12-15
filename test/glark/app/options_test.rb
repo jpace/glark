@@ -296,6 +296,13 @@ module Glark
       end
     end
 
+    def test_no_line_number_no_file_name
+      [ %w{ -N -h }, '-hN', '-Nh' ].each do |opt|
+        run_test([ opt, 'foo' ].flatten,
+                 :output => { :show_line_numbers => false, :show_file_names => false })
+      end
+    end
+
     def test_explain
       %w{ --explain }.each do |opt|
         run_test([ opt, 'foo' ],

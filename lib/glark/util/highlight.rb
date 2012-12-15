@@ -28,6 +28,8 @@ end
 module Sickill
   module Rainbow
     class AnsiColor
+      $-w = false
+      # includes the aberrant color name in the error message.
       def validate_color_name #:nodoc:
         color_names = TERM_COLORS.keys
 
@@ -35,6 +37,7 @@ module Sickill
           raise ArgumentError.new "Unknown color name: '#{@color}'; valid names: #{color_names.join(', ')}"
         end
       end
+      $-w = true
     end
   end
 end

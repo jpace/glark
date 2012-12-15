@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'fileutils'
-# require 'lib/glark'
 require 'rake/testtask'
 require 'rubygems/package_task'
 require 'rbconfig'
@@ -25,20 +24,26 @@ spec = Gem::Specification.new do |s|
   s.version            = "1.10.0"
   s.author             = "Jeff Pace"
   s.email              = "jeugenepace@gmail.com"
+
   s.homepage           = "http://www.incava.org/projects/glark"
   s.platform           = Gem::Platform::RUBY
   s.summary            = "Extended searching of text files."
-  s.files              = FileList["{bin,lib,man}/**/*"].to_a
+  s.description        = <<-EODESC
+Glark searches files for regular expressions, extending grep by matching complex
+expressions ("and", "or", and "xor"), extracting and searching within compressed
+files, and excluding .svn and .git subdirectories by default. Different projects
+can have their own Glark configuration.
+EODESC
+  s.files              = FileList["{lib,man}/**/*"].to_a + FileList["bin/glark"].to_a
   s.require_path       = "lib"
   s.test_files         = FileList["{test}/**/*.rb"].to_a
   s.has_rdoc           = false
-  # s.extra_rdoc_files   = [""]
-  s.add_dependency("riel", ">= 1.1.14")
-  s.add_dependency("rainbow", ">= 1.1.4")
   s.bindir             = 'bin'
-  # s.bindir = Config::CONFIG['bindir']
   s.executables        = %w{ glark }
   s.default_executable = 'glark'
+  
+  s.add_dependency("riel", ">= 1.1.16")
+  s.add_dependency("rainbow", ">= 1.1.4")
 end
  
 Gem::PackageTask.new(spec) do |pkg| 
