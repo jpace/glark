@@ -575,7 +575,7 @@ bold.
   * `glark connect -
     Search standard input for "connect".
     
-  * `% for i in *.jar; do jar tf $i | glark --label=$i Exception; done`:
+  * `for i in *.jar; do jar tf $i | glark --label=$i Exception; done`:
     Search the files for 'Exception', displaying the jar file name instead of the
     standard input marker ('-'). An equivalent is:
 
@@ -583,7 +583,7 @@ bold.
 
 ### ADVANCED USAGE
 
-  * `glark% --explain --match-name 'c.*\.rb$' --and=5 Regexp --xor parse --and=3 boundary quote /usr/lib/ruby/1.9.1/...2`:
+  * `glark --explain --match-name 'c.*\.rb$' --and=5 Regexp --xor parse --and=3 boundary quote /usr/lib/ruby/1.9.1/...2`:
 
     As shown by the `--explain` options:
 
