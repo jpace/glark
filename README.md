@@ -572,7 +572,7 @@ bold.
     Search for "Regexp" in all files _under_ /usr/lib/ruby/1.9.1 with a name
     starting with 'http'.
 
-  * `glark connect -
+  * `glark connect -`:
     Search standard input for "connect".
     
   * `for i in *.jar; do jar tf $i | glark --label=$i Exception; done`:
