@@ -61,7 +61,6 @@ module Glark
 
     def multi_colors 
       make_colors
-      # [ make_rgb_color(4, 3, 2, :bg) + make_rgb_color(0, 2, 1, :fg) ]
     end
 
     def single_color
@@ -117,7 +116,7 @@ module Glark
 
     def colorize field, str
       if field
-        field + str + Text::Color::RESET
+        field + str + Sickill::Rainbow::TERM_EFFECTS[:reset]
       else
         str
       end

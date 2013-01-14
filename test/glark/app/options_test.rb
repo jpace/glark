@@ -29,19 +29,13 @@ module Glark
 
     def assert_color opts, name, expval, args
       val = opts.method(name).call
-      ### puts "val: #{val}"
-      ### puts "expval: #{expval}"
-      ###$$$ assert_equal expval, val, "args: #{args}"
     end
 
     def assert_colors opts, exp, args
       return unless exp
       exp.each do |name, expval|
-        ### puts "name: #{name}"
         val = opts.method(name).call
-        ### puts "val: #{val}"
-        ### puts "expval: #{expval}"
-        ###$$$ assert_equal expval, val, "args: #{args}"
+        assert_equal  expval, val, "args: #{args}"
       end
     end
 
@@ -52,7 +46,7 @@ module Glark
       
       assert_method_values gopt, expected[:app], args
       assert_method_values gopt.match_spec, expected[:match], args
-      # assert_method_values gopt.colors, expected[:colors], args
+      assert_method_values gopt.colors, expected[:colors], args
       assert_colors gopt.colors, expected[:colors], args
       assert_method_values gopt.output_options, expected[:output], args
       assert_method_values gopt.info_options, expected[:info], args
@@ -194,7 +188,7 @@ module Glark
         end
       end
 
-      singlecolor = str_to_color_codes(Text::Highlighter::DEFAULT_COLORS[0])
+      singlecolor = str_to_color_codes(ColorOptions::DEFAULT_COLORS[0])
       
       %w{ single }.each do |val|
         [

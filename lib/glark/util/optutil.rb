@@ -1,7 +1,8 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-require 'riel/text/ansi/color'
+require 'rubygems'
+require 'rainbow'
 
 module Glark
   module OptionUtil
@@ -60,7 +61,7 @@ module Glark
 
     def colorize field, str
       if field
-        field + str + Text::Color::RESET
+        field + str + Sickill::Rainbow::TERM_EFFECTS[:reset]
       else
         str
       end

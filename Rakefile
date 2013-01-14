@@ -21,7 +21,7 @@ end
 
 spec = Gem::Specification.new do |s| 
   s.name               = "glark"
-  s.version            = "1.10.0"
+  s.version            = "1.10.1"
   s.author             = "Jeff Pace"
   s.email              = "jeugenepace@gmail.com"
 
