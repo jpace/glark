@@ -2,7 +2,6 @@ require 'rubygems'
 require 'fileutils'
 require 'rake/testtask'
 require 'rubygems/package_task'
-require 'rbconfig'
 
 task :default => :test
 
