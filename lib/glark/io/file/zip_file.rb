@@ -19,7 +19,7 @@ module Glark
       rescue LoadError => e
         msg = "error loading zip gem: #{e}\n"
         msg << "to install this dependency, run 'gem install rubyzip'"
-        info "msg: #{msg}".on_red
+        info "msg: #{msg}".color(:red)
         raise msg
       end
     end
