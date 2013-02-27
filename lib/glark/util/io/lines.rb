@@ -85,8 +85,7 @@ module Glark
         # This is much easier. Just resplit the whole thing at end of line
         # sequences.
         
-        eoline    = "\n"             # should be OS-dependent
-        srclines  = @lines
+        eoline = "\n"           # should be OS-dependent
         reallines = @lines.join("").split ANY_END_OF_LINE
 
         # "\n" after all but the last line

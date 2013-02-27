@@ -99,7 +99,7 @@ module Glark
     end
 
     def config_fields
-      fields = {
+      {
         "file-color" => @file_name_color,
         "highlight" => @text_color_style,
         "line-number-color" => @line_number_color,
@@ -107,7 +107,7 @@ module Glark
     end
 
     def dump_fields
-      fields = {
+      {
         "file_name_color" => colorize(@file_name_color, "filename"),
         "highlight" => @text_color_style,
         "line_number_color" => colorize(@line_number_color, "12345"),

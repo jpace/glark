@@ -16,7 +16,7 @@ module Glark
     end
 
     def config_fields
-      fields = {
+      {
         "after-context" => @context.after,
         "before-context" => @context.before,
         "filter" => @filter,
@@ -25,7 +25,7 @@ module Glark
     end
 
     def dump_fields
-      fields = {
+      {
         "after" => @context.after,
         "before" => @context.before,
         "count" => @count,
@@ -76,7 +76,7 @@ module Glark
       add_opt_blk(optdata, %w{ -U --no-highlight }) { @colors.text_color_style =  nil }
       add_opt_blk(optdata, %w{ -g --grep }) { self.style = "grep" }
       
-      optdata << lnum_color_option = {
+      optdata << {
         :tags => %w{ --line-number-color },
         :arg  => [ :string ],
         :set  => Proc.new { |val| @colors.line_number_color = @colors.create_color "line-number-color", val },
@@ -87,13 +87,13 @@ module Glark
       add_opt_true optdata, :show_file_names, %w{ -H --with-filename }
       add_opt_false optdata, :show_file_names, %w{ -h --no-filename }
 
-      optdata << highlight_option = { 
+      optdata << { 
         :tags => %w{ -u --highlight },
         :arg  => [ :optional, :regexp, %r{ ^ (?:(multi|single)|none) $ }x ],
         :set  => Proc.new { |md| val = md ? md[1] : "multi"; @colors.text_color_style = val }
       }
 
-      optdata << file_color_option = {
+      optdata << {
         :tags => %w{ --file-color },
         :arg  => [ :string ],
         :set  => Proc.new { |val| @colors.file_name_color = @colors.create_color "file-color", val }

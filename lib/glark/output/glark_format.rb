@@ -20,7 +20,7 @@ module Glark
     end
 
     def show_file_header
-      if @show_file_name && @file_header.nil?
+      if @show_file_name && @file_header.nil? && displayed_name
         @file_header = FileHeader.new displayed_name, @fname_highlighter
         @file_header.print @out
       end

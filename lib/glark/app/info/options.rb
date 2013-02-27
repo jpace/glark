@@ -21,7 +21,7 @@ module Glark
     end
 
     def config_fields
-      fields = {
+      {
         "known-nontext-files" => FileType.nontext_extensions.sort.join(' '),
         "known-text-files" => FileType.text_extensions.sort.join(' '),
         "quiet" => Log.quiet,
@@ -30,7 +30,7 @@ module Glark
     end
 
     def dump_fields
-      fields = { 
+      {
         "explain" => @explain,
         "known_nontext_files" => FileType.nontext_extensions.join(", "),
         "known_text_files" => FileType.text_extensions.join(", "),

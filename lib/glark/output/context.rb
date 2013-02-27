@@ -30,7 +30,7 @@ module Glark
     end
 
     def add_as_option optdata
-      optdata << context_option = {
+      optdata << {
         :tags => %w{ -C --context },
         :res  => %r{ ^ - ([1-9]\d*) $ }x,
         :arg  => [ :optional, :integer ],
@@ -38,14 +38,14 @@ module Glark
         :rc   => %w{ context },
       }
 
-      optdata << context_after_option = {
+      optdata << {
         :tags => %w{ --after-context -A },
         :arg  => [ :integer ],
         :set  => Proc.new { |val| @after = val },
         :rc   => %w{ after-context },
       }
 
-      optdata << context_before_option = {
+      optdata << {
         :tags => %w{ --before-context -B },
         :arg  => [ :integer ],
         :set  => Proc.new { |val| @before = val },

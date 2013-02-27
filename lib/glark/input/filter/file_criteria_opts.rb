@@ -25,7 +25,7 @@ module Glark
 
     def config_fields
       maxsize = (filter = find_by_class(:size, :negative, SizeLimitFilter)) && filter.max_size
-      fields = {
+      {
         "size-limit" => maxsize
       }
     end

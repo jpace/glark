@@ -19,14 +19,14 @@ module Glark
     end
 
     def config_fields
-      fields = {
+      {
         "ignore-case" => @ignorecase,
         "text-color" => text_colors.join(' '),
       }
     end
 
     def dump_fields
-      fields = {
+      {
         "expr" => @expr,
         "extract_matches" => @extract_matches,
         "ignorecase" => @ignorecase,
@@ -51,7 +51,7 @@ module Glark
       add_opt_true optdata, :whole_lines, %w{ -x --line-regexp }
       add_opt_true optdata, :extended, %w{ --extended }
 
-      optdata << expr_file_option = {
+      optdata << {
         :tags => %w{ -f --file },
         :arg  => [ :string ],
         :set  => Proc.new { |fname| @expr = create_expression_factory.read_file fname }
@@ -62,7 +62,7 @@ module Glark
         @expr = create_expression_factory.make_expression args
       end
 
-      optdata << text_color_option = {
+      optdata << {
         :tags => %w{ --text-color },
         :arg  => [ :string ],
         :set  => Proc.new { |val| @colors.text_colors = [ @colors.create_color("text-color", val) ] }

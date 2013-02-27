@@ -27,7 +27,7 @@ module Grep
     end
 
     def print_file_name
-      if @show_file_name
+      if @show_file_name && displayed_name
         @out.print displayed_name, ":"
       end
     end

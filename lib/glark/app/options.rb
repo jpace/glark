@@ -109,7 +109,7 @@ module Glark
     end
 
     def config_fields
-      fields = {
+      {
         "local-config-files" => @local_config_files,
       }
     end

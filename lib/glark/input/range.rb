@@ -74,22 +74,22 @@ module Glark
     end
 
     def add_as_option optdata
-      optdata << range_after_option = {
-        :tags    => %w{ --after },
-        :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
-        :set     => Proc.new { |md| @from = md[1] }
+      optdata << {
+        :tags => %w{ --after },
+        :arg => [ :required, :regexp, %r{ (\d+%?) $ }x ],
+        :set => Proc.new { |md| @from = md[1] }
       }
 
-      optdata << range_before_option = { 
-        :tags    => %w{ --before },
-        :arg     => [ :required, :regexp, %r{ (\d+%?) $ }x ],
-        :set     => Proc.new { |md| @to = md[1] }
+      optdata << { 
+        :tags => %w{ --before },
+        :arg => [ :required, :regexp, %r{ (\d+%?) $ }x ],
+        :set => Proc.new { |md| @to = md[1] }
       }
 
-      optdata << range_option = {
-        :tags     => %w{ -R --range },
-        :arg      => [ :required, :regexp, Regexp.new('(\d+%?),(\d+%?)') ],
-        :set      => Proc.new do |md, opt, args|
+      optdata << {
+        :tags => %w{ -R --range },
+        :arg => [ :required, :regexp, Regexp.new('(\d+%?),(\d+%?)') ],
+        :set => Proc.new do |md, opt, args|
           if md && md[1] && md[2]
             @from = md[1]
             @to = md[2]

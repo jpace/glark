@@ -30,11 +30,11 @@ module Glark
 
       Log.verbose = true
 
-      glark = Runner.new gopt, gopt.fileset
+      Runner.new gopt, gopt.fileset
       
       sio.close
 
-      if true
+      if false
         puts "....."
         puts sio.string
         puts "....."

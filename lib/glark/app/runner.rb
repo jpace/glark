@@ -87,7 +87,7 @@ module Glark
       when ZIP_RE.match(fstr)
         search_read_archive_file fname, Glark::ZipFile
       else
-        write "file '#{fname}' does not have a handled extension"
+        $stderr.puts "file '#{fstr}' does not have a handled extension for reading content"
         return
       end
     end
@@ -103,7 +103,7 @@ module Glark
             when TAR_GZ_RE.match(fstr)
               Glark::TarGzFile
             else
-              write "file '#{fname}' does not have a handled extension"
+              $stderr.puts "file '#{fstr}' does not have a handled extension for reading a list"
               return
             end
 
@@ -120,7 +120,7 @@ module Glark
       
       if name == "-" 
         write "reading standard input..."
-        search_text name, $stdin
+        search_text nil, $stdin
       else
         case type
         when :binary

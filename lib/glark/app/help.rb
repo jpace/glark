@@ -90,7 +90,7 @@ module Glark
       end
 
       if dir
-        manfile = dir + "man/glark.1"
+        # manfile = dir + "man/glark.1"
         cmd = "gem man glark"
         ::IO.popen(cmd) do |io|
           puts io.readlines

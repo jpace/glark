@@ -16,8 +16,7 @@ module Glark
     end
 
     def config_fields
-      fields = {
-      }
+      Hash.new
     end
 
     def dump_fields

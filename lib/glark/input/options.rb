@@ -33,7 +33,7 @@ module Glark
       $/ = if sep && sep.to_i > 0
              begin
                sep.oct.chr
-             rescue RangeError => e
+             rescue RangeError
                # out of range (e.g., 777) means nil:
                nil
              end
@@ -82,26 +82,26 @@ module Glark
     end
     
     def add_as_options optdata    
-      optdata << record_separator_option = {
+      optdata << {
         :res => [ Regexp.new('^ -0 (\d{1,3})? $ ', Regexp::EXTENDED) ],
         :set => Proc.new { |md| rs = md ? md[1] : 0; set_record_separator rs }
       }
 
       @range.add_as_option optdata
 
-      optdata << recurse_option = {
+      optdata << {
         :tags => %w{ -r --recurse },
         :set  => Proc.new { set_directory("recurse") }
       }
 
-      optdata << directories_option = {
+      optdata << {
         :tags => %w{ --directories -d },
         :arg  => [ :string ],
         :set  => Proc.new { |val| set_directory val },
       }
 
       re = Regexp.new '^[\'\"]?(' + VALID_BINARY_FILE_TYPES.join('|') + ')[\'\"]?$'
-      optdata << binary_files_option = {
+      optdata << {
         :tags => %w{ --binary-files },
         :arg  => [ :required, :regexp, re ],
         :set  => Proc.new { |md| @binary_files = md[1] },

@@ -28,7 +28,7 @@ module Glark
     end
 
     def assert_color opts, name, expval, args
-      val = opts.method(name).call
+      opts.method(name).call
     end
 
     def assert_colors opts, exp, args
@@ -42,7 +42,6 @@ module Glark
     def run_test args, expected = Hash.new, &blk
       gopt = Glark::AppOptions.new
       gopt.run args + Array.new
-      outputopts = gopt.output_options
       
       assert_method_values gopt, expected[:app], args
       assert_method_values gopt.match_spec, expected[:match], args
