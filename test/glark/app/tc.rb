@@ -28,8 +28,6 @@ module Glark
       gopt.run(args + files)
       gopt.output_options.out = sio
 
-      Log.verbose = true
-
       Runner.new gopt, gopt.fileset
       
       sio.close

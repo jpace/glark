@@ -11,9 +11,10 @@ STDERR.sync = true
 
 require 'glark/app/runner'
 
-Log.verbose = true
+# Log.verbose = true
 Log.set_widths(-15, 35, -35)
-Log.level = Log::DEBUG
+Log.quiet = true
+Log.verbose = false
 
 module Glark
   class TestCase < Test::Unit::TestCase

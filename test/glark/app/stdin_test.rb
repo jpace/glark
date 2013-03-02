@@ -19,8 +19,6 @@ module Glark
       gopt.run(args)
       gopt.output_options.out = outio
 
-      Log.verbose = true
-
       Runner.new gopt, gopt.fileset
       
       # inio.close

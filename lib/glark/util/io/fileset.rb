@@ -86,7 +86,7 @@ module Glark
         end
         
         unless pn.readable?
-          $stderr.puts "directory not readable: #{pn}"
+          write "directory not readable: #{pn}"
           next
         end
         
@@ -101,7 +101,7 @@ module Glark
       elsif pn.file?
         handle_file pn, &blk
       else
-        $stderr.puts "unknown file type: #{pn}"
+        write "unknown file type: #{pn}"
       end
     end
 

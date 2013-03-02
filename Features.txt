@@ -161,3 +161,7 @@ Sat Dec 15 10:03:11 2012
 Sun Dec 16 18:10:19 2012
 
   Fixed formatting error in documentation.
+
+Thu Feb 28 08:58:59 2013
+
+  When reading from stdin, '-' is no longer displayed as the filename.

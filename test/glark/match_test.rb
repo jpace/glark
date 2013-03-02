@@ -129,8 +129,6 @@ module Glark
     end
 
     def test_and_expression_2_lines_apart
-      Log.level = Log::DEBUG
-      
       # 'ea', 'ec' within 2 lines of each other:
       expected = [
                   "    9 zoo[30m[43mea[0ml",

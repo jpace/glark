@@ -1,6 +1,7 @@
 #!/usr/bin/ruby -w
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
+# -*- encoding: UTF-8 -*-
 
 require 'glark/match/expression'
 require 'glark/util/highlight'
@@ -35,6 +36,9 @@ class RegexpExpression < Expression
   end
 
   def match? line
+    if String.method_defined?(:encode)
+      line.encode! 'UTF-8', 'UTF-8', :invalid => :replace
+    end
     @re.match line
   end
 
