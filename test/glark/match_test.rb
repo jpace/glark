@@ -21,7 +21,7 @@ module Glark
       opts.output_options.out = sio
 
       files = opts.fileset
-      glark = Runner.new opts, files
+      Runner.new opts, files
       
       result = sio.string
       assert_equal expected.collect { |line| "#{line}\n" }.join(''), result

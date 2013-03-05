@@ -4,6 +4,7 @@
 require 'rubygems'
 require 'riel/dir'
 require 'riel/optproc'
+require 'riel/env'
 require 'glark/app/info/options'
 require 'glark/app/rcfile'
 require 'glark/app/spec'
