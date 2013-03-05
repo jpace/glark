@@ -165,3 +165,8 @@ Sun Dec 16 18:10:19 2012
 Thu Feb 28 08:58:59 2013
 
   When reading from stdin, '-' is no longer displayed as the filename.
+
+Mon Mar  4 19:43:46 2013
+
+  Removed 'reading standard input'.
+  Released version 1.10.2.

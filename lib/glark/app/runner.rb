@@ -119,7 +119,7 @@ module Glark
       end
       
       if name == "-" 
-        write "reading standard input..."
+        info "reading standard input..."
         search_text nil, $stdin
       else
         case type
