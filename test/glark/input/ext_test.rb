@@ -11,9 +11,9 @@ module Glark
                   "[1m/proj/org/incava/glark/test/resources/add.rb[0m",
                   "    5   def ini[30m[43mtialize[0m x, y",
                   "[1m/proj/org/incava/glark/test/resources/greet.rb[0m",
-                  "    8   def ini[30m[43mtialize name[0m",
-                  "    9     pu[30m[43mts \"hello, \" + name[0m",
-                  "   13 Gree[30m[43mt.ne[0mw ARGV.shift || \"world\"",
+                  "    5   def ini[30m[43mtialize name[0m",
+                  "    6     pu[30m[43mts \"hello, \" + name[0m",
+                  "   10 Gree[30m[43mt.ne[0mw ARGV.shift || \"world\"",
                  ]
       run_app_test expected, [ '-r', '--match-ext', 'rb', 't.*e' ], dirname
     end

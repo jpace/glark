@@ -2,11 +2,13 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
+require 'rubygems'
+require 'logue/loggable'
 require 'glark/util/io/filter/filter'
 
 module Glark
   class Criteria
-    include Loggable
+    include Logue::Loggable
 
     def initialize
       # by type (hash) => by positive/negative (hash) => filter list (array)

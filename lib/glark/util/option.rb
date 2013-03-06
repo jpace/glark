@@ -4,8 +4,6 @@
 
 module Glark
   class Option
-    include Loggable
-    
     def initialize optee
       @optee = optee
     end

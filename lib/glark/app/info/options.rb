@@ -64,14 +64,14 @@ module Glark
     
     def add_as_options optdata
       add_opt_blk(optdata, %w{ -V --version }) { show_version }
-      add_opt_blk(optdata, %w{ --verbose }) { Log.verbose = true }
+      add_opt_blk(optdata, %w{ --verbose }) { Logue::Log.verbose = true }
       add_opt_blk(optdata, %w{ -? --help }) { Help.new.show_usage; exit 0 }
       add_opt_blk(optdata, %w{ --man }) { Help.new.show_man; exit 0 }
       
       add_opt_true optdata, :explain, %w{ --explain }
 
-      add_opt_blk(optdata, %w{ -q -s --quiet --messages }) { Log.quiet = true }
-      add_opt_blk(optdata, %w{ -Q -S --no-quiet --no-messages }) { Log.quiet = false }
+      add_opt_blk(optdata, %w{ -q -s --quiet --messages }) { Logue::Log.quiet = true }
+      add_opt_blk(optdata, %w{ -Q -S --no-quiet --no-messages }) { Logue::Log.quiet = false }
     end
 
     def show_version

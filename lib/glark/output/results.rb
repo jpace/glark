@@ -5,8 +5,6 @@
 # Results of searching files.
 
 class Results
-  include Loggable
-
   attr_reader :count
 
   def initialize

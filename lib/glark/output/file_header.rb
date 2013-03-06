@@ -5,7 +5,7 @@
 require 'glark/util/highlight'
 
 class FileHeader
-  include Loggable, Highlight
+  include Highlight
   
   def initialize name, highlighter
     @name = name

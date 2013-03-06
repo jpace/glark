@@ -12,8 +12,6 @@ require 'glark/match/xor'
 require 'glark/match/and'
 
 class AndDistance
-  include Loggable
-
   # signifies no limit to the distance between matches, i.e., anywhere within
   # the entire file is valid.
   INFINITE_DISTANCE = -1

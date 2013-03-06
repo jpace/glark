@@ -2,11 +2,13 @@
 #!ruby -w
 # vim: set filetype=ruby : set sw=2
 
+require 'rubygems'
+require 'logue/loggable'
 require 'glark/util/io/filter/filter'
 
 module Glark
   class PatternFilter < Filter
-    include Loggable
+    include Logue::Loggable
 
     attr_reader :pattern
 

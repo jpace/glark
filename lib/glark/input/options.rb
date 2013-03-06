@@ -5,13 +5,14 @@
 # Options for input.
 
 require 'rubygems'
+require 'logue/loggable'
 require 'glark/input/spec'
 require 'glark/util/io/fileset'
 require 'glark/util/options'
 
 module Glark
   class InputOptions < InputSpec
-    include OptionUtil, Loggable
+    include OptionUtil, Logue::Loggable
     
     def initialize optdata
       super()

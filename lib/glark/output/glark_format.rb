@@ -9,7 +9,7 @@ module Glark; end
 
 module Glark
   module Format
-    include Loggable, Highlight
+    include Highlight
     
     def initialize file, spec
       @file_header = nil        # not nil after file header written

@@ -1,11 +1,13 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
+require 'rubygems'
+require 'logue/loggable'
 require 'glark/io/file/archive_file'
 
 module Glark
   class ZipFile < ArchiveFile
-    include Loggable
+    include Logue::Loggable
     
     def initialize fname, range, &blk
       super fname, range

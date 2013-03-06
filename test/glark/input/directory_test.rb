@@ -49,7 +49,7 @@ module Glark
                   "  330 Justice he was full often in assi[30m[43mze[0m,",
                   "  605 Of which there was a do[30m[43mzen in that house[0m,",
                   "[1m/proj/org/incava/glark/test/resources/greet.rb[0m",
-                  "    8   def initiali[30m[43mze name[0m",
+                  "    5   def initiali[30m[43mze name[0m",
                   "[1m/proj/org/incava/glark/test/resources/rcfile.txt[0m",
                   "    8 si[30m[43mze[0m-limit: 1000",
                   "[1m/proj/org/incava/glark/test/resources/zfile.txt[0m",

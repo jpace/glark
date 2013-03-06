@@ -3,13 +3,14 @@
 # vim: set filetype=ruby : set sw=2
 
 require 'rubygems'
+require 'logue/loggable'
 require 'glark/util/io/depth'
 require 'riel/filetype'
 
 module Glark
   # Files and directories. And standard input, just for fun.
   class FileSet
-    include Loggable, Enumerable
+    include Logue::Loggable, Enumerable
 
     attr_reader :files
 

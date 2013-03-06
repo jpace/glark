@@ -13,7 +13,7 @@ module Glark
   class App
     def initialize
       begin
-        Log.set_widths(-15, -40, -40)
+        Logue::Log.set_widths(-15, -40, -40)
         
         opts = AppOptions.new
         opts.run ARGV
@@ -32,7 +32,7 @@ module Glark
       rescue => e
         # show the message, and the stack trace only if verbose:
         $stderr.puts "error: #{e}"
-        if Log.verbose
+        if Logue::Log.verbose
           $stderr.puts e.backtrace
           raise
         else

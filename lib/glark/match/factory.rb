@@ -6,7 +6,7 @@
 
 require 'rubygems'
 require 'riel/regexp'
-require 'riel/log/loggable'
+require 'logue/loggable'
 require 'glark/match/and'
 require 'glark/match/and_distance'
 require 'glark/match/ior'
@@ -14,7 +14,7 @@ require 'glark/match/re_factory'
 require 'glark/match/xor'
 
 class ExpressionFactory
-  include Loggable
+  include Logue::Loggable
 
   attr_reader :expr
 

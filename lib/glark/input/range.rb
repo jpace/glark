@@ -1,12 +1,14 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
+require 'logue/loggable'
+
 module Glark
   class RangeError < RuntimeError
   end
 
   class Range
-    include Loggable, Comparable
+    include Logue::Loggable, Comparable
 
     PCT_RE = Regexp.new '([\.\d]+)%'
     

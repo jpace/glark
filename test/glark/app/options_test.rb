@@ -216,21 +216,21 @@ module Glark
     end
     
     def test_verbose
-      if origverb = Log.verbose
+      if origverb = Logue::Log.verbose
         %w{ --verbose }.each do |vtag|
           [ nil, 1, 2, 3, 4 ].each do |num|
             vopt = vtag
             if num
               vopt += "=" + num.to_s
             end
-            Log.verbose = nil
+            Logue::Log.verbose = nil
             run_test([ vopt, 'foo' ]) do |opts|
-              assert_equal true, Log.verbose, "log verbosity"
+              assert_equal true, Logue::Log.verbose, "log verbosity"
             end
           end
         end
 
-        Log.verbose = origverb
+        Logue::Log.verbose = origverb
       end
     end
     
@@ -306,7 +306,7 @@ module Glark
     def test_quiet
       %w{ -q -s --quiet --messages }.each do |opt|
         run_test([ opt, 'foo' ]) do |opts|
-          assert Log.quiet
+          assert Logue::Log.quiet
         end
       end
     end
@@ -314,7 +314,7 @@ module Glark
     def test_no_quiet
       %w{ -Q -S --no-quiet --no-messages }.each do |opt|
         run_test([ opt, 'foo' ]) do |opts|
-          assert !Log.quiet
+          assert !Logue::Log.quiet
         end
       end
     end

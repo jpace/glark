@@ -2,7 +2,7 @@
 # -*- ruby -*-
 
 require 'rubygems'
-require 'riel'
+require 'logue/loggable'
 
 module Glark
   class Resource

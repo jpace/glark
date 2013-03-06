@@ -5,11 +5,12 @@
 # RegexpExpression factory.
 
 require 'rubygems'
+require 'logue/loggable'
 require 'riel/regexp'
 require 'glark/match/re'
 
 class RegexpExpressionFactory
-  include Loggable
+  include Logue::Loggable
 
   attr_reader :count
 

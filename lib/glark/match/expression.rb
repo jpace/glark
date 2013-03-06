@@ -4,13 +4,8 @@
 
 # Extended regular-expression-based expressions.
 
-require 'rubygems'
-require 'riel'
-
 # An expression, which can be applied (processed) against a Glark::File.
 class Expression
-  include Loggable
-  
   attr_accessor :matches
 
   def initialize

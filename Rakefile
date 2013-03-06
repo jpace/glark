@@ -42,6 +42,7 @@ EODESC
   s.default_executable = 'glark'
   
   s.add_dependency("riel", ">= 1.1.16")
+  s.add_dependency("logue", ">= 0.0.1")
   s.add_dependency("rainbow", ">= 1.1.4")
 end
  

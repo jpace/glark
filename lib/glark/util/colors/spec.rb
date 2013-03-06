@@ -1,13 +1,8 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
-require 'rubygems'
-require 'riel/log/loggable'
-
 module Glark
   class ColorSpec
-    include Loggable
-    
     attr_accessor :text_colors
     attr_accessor :file_name_color
     attr_accessor :line_number_color

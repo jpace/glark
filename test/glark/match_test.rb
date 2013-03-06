@@ -2,7 +2,6 @@
 # -*- ruby -*-
 
 require 'rubygems'
-require 'riel'
 require 'glark/match/factory'
 require 'glark/tc'
 require 'stringio'

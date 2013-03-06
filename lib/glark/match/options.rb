@@ -5,7 +5,6 @@
 # Options for matching.
 
 require 'rubygems'
-require 'riel/log'
 require 'glark/match/spec'
 require 'glark/util/options'
 

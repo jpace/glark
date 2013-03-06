@@ -2,7 +2,7 @@
 # -*- ruby -*-
 
 require 'rubygems'
-require 'riel'
+require 'logue/log'
 require 'test/unit'
 require 'tempfile'
 
@@ -11,14 +11,14 @@ STDERR.sync = true
 
 require 'glark/app/runner'
 
-# Log.verbose = true
-Log.set_widths(-15, 35, -35)
-Log.quiet = true
-Log.verbose = false
+# Logue::Log.verbose = true
+Logue::Log.set_widths(-15, 35, -35)
+Logue::Log.quiet = true
+Logue::Log.verbose = false
 
 module Glark
   class TestCase < Test::Unit::TestCase
-    include Loggable
+    include Logue::Loggable
 
     # Returns a list of instance methods, in sorted order, so that they are run
     # predictably by the unit test framework.

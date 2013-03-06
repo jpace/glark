@@ -3,7 +3,7 @@
 # vim: set filetype=ruby : set sw=2
 
 require 'rubygems'
-require 'riel/log/loggable'
+require 'logue/loggable'
 require 'glark/app/options'
 require 'glark/io/file/binary_file'
 require 'glark/io/file/gz_file'
@@ -17,7 +17,7 @@ $stderr.sync = true             # unbuffer
 module Glark
   # The main processor.
   class Runner
-    include Loggable
+    include Logue::Loggable
 
     GZ_RE = Regexp.new '\.gz$'
     TAR_GZ_RE = Regexp.new '\.(?:tgz|tar\.gz)$'

@@ -1,12 +1,14 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
+require 'rubygems'
+require 'logue/loggable'
 require 'glark/io/file/gz_file'
 require 'glark/io/file/tar_file'
 
 module Glark
   class TarGzFile
-    include Loggable
+    include Logue::Loggable
     
     def initialize fname, range
       @fname = fname
