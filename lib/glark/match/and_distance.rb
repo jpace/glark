@@ -5,7 +5,6 @@
 # Distance for and expression
 
 require 'rubygems'
-require 'riel/string'
 require 'glark/match/re'
 require 'glark/match/ior'
 require 'glark/match/xor'
@@ -51,6 +50,12 @@ class AndDistance
   end
   
   def numeric? x
-    x && (x.kind_of?(Fixnum) || x.to_i == INFINITE_DISTANCE || x.num)
+    return nil unless x
+    return true if x.kind_of?(Fixnum) || x.to_i == INFINITE_DISTANCE
+    begin
+      Integer x
+    rescue ArgumentError
+      nil
+    end
   end  
 end
