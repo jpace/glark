@@ -24,8 +24,8 @@ module Glark
       {
         "known-nontext-files" => FileType.nontext_extensions.sort.join(' '),
         "known-text-files" => FileType.text_extensions.sort.join(' '),
-        "quiet" => Log.quiet,
-        "verbose" => Log.verbose,
+        "quiet" => Logue::Log.quiet,
+        "verbose" => Logue::Log.verbose,
       }
     end
 
@@ -34,9 +34,9 @@ module Glark
         "explain" => @explain,
         "known_nontext_files" => FileType.nontext_extensions.join(", "),
         "known_text_files" => FileType.text_extensions.join(", "),
-        "quiet" => Log.quiet,
+        "quiet" => Logue::Log.quiet,
         "ruby version" => RUBY_VERSION,
-        "verbose" => Log.verbose,
+        "verbose" => Logue::Log.verbose,
         "version" => Glark::VERSION,
       }
     end
@@ -53,11 +53,11 @@ module Glark
             FileType.set_text ext
           end
         when "quiet"
-          Log.quiet = to_boolean(values.last)
+          Logue::Log.quiet = to_boolean(values.last)
         when "verbose"
-          Log.verbose = to_boolean(values.last) ? 1 : nil
+          Logue::Log.verbose = to_boolean(values.last) ? 1 : nil
         when "verbosity"
-          Log.verbose = values.last.to_i
+          Logue::Log.verbose = values.last.to_i
         end
       end
     end
