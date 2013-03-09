@@ -14,6 +14,7 @@ require 'glark/output/options'
 require 'glark/util/colors/options'
 require 'glark/util/options'
 require 'glark/util/optutil'
+require 'pathname'
 
 module Glark
   class AppOptions < AppSpec

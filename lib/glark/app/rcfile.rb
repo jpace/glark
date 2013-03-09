@@ -1,6 +1,8 @@
 #!/usr/bin/ruby -w
 # -*- ruby -*-
 
+require 'pathname'
+
 module Glark
   class RCFile
     COMMENT_RE = Regexp.new '\s*#.*'

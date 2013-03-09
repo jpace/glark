@@ -178,3 +178,4 @@ Tue Mar  5 20:01:43 2013
 Fri Mar  8 19:30:17 2013
 
   Fixed dependency on Logue.
+  Added require of pathname.
