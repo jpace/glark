@@ -3,6 +3,8 @@
 
 module Glark
   class Context
+    include Logue::Loggable
+    
     attr_accessor :after
     attr_accessor :before
 
@@ -34,7 +36,7 @@ module Glark
         :tags => %w{ -C --context },
         :res  => %r{ ^ - ([1-9]\d*) $ }x,
         :arg  => [ :optional, :integer ],
-        :set  => Proc.new { |val, opt, args| @after = @before = val || 2 },
+        :set  => Proc.new { |val, opt, args| @after = @before = val == true ? 2 : val },
         :rc   => %w{ context },
       }
 

@@ -44,7 +44,7 @@ EODESC
   s.add_dependency("riel", ">= 1.1.16")
   s.add_dependency("logue", ">= 0.0.1")
   s.add_dependency("rainbow", ">= 1.1.4")
-  s.add_dependency("ragol", ">= 0.0.1")
+  s.add_dependency("ragol", ">= 0.0.3")
 end
  
 Gem::PackageTask.new(spec) do |pkg| 

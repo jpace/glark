@@ -79,27 +79,19 @@ module Glark
       optdata << {
         :tags => %w{ --after },
         :arg => [ :required, :regexp, %r{ (\d+%?) $ }x ],
-        :set => Proc.new { |md| @from = md[1] }
+        :set => Proc.new { |md| @from = md }
       }
 
       optdata << { 
         :tags => %w{ --before },
         :arg => [ :required, :regexp, %r{ (\d+%?) $ }x ],
-        :set => Proc.new { |md| @to = md[1] }
+        :set => Proc.new { |md| @to = md }
       }
 
       optdata << {
         :tags => %w{ -R --range },
-        :arg => [ :required, :regexp, Regexp.new('(\d+%?),(\d+%?)') ],
-        :set => Proc.new do |md, opt, args|
-          if md && md[1] && md[2]
-            @from = md[1]
-            @to = md[2]
-          else
-            @from = args.shift
-            @to = args.shift
-          end
-        end
+        :arg => [ :required, :regexp, Regexp.new('(\d+%?,\d+%?)') ],
+        :set => Proc.new { |md, opt, args| @from, @to = md.split(',') }
       }
     end
   end

@@ -17,6 +17,18 @@ require 'glark/util/optutil'
 require 'pathname'
 
 module Glark
+  class OptionSet < OptProc::OptionSet
+    include Logue::Loggable
+    
+    def set_option results
+      # intercept these, which we'll use to create the expression:
+      %w{ -o --or --and -a \( \) --xor }.each do |tag|
+        return nil if results.current_arg.index(tag) == 0
+      end
+      super
+    end
+  end
+
   class AppOptions < AppSpec
     include OptionUtil
     
@@ -41,7 +53,7 @@ module Glark
 
       super @input_options, @match_options, @output_options
       
-      @optset = OptProc::OptionSet.new optdata
+      @optset = OptionSet.new optdata
     end
     
     def run args
@@ -163,8 +175,8 @@ module Glark
       @info_options.show_version if @args.size == 1 && @args.first == "-v"
       
       @match_options.expr = nil
-      
-      nil while @args.size > 0 && @optset.process_option(@args)
+
+      @optset.process(@args)
 
       unless @match_options.expr
         read_expression

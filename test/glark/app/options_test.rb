@@ -7,6 +7,8 @@ require 'glark/app/tc'
 require 'glark/app/options'
 require 'glark/util/highlight'
 
+Logue::Log.level = Logue::Log::DEBUG
+
 module Glark
   class OptionsTestCase < AppTestCase
     @@hl = HlWrapper.new

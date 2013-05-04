@@ -105,7 +105,7 @@ module Glark
       optdata << {
         :tags => %w{ --binary-files },
         :arg  => [ :required, :regexp, re ],
-        :set  => Proc.new { |md| @binary_files = md[1] },
+        :set  => Proc.new { |md| @binary_files = md },
         :rc   => %w{ binary-files },
       }
       
