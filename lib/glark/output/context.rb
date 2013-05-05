@@ -33,11 +33,11 @@ module Glark
 
     def add_as_option optdata
       optdata << {
-        :tags => %w{ -C --context },
-        :res  => %r{ ^ - ([1-9]\d*) $ }x,
-        :arg  => [ :optional, :integer ],
-        :set  => Proc.new { |val, opt, args| @after = @before = val == true ? 2 : val },
-        :rc   => %w{ context },
+        :tags    => %w{ -C --context },
+        :regexp  => %r{ ^ - ([1-9]\d*) $ }x,
+        :arg     => [ :optional, :integer ],
+        :process => Proc.new { |val, opt, args| @after = @before = val == true ? 2 : val },
+        :rcname  => %w{ context },
       }
 
       optdata << {
@@ -56,4 +56,3 @@ module Glark
     end
   end
 end
-
