@@ -112,18 +112,18 @@ module Glark
       subdepth = depth - 1
 
       pn.children.sort.each do |entry|
-        next if @yielded_files.include?(entry)
         if entry.file?
           type = FileType.type entry.to_s
           next if type == FileType::BINARY && @binary_files == 'skip'
         end
-        @yielded_files << entry
         handle_pathname entry, subdepth, &blk
       end
     end
 
     def handle_file pn, &blk
       return if @file_criteria.skipped? pn
+      return if @yielded_files.include? pn
+      @yielded_files << pn
 
       type = FileType.type pn.to_s
       case type

@@ -179,3 +179,7 @@ Fri Mar  8 19:30:17 2013
 
   Fixed dependency on Logue.
   Added require of pathname.
+
+Mon May  6 06:42:03 2013
+
+  Fixed so that a file will not be searched multiple times.
