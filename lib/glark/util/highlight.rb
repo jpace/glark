@@ -75,17 +75,3 @@ class RainbowHighlighter
     end.join ''
   end
 end
-
-class HlWrapper
-  def initialize
-    @hl = RainbowHighlighter.instance
-  end
-  
-  def make_color color
-    @hl.to_codes color
-  end
-  
-  def make_rgb_color red, green, blue, fgbg
-    @hl.instance.to_rgb_code red, green, blue, fgbg
-  end
-end

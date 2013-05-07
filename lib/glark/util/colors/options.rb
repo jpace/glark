@@ -46,11 +46,7 @@ module Glark
     end
 
     def make_color color
-      @highlighter.make_color color
-    end
-
-    def make_rgb_color red, green, blue, fgbg
-      @highlighter.make_rgb_color red, green, blue, fgbg
+      @highlighter.to_codes color
     end
 
     def make_colors limit = -1
@@ -70,7 +66,7 @@ module Glark
     def text_color_style= tcstyle
       @text_color_style = tcstyle
       if @text_color_style
-        @highlighter = @text_color_style && HlWrapper.new
+        @highlighter = @text_color_style && RainbowHighlighter.instance
         @text_colors = case @text_color_style
                            when highlight_multi?(@text_color_style), true
                              multi_colors

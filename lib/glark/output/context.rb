@@ -8,9 +8,8 @@ module Glark
     attr_accessor :after
     attr_accessor :before
 
-    def initialize 
-      @after = 0
-      @before = 0
+    def initialize
+      clear
     end
 
     def clear

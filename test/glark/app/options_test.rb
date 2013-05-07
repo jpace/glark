@@ -11,10 +11,10 @@ Logue::Log.level = Logue::Log::DEBUG
 
 module Glark
   class OptionsTestCase < AppTestCase
-    @@hl = HlWrapper.new
+    @@hl = RainbowHighlighter.instance
     
     def str_to_color_codes str
-      @@hl.make_color str
+      @@hl.to_codes str
     end
     
     def assert_method_values opts, exp, args

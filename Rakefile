@@ -13,8 +13,10 @@ Rake::TestTask.new('test') do |t|
   t.verbose = true
 end
 
+directory "man"
+
 desc "generate man page"
-task :generate_manpage do 
+task :generate_manpage => [ "man" ] do
   sh "ronn -r --pipe README.md > man/glark.1"
 end
 
@@ -42,11 +44,11 @@ EODESC
   s.default_executable = 'glark'
   
   s.add_dependency("riel", ">= 1.1.16")
-  s.add_dependency("logue", ">= 0.0.1")
+  s.add_dependency("logue", ">= 1.0.0")
   s.add_dependency("rainbow", ">= 1.1.4")
-  s.add_dependency("ragol", ">= 0.0.3")
+  s.add_dependency("ragol", ">= 1.0.0")
 end
- 
+
 Gem::PackageTask.new(spec) do |pkg| 
   pkg.need_zip = true 
   pkg.need_tar_gz = true 

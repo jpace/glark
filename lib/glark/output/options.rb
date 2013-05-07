@@ -90,7 +90,6 @@ module Glark
       optdata << { 
         :tags => %w{ -u --highlight },
         :arg  => [ :optional, :regexp, %r{ ^ (?:(multi|single)|none) $ }x ],
-        # :arg  => [ :optional ],
         :set  => Proc.new { |md| val = md ? md : "multi"; @colors.text_color_style = val }
       }
 
