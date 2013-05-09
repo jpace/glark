@@ -183,3 +183,7 @@ Fri Mar  8 19:30:17 2013
 Mon May  6 06:42:03 2013
 
   Fixed so that a file will not be searched multiple times.
+
+Thu May  9 08:15:32 2013
+
+  Released version 1.10.3.
