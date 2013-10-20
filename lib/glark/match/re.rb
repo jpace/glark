@@ -36,9 +36,6 @@ class RegexpExpression < Expression
   end
 
   def match? line
-    if String.method_defined?(:encode)
-      line.encode! 'UTF-8', 'UTF-8', :invalid => :replace
-    end
     @re.match line
   end
 
