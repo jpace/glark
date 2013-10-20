@@ -37,7 +37,7 @@ class RegexpExpressionFactory
                           :wholewords => @wholewords,
                           :wholelines => @wholelines,
                           :extended   => @extended)
-
+    
     re = RegexpExpression.new regex, @count, @text_colors, @extract_matches
     @count += 1
     re

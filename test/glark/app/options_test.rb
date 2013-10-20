@@ -41,7 +41,7 @@ module Glark
       end
     end
 
-    def run_test args, expected = Hash.new, &blk
+    def run_options_test args, expected = Hash.new, &blk
       gopt = Glark::AppOptions.new
       gopt.run args + Array.new
       
@@ -57,12 +57,12 @@ module Glark
     end
     
     def test_default_values
-      run_test(%w{ foo file1 file2 }, 
+      run_options_test(%w{ foo file1 file2 }, 
                :match => { :expr => RegexpExpression.new(%r{foo}, 0) })
     end
     
     def test_extract_match
-      run_test(%w{ --extract-matches foo file1 file2 },
+      run_options_test(%w{ --extract-matches foo file1 file2 },
                :match => { :extract_matches => true })
     end
     
@@ -70,7 +70,7 @@ module Glark
       str = '--extract-matches'
       (5 ... str.length - 1).each do |idx|
         tag = str[0 .. idx]
-        run_test([ tag ] + %w{ foo file1 file2 },
+        run_options_test([ tag ] + %w{ foo file1 file2 },
                  :match => { :extract_matches => true })
       end
     end
@@ -78,7 +78,7 @@ module Glark
     def test_record_separator
       %w{ -0 -00 -000 }.each do |arg|
         $/ = "\n"
-        run_test([ arg ] + %w{ foo file1 file2 }) do |gopt|
+        run_options_test([ arg ] + %w{ foo file1 file2 }) do |gopt|
           assert_equal "\n\n", $/
         end
       end
@@ -91,7 +91,7 @@ module Glark
        %w{ -r    -li },
        %w{ -r  -l -i },
       ].each do |args|
-        run_test(args + %w{ foo },
+        run_options_test(args + %w{ foo },
                  :match => { :ignorecase => true, :expr => RegexpExpression.new(%r{foo}i, 0) },
                  :output => { :file_names_only => true },
                  :input => { :max_depth => nil }) do |opts|
@@ -104,7 +104,7 @@ module Glark
     def test_context_default
       %w{ -C --context }.each do |ctx|
         args = [ ctx, 'foo' ]
-        run_test(args) do |opts|
+        run_options_test(args) do |opts|
           assert_context 2, 2, opts
         end
       end
@@ -128,7 +128,7 @@ module Glark
          [ '--context',         vstr ],
          [ '--context=' + vstr,      ]
         ].each do |args|
-          run_test(args + %w{ foo }) do |opts|
+          run_options_test(args + %w{ foo }) do |opts|
             assert_context val, val, opts
           end
         end
@@ -137,7 +137,7 @@ module Glark
       vals = (1 .. 10).to_a  | (1 .. 16).collect { |x| 2 ** x }
       vals.each do |val|
         args = [ '-' + val.to_s, 'foo' ]
-        run_test(args) do |opts|
+        run_options_test(args) do |opts|
           assert_context val, val, opts
         end
       end
@@ -151,7 +151,7 @@ module Glark
          [ '--after-context',   vstr ],
          [ '--after-context=' + vstr ]
         ].each do |args|
-          run_test(args + %w{ foo }) do |opts|
+          run_options_test(args + %w{ foo }) do |opts|
             assert_context nil, val, opts
           end
         end
@@ -166,7 +166,7 @@ module Glark
          [ '--before-context',   vstr ],
          [ '--before-context=' + vstr ]
         ].each do |args|
-          run_test(args + %w{ foo }) do |opts|
+          run_options_test(args + %w{ foo }) do |opts|
             assert_context val, nil, opts
           end
         end
@@ -175,7 +175,7 @@ module Glark
 
     def test_highlight
       %w{ -u --highlight }.each do |hlopt|
-        run_test([ hlopt, 'foo' ],
+        run_options_test([ hlopt, 'foo' ],
                  :color => { :text_color_style => "multi" })
       end
 
@@ -184,7 +184,7 @@ module Glark
          [ '--highlight=' + val ],
          [ '--highlight',   val ],
         ].each do |opt|
-          run_test(opt + [ 'foo' ],
+          run_options_test(opt + [ 'foo' ],
                    :color => { :text_color_style => val })
         end
       end
@@ -196,14 +196,14 @@ module Glark
          [ '--highlight=' + val ],
          [ '--highlight',   val ],
         ].each do |opt|
-          run_test(opt + [ 'foo' ],
+          run_options_test(opt + [ 'foo' ],
                    :match => { :text_colors => [ singlecolor ] },
                    :color => { :text_color_style => val })
         end
       end
 
       %w{ none }.each do |val|
-        run_test([ '--highlight=' + val, 'foo' ],
+        run_options_test([ '--highlight=' + val, 'foo' ],
                  :match => { :text_colors => [] },
                  :color => { :text_color_style => nil })
       end
@@ -211,7 +211,7 @@ module Glark
 
     def test_no_highlight
       %w{ -U --no-highlight }.each do |hlopt|
-        run_test([ hlopt, 'foo' ],
+        run_options_test([ hlopt, 'foo' ],
                  :match => { :text_colors => [] },
                  :color => { :text_color_style => nil })
       end
@@ -226,7 +226,7 @@ module Glark
               vopt += "=" + num.to_s
             end
             Logue::Log.verbose = nil
-            run_test([ vopt, 'foo' ]) do |opts|
+            run_options_test([ vopt, 'foo' ]) do |opts|
               assert_equal true, Logue::Log.verbose, "log verbosity"
             end
           end
@@ -238,13 +238,13 @@ module Glark
     
     def test_invert_match
       %w{ -v --invert-match }.each do |vopt|
-        run_test([ vopt, 'foo' ], :output => { :invert_match => true })
+        run_options_test([ vopt, 'foo' ], :output => { :invert_match => true })
       end
     end
     
     def test_ignore_case
       %w{ -i --ignore-case }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :match => { 
                    :expr => RegexpExpression.new(%r{foo}i, 0),
                    :ignorecase => true
@@ -254,21 +254,21 @@ module Glark
     
     def test_filter
       %w{ --filter }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :output => { :filter => true })
       end
     end
     
     def test_no_filter
       %w{ --no-filter --nofilter }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :output => { :filter => false })
       end
     end
     
     def test_output_type
       %w{ -g --grep }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :match => { :text_colors => [] },
                  :output => { :show_line_numbers => false, :style => "grep" },
                  :colors => { :text_color_style => false }) do |opts|
@@ -279,35 +279,35 @@ module Glark
     
     def test_line_number
       %w{ -n --line-number }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :output => { :show_line_numbers => true })
       end
     end
 
     def test_no_line_number
       %w{ -N --no-line-number }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :output => { :show_line_numbers => false })
       end
     end
 
     def test_no_line_number_no_file_name
       [ %w{ -N -h }, '-hN', '-Nh' ].each do |opt|
-        run_test([ opt, 'foo' ].flatten,
+        run_options_test([ opt, 'foo' ].flatten,
                  :output => { :show_line_numbers => false, :show_file_names => false })
       end
     end
 
     def test_explain
       %w{ --explain }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :info => { :explain => true })
       end
     end
 
     def test_quiet
       %w{ -q -s --quiet --messages }.each do |opt|
-        run_test([ opt, 'foo' ]) do |opts|
+        run_options_test([ opt, 'foo' ]) do |opts|
           assert Logue::Log.quiet
         end
       end
@@ -315,7 +315,7 @@ module Glark
 
     def test_no_quiet
       %w{ -Q -S --no-quiet --no-messages }.each do |opt|
-        run_test([ opt, 'foo' ]) do |opts|
+        run_options_test([ opt, 'foo' ]) do |opts|
           assert !Logue::Log.quiet
         end
       end
@@ -323,7 +323,7 @@ module Glark
 
     def test_whole_words
       %w{ -w --word }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :match => {
                    :expr => RegexpExpression.new(%r{\bfoo\b}, 0),
                    :whole_words => true 
@@ -333,7 +333,7 @@ module Glark
 
     def test_whole_lines
       %w{ -x --line-regexp }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :match => { 
                    :expr => RegexpExpression.new(%r{^foo$}, 0),
                    :whole_lines => true 
@@ -343,41 +343,41 @@ module Glark
 
     def test_files_with_matches
       %w{ -l --files-with-matches }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :output => { :invert_match => false, :file_names_only => true })
       end
     end
 
     def test_files_without_matches
       %w{ -L --files-without-match }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :output => { :invert_match => true, :file_names_only => true })
       end
     end
 
     def test_count
       %w{ -c --count }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :output => { :count => true })
       end
     end
 
     def test_write_null
       %w{ -Z --null }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :output => { :write_null => true })
       end
     end
 
     def test_exclude_matching
       %w{ -M --exclude-matching }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :input => { :exclude_matching => true })
       end
     end
 
     def run_directory_test expmaxdepth, expskipall, args
-      run_test(args, :input => { :max_depth => expmaxdepth }) do |opts|
+      run_options_test(args, :input => { :max_depth => expmaxdepth }) do |opts|
         dircrit = opts.input_spec.dir_criteria
         assert_equal expskipall, dircrit.skip_all
       end
@@ -411,21 +411,21 @@ module Glark
 
     def test_extract_matches
       %w{ -y --extract-matches }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :match => { :extract_matches => true })
       end
     end
 
     def test_no_split_as_path
       %w{ --no-split-as-path }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :input => { :split_as_path => false })
       end
     end
 
     def test_split_as_path
       %w{ --split-as-path }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :input => { :split_as_path => true })
       end
     end
@@ -457,14 +457,14 @@ module Glark
 
     def test_no_show_file_names
       %w{ -h --no-filename }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :output => { :show_file_names => false })
       end
     end
 
     def test_show_file_names
       %w{ -H --with-filename }.each do |opt|
-        run_test([ opt, 'foo' ],
+        run_options_test([ opt, 'foo' ],
                  :output => { :show_file_names => true })
       end
     end
@@ -475,7 +475,7 @@ module Glark
          [ '--label=' + label ],
          [ '--label',   label ]
         ].each do |opt|
-          run_test(opt + %w{ foo },
+          run_options_test(opt + %w{ foo },
                    :output => { :label => label })
         end
       end
@@ -488,7 +488,7 @@ module Glark
          [ '--match-limit',     num ],
          [ '--match-limit=' +   num ],
         ].each do |args|
-          run_test(args + %w{ foo },
+          run_options_test(args + %w{ foo },
                    :output => { :match_limit => num.to_i })
         end
       end
@@ -501,7 +501,7 @@ module Glark
            [ tag, pat ],
            [ tag + '=' + pat ]
           ].each do |args|
-            run_test(args + %w{ foo }) do |opts|
+            run_options_test(args + %w{ foo }) do |opts|
               assert_file_filter_pattern_eq pat, opts, :name, :positive, BaseNameFilter
             end
           end
@@ -516,7 +516,7 @@ module Glark
            [ tag, pat ],
            [ tag + '=' + pat ]
           ].each do |args|
-            run_test(args + %w{ foo }) do |opts|
+            run_options_test(args + %w{ foo }) do |opts|
               assert_file_filter_pattern_eq pat, opts, :name, :negative, BaseNameFilter
             end
           end
@@ -531,7 +531,7 @@ module Glark
            [ tag, pat ],
            [ tag + '=' + pat ]
           ].each do |args|
-            run_test(args + %w{ foo }) do |opts|
+            run_options_test(args + %w{ foo }) do |opts|
               assert_file_filter_pattern_eq pat, opts, :path, :positive, FullNameFilter
             end
           end
@@ -546,7 +546,7 @@ module Glark
            [ tag, pat ],
            [ tag + '=' + pat ]
           ].each do |args|
-            run_test(args + %w{ foo }) do |opts|
+            run_options_test(args + %w{ foo }) do |opts|
               assert_file_filter_pattern_eq pat, opts, :path, :negative, FullNameFilter
             end
           end
@@ -555,7 +555,7 @@ module Glark
     end
 
     def run_range_test expfrom, expto, args
-      run_test(args + %w{ foo },
+      run_options_test(args + %w{ foo },
                :input => { :range => Glark::Range.new(expfrom, expto) })
     end
 
@@ -604,7 +604,7 @@ module Glark
          [ '--binary-files='  + val ],
          [ '--binary-files',    val ],
         ].each do |opt|
-          run_test(opt + %w{ foo },
+          run_options_test(opt + %w{ foo },
                    :input => { :binary_files => val })
         end
       end
@@ -616,7 +616,7 @@ module Glark
          [ '--size-limit=' + val.to_s ],
          [ '--size-limit',   val.to_s ],
         ].each do |opt|
-          run_test(opt + %w{ foo }) do |opts|
+          run_options_test(opt + %w{ foo }) do |opts|
             assert_file_filter_eq val, opts, :size, :negative, SizeLimitFilter, :max_size
           end
         end
@@ -629,7 +629,7 @@ module Glark
          [ '--text-color="' + color + '"' ],
          [ '--text-color=' + color ],
         ].each do |opt|
-          run_test(opt + [ 'foo' ],
+          run_options_test(opt + [ 'foo' ],
                    :match => { :text_colors => [ str_to_color_codes(color) ] })
         end
       end
@@ -642,7 +642,7 @@ module Glark
          [ '--file-color="' + color + '"' ],
          [ '--file-color='  + color ],
         ].each do |opt|
-          run_test(opt + [ 'foo' ],
+          run_options_test(opt + [ 'foo' ],
                    :colors => { :file_name_color => str_to_color_codes(color) })
         end
       end
@@ -676,7 +676,7 @@ module Glark
          [ '--file='  + t.path       ],
          [ '--file',    t.path       ],
         ].each do |opt|
-          run_test(opt, :match => { :expr => orexpr })
+          run_options_test(opt, :match => { :expr => orexpr })
         end
       ensure
         if pt.exist?
@@ -695,7 +695,7 @@ module Glark
       [ 
        [ '-o', *pats ],
       ].each do |opt|
-        run_test(opt, :match => { :expr => orexpr })
+        run_options_test(opt, :match => { :expr => orexpr })
       end
     end
     
@@ -709,7 +709,7 @@ module Glark
       [ 
        [ '-a', 0, *pats ],
       ].each do |opt|
-        run_test(opt, :match => { :expr => exp })
+        run_options_test(opt, :match => { :expr => exp })
       end
     end
   end

@@ -8,7 +8,7 @@ require 'stringio'
 
 module Glark
   class MatchTestCase < Glark::TestCase
-    def run_test expected, fname, exprargs
+    def run_match_test expected, fname, exprargs
       opts = AppOptions.new
       
       # Egads, Ruby is fun. Converting a maybe-array into a definite one:
@@ -28,7 +28,7 @@ module Glark
 
     def run_abc_test expected, exprargs
       fname = '/proj/org/incava/glark/test/resources/abcfile.txt'
-      run_test expected, fname, exprargs
+      run_match_test expected, fname, exprargs
     end
 
     def test_plain_old_match_first_line
@@ -58,7 +58,7 @@ module Glark
 
     def run_z_test expected, exprargs
       fname = '/proj/org/incava/glark/test/resources/zfile.txt'
-      run_test expected, fname, exprargs
+      run_match_test expected, fname, exprargs
     end
 
     def test_multicolor_alt_regexp_one_match
