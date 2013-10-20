@@ -5,7 +5,6 @@
 # Expression factory.
 
 require 'rubygems'
-require 'riel/regexp'
 require 'logue/loggable'
 require 'glark/match/and'
 require 'glark/match/and_distance'

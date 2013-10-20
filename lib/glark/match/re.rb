@@ -36,7 +36,11 @@ class RegexpExpression < Expression
   end
 
   def match? line
-    @re.match line
+    begin
+      @re.match line
+    rescue => e
+      false
+    end
   end
 
   def evaluate line, lnum, file, formatter
