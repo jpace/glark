@@ -38,7 +38,7 @@ class RegexpExpression < Expression
   def match? line
     begin
       @re.match line
-    rescue => e
+    rescue
       false
     end
   end

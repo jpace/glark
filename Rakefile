@@ -22,7 +22,7 @@ end
 
 spec = Gem::Specification.new do |s| 
   s.name               = "glark"
-  s.version            = "1.10.4"
+  s.version            = "1.10.5"
   s.author             = "Jeff Pace"
   s.email              = "jeugenepace@gmail.com"
 
@@ -45,7 +45,7 @@ EODESC
   
   s.add_dependency("riel", ">= 1.2.0")
   s.add_dependency("logue", ">= 1.0.0")
-  s.add_dependency("rainbow", ">= 1.1.4")
+  s.add_dependency("rainbow", ">= 2.0.0")
   s.add_dependency("ragol", ">= 1.0.0")
 end
 

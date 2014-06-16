@@ -7,7 +7,7 @@ require 'glark/util/options'
 
 module Glark
   PACKAGE = 'glark'
-  VERSION = '1.10.4'
+  VERSION = '1.10.5'
   
   class InfoOptions < Options
     attr_reader :colors

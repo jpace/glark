@@ -43,6 +43,25 @@ module Glark
       run_app_test expected, [ '--file-color', 'yellow', 'The.?M.*Tale' ], *files
     end
 
+    def test_rgb
+      files = [ '/proj/org/incava/glark/test/resources/textfile.txt', '/proj/org/incava/glark/test/resources/filelist.txt' ]
+      expected = [
+                  "[38;5;152m/proj/org/incava/glark/test/resources/textfile.txt[0m",
+                  "    3   -rw-r--r--   1 jpace jpace   45450 2010-12-04 15:24 02-[38;5;207mTheMillersTale[0m.txt",
+                  "    6   -rw-r--r--   1 jpace jpace   63290 2010-12-04 15:24 05-[38;5;207mTheManOfLawsTale[0m.txt",
+                  "   11   -rw-r--r--   1 jpace jpace   65852 2010-12-04 15:24 10-[38;5;207mTheMerchantsTale[0m.txt",
+                  "   20   -rw-r--r--   1 jpace jpace   49747 2010-12-04 15:24 19-[38;5;207mTheMonksTale[0m.txt",
+                  "   24   -rw-r--r--   1 jpace jpace   21141 2010-12-04 15:24 23-[38;5;207mTheManciplesTale[0m.txt",
+                  "[38;5;152m/proj/org/incava/glark/test/resources/filelist.txt[0m",
+                  "    3 02-[38;5;207mThe_Millers_Tale[0m.txt",
+                  "    6 05-[38;5;207mThe_Man_Of_Laws_Tale[0m.txt",
+                  "   11 10-[38;5;207mThe_Merchants_Tale[0m.txt",
+                  "   20 19-[38;5;207mThe_Monks_Tale[0m.txt",
+                  "   24 23-[38;5;207mThe_Manciples_Tale[0m.txt",
+                 ]
+      run_app_test expected, [ '--file-color', '#aabbcc', '--text-color', '#f03dda', 'The.?M.*Tale' ], *files
+    end
+
     def test_highlight_multi
       fname = '/proj/org/incava/glark/test/resources/04-TheCooksTale.txt'
       expected = [

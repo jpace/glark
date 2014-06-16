@@ -13,23 +13,6 @@ module Highlight
   end
 end
 
-module Sickill
-  module Rainbow
-    class AnsiColor
-      $-w = false
-      # includes the aberrant color name in the error message.
-      def validate_color_name #:nodoc:
-        color_names = TERM_COLORS.keys
-
-        unless color_names.include?(@color)
-          raise ArgumentError.new "Unknown color name: '#{@color}'; valid names: #{color_names.join(', ')}"
-        end
-      end
-      $-w = true
-    end
-  end
-end
-
 class RainbowHighlighter
   include Singleton
 
@@ -49,25 +32,25 @@ class RainbowHighlighter
   def get_code color, type
     case color
     when 'bold', 'bright'
-      Sickill::Rainbow::TERM_EFFECTS[:bright]
+      Rainbow::Presenter::TERM_EFFECTS[:bright]
     when 'reverse', 'negative', 'inverse'
-      Sickill::Rainbow::TERM_EFFECTS[:inverse]
+      Rainbow::Presenter::TERM_EFFECTS[:inverse]
     when 'underline'
-      Sickill::Rainbow::TERM_EFFECTS[:underline]
+      Rainbow::Presenter::TERM_EFFECTS[:underline]
     when 'blink'
-      Sickill::Rainbow::TERM_EFFECTS[:blink]
+      Rainbow::Presenter::TERM_EFFECTS[:blink]
     when %r{^[\dA-Fa-f]{6}$}
-      ac = Sickill::Rainbow::AnsiColor.new type, color
-      ac.code
+      ac = Rainbow::Color.build type, [ color ]
+      ac.codes.join(';')
     else
-      ac = Sickill::Rainbow::AnsiColor.new type, color.to_sym
-      ac.code
+      ac = Rainbow::Color.build type, [ color.to_sym ]
+      ac.codes.join(';')
     end
   end
 
   def to_codes color
     codes = ""
-    return codes unless Sickill::Rainbow.enabled
+    return codes unless Rainbow.enabled
     color.scan(COLORS_RE).collect do |md|
       color, type = md[0] ? [ md[0], :background ] : [ md[1], :foreground ]
       code = get_code color, type
