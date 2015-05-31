@@ -491,7 +491,7 @@ bold.
 ### COMPLEX EXPRESSIONS
     
   * `glark --or format print *.h"`:
-    Searches for either "printf" or "format". Short form:
+    Searches for either "print" or "format". Short form:
 
     `glark -o format print *.h`
     
