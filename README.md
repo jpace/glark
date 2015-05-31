@@ -157,7 +157,7 @@ substrings, such as `--rec` for `--recurse`.
     Output only the first `NUM` matches in each file.
 
   * `-o` NUM expr1 expr2, `--or` NUM expr1 expr2, `--or`=NUM expr1 expr2:
-    Match either expressions. See the `EXPRESSIONS` section for more
+    Match either expression. See the `EXPRESSIONS` section for more
     information.
 
   * `( expr1 --or=NUM expr2 )`:
