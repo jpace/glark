@@ -310,7 +310,7 @@ or more of any of the following:
     under the given directory. This can also be **...**, meaning to recurse under
     the current directory.
 
-    The form **/usr/lib/...N**, where N is a number, restrains recursive searching
+    The form **/usr/lib/...N**, where N is a number, restricts recursive searching
     to the given depth. A value of 0 means to search only the files in the given
     directory; a value of 1 means to search the files in the given directory and
     the immediate subdirectories. What happens with a value of 2 is left as an
