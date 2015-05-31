@@ -455,6 +455,7 @@ bold.
     Produces 6 lines of context around any match for "format". Short forms:
 
     `glark -C 6 format *.h`
+
     `glark -6 format *.h`
     
   * `glark --exclude-matching Object *.java`:
