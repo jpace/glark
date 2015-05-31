@@ -137,7 +137,7 @@ substrings, such as `--rec` for `--recurse`.
   * `--after`=NUM[%]:
     Restrict the search to after the given section, which represents either the
     number of the first line within the valid range, or the percentage of lines
-    to be skipped. `--after=25%` means to search the "lower" 25% of each file.
+    to be skipped. `--after=25%` means to search the "lower" 75% of each file.
     `--after=10` means to skip the first ten lines of each file.
 
   * `-b` NUM[%], `--before`=NUM[%]:
@@ -156,7 +156,7 @@ substrings, such as `--rec` for `--recurse`.
   * `-m` NUM, `--match-limit`=NUM:
     Output only the first `NUM` matches in each file.
 
-  * `-a` NUM expr1 expr2, `--or` NUM expr1 expr2, `--or`=NUM expr1 expr2:
+  * `-o` NUM expr1 expr2, `--or` NUM expr1 expr2, `--or`=NUM expr1 expr2:
     Match either expressions. See the `EXPRESSIONS` section for more
     information.
 
