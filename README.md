@@ -373,7 +373,7 @@ notations are supported.
     If `NUM` is 0 (zero), the condition is satisfied if both expressions match
     on the same line.
 
-    If the `--and` option is used and the follow argument is not numeric, then
+    If the `--and` option is used and the following argument is not numeric, then
     the value defaults to zero.
 
     A warning will result if the value given in the number position does not
