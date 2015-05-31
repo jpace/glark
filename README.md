@@ -533,7 +533,7 @@ bold.
     `glark -b 50% cout *.cpp`
 
   * `glark --range 20,50% cout *.cpp`:
-    Find references to "cout", in the first half of the file, after the 20th line.
+    Find references to "cout", in the first half of the file, starting at the 20th line.
     Short form:
 
     `glark -R 20,50% cout *.cpp`
