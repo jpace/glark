@@ -24,7 +24,7 @@ spec = Gem::Specification.new do |s|
   s.name               = "glark"
   s.version            = "1.10.5"
   s.author             = "Jeff Pace"
-  s.email              = "jeugenepace@gmail.com"
+  s.email              = "jpace317@gmail.com"
 
   s.homepage           = "http://www.incava.org/projects/glark"
   s.platform           = Gem::Platform::RUBY

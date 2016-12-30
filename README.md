@@ -845,7 +845,7 @@ The code to detect nontext files assumes ASCII, not Unicode.
 
 ## AUTHOR
 
-Jeff Pace (jeugenepace at gmail dot com)
+Jeff Pace
 
 http://www.github.com/jpace/glark
 
