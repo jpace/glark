@@ -27,7 +27,7 @@ class RegexpExpressionFactory
   def create_expression pattern, negated = false
     # this check is because they may have omitted the pattern, e.g.:
     #   % glark *.cpp
-    if File.exists? pattern
+    if File.exist? pattern
       warn "pattern '#{pattern}' exists as a file.\n    Pattern may have been omitted."
     end
 

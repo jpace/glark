@@ -6,7 +6,7 @@ require 'glark/app/tc'
 module Glark
   class RegexpTestCase < AppTestCase
     def test_regexp_no_context
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "    2   -rw-r--r--   1 jpace jpace  126084 2010-12-04 15:24 01-[30m[43mTheKnightsTale[0m.txt",
                   "    3   -rw-r--r--   1 jpace jpace   45450 2010-12-04 15:24 02-[30m[43mTheMillersTale[0m.txt",
@@ -35,7 +35,7 @@ module Glark
     end
 
     def test_one_line_grep
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "  -rw-r--r--   1 jpace jpace   35994 2010-12-04 15:24 08-TheSompnoursTale.txt",
                   "  -rw-r--r--   1 jpace jpace   42282 2010-12-04 15:24 11-TheSquiresTale.txt",

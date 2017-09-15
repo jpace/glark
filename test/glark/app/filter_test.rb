@@ -2,11 +2,14 @@
 # -*- ruby -*-
 
 require 'glark/app/tc'
+require 'glark/resources'
 
 module Glark
   class FilterTestCase < AppTestCase
+    include Glark::Resources
+    
     def test_one_file_with_matches
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "    1   -rw-r--r--   1 jpace jpace   52183 2010-12-04 15:24 00-ThePrologue.txt",
                   "    2   -rw-r--r--   1 jpace jpace  126084 2010-12-04 15:24 01-TheKnightsTale.txt",
@@ -39,7 +42,7 @@ module Glark
     end
 
     def test_one_file_no_matches
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "    1   -rw-r--r--   1 jpace jpace   52183 2010-12-04 15:24 00-ThePrologue.txt",
                   "    2   -rw-r--r--   1 jpace jpace  126084 2010-12-04 15:24 01-TheKnightsTale.txt",
@@ -72,9 +75,9 @@ module Glark
     end
 
     def test_two_files
-      fnames = [ '/proj/org/incava/glark/test/resources/textfile.txt', '/proj/org/incava/glark/test/resources/04-TheCooksTale.txt' ]
+      fnames = [ to_path("textfile.txt"), to_path("04-TheCooksTale.txt") ]
       expected = [
-                  "[1m/proj/org/incava/glark/test/resources/textfile.txt[0m",
+                  "[1m" + RES_DIR + "/textfile.txt[0m",
                   "    1   -rw-r--r--   1 jpace jpace   52183 2010-12-04 15:24 00-ThePrologue.txt",
                   "    2   -rw-r--r--   1 jpace jpace  126084 2010-12-04 15:24 01-TheKnightsTale.txt",
                   "    3   -rw-r--r--   1 jpace jpace   45450 2010-12-04 15:24 02-TheMillersTale.txt",
@@ -101,7 +104,7 @@ module Glark
                   "   24   -rw-r--r--   1 jpace jpace   21141 2010-12-04 15:24 23-TheManciplesTale.txt",
                   "   25   -rw-r--r--   1 jpace jpace   58300 2010-12-04 15:24 24-TheParsonsTale.txt",
                   "   26   -rw-r--r--   1 jpace jpace    3650 2010-12-04 15:24 25-PrecesDeChauceres.txt",
-                  "[1m/proj/org/incava/glark/test/resources/04-TheCooksTale.txt[0m",
+                  "[1m" + RES_DIR + "/04-TheCooksTale.txt[0m",
                   "    1 Of many a pilgrim hast thou Christe's curse,",
                   "    2 F[30m[43mor[0m of thy parsley yet fare they the w[30m[43mor[0mse.",
                   "    3 ",

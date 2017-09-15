@@ -6,7 +6,7 @@ require 'glark/app/tc'
 module Glark
   class RecordSeparatorTestCase < AppTestCase
     def test_default
-      fname = '/proj/org/incava/glark/test/resources/04-TheCooksTale.txt'
+      fname = to_path "04-TheCooksTale.txt"
       expected = [
                   "    2 For of [30m[43mthy parsley yet fare they the[0m worse.",
                  ]
@@ -14,7 +14,7 @@ module Glark
     end
 
     def test_paragraph
-      fname = '/proj/org/incava/glark/test/resources/04-TheCooksTale.txt'
+      fname = to_path "04-TheCooksTale.txt"
       expected = [
                   "    1 Of many a pilgrim hast thou Christe's curse,",
                   "    2 For of [30m[43mthy[0m parsley yet fare [30m[42mthe[0my [30m[42mthe[0m worse.",

@@ -6,7 +6,7 @@ require 'glark/app/tc'
 module Glark
   class AndTestCase < AppTestCase
     def test_one_line
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "    6   -rw-r--r--   1 jpace jpace   [30m[43m63290[0m 2010-12-04 15:24 05-[30m[42mTheManOfLawsTale[0m.txt",
                   "   10   -rw-r--r--   1 jpace jpace   [30m[43m64791[0m 2010-12-04 15:24 09-[30m[42mTheClerksTale[0m.txt",
@@ -16,7 +16,7 @@ module Glark
     end
 
     def test_multi_line
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "   12   -rw-r--r--   1 jpace jpace   42282 2010-12-04 15:24 11-[30m[42mTheSquiresTale[0m.txt",
                   "   13   -rw-r--r--   1 jpace jpace   [30m[43m51996[0m 2010-12-04 15:24 12-TheFranklinsTale.txt",
@@ -32,7 +32,7 @@ module Glark
     end
 
     def test_infinite_distance
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "    2   -rw-r--r--   1 jpace jpace  126084 2010-12-04 15:24 01-[30m[42mTheKnightsTale[0m.txt",
                   "    3   -rw-r--r--   1 jpace jpace   45450 2010-12-04 15:24 02-TheMillersTale.txt",
@@ -61,7 +61,7 @@ module Glark
     end
 
     def test_multi_line_grep_one_file
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "  -rw-r--r--   1 jpace jpace   42282 2010-12-04 15:24 11-TheSquiresTale.txt",
                   "  -rw-r--r--   1 jpace jpace   30734 2010-12-04 15:24 21-TheSecondNunsTale.txt",
@@ -71,10 +71,10 @@ module Glark
     end
 
     def test_multi_line_grep_two_files
-      fnames = [ '/proj/org/incava/glark/test/resources/textfile.txt', '/proj/org/incava/glark/test/resources/filelist.txt' ]
+      fnames = [ to_path("textfile.txt"), to_path("filelist.txt") ]
       expected = [
-                  "/proj/org/incava/glark/test/resources/textfile.txt:  -rw-r--r--   1 jpace jpace   30734 2010-12-04 15:24 21-TheSecondNunsTale.txt",
-                  "/proj/org/incava/glark/test/resources/filelist.txt:21-The_Second_Nuns_Tale.txt",
+                  RES_DIR + "/textfile.txt:  -rw-r--r--   1 jpace jpace   30734 2010-12-04 15:24 21-TheSecondNunsTale.txt",
+                  RES_DIR + "/filelist.txt:21-The_Second_Nuns_Tale.txt",
                  ]
       run_app_test expected, [ '-g', '--and=3', '\b21\b', 'The.*Can.*Tale' ], *fnames
     end

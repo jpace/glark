@@ -9,6 +9,8 @@
 require 'glark/app/options'
 require 'glark/app/runner'
 
+Rainbow.enabled = true
+
 module Glark
   class App
     def initialize

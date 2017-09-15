@@ -2,11 +2,14 @@
 # -*- ruby -*-
 
 require 'glark/app/tc'
+require 'glark/resources'
 
 module Glark
   class WholeLinesTestCase < AppTestCase
-    def test_
-      fname = '/proj/org/incava/glark/test/resources/filelist.txt'
+    include Glark::Resources
+    
+    def test_match
+      fname = to_path "filelist.txt"
       expected = [
                   "   12 [30m[43m11-The_Squires_Tale.txt[0m",
                   "   16 [30m[43m15-The_Shipmans_Tale.txt[0m",

@@ -6,7 +6,7 @@ require 'glark/app/tc'
 module Glark
   class RangeAppTestCase < AppTestCase
     def test_range_no_context
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "    8   -rw-r--r--   1 jpace jpace   22754 2010-12-04 15:24 07-[30m[43mTheFriarsTale[0m.txt",
                   "    9   -rw-r--r--   1 jpace jpace   35994 2010-12-04 15:24 08-[30m[43mTheSompnoursTale[0m.txt",
@@ -24,7 +24,7 @@ module Glark
     end
 
     def test_range_with_context
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "    5 -   -rw-r--r--   1 jpace jpace    6525 2010-12-04 15:24 04-TheCooksTale.txt",
                   "    6 -   -rw-r--r--   1 jpace jpace   63290 2010-12-04 15:24 05-TheManOfLawsTale.txt",
@@ -50,7 +50,7 @@ module Glark
     end
 
     def test_after_no_context
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "    8   -rw-r--r--   1 jpace jpace   22754 2010-12-04 15:24 07-[30m[43mTheFriarsTale[0m.txt",
                   "    9   -rw-r--r--   1 jpace jpace   35994 2010-12-04 15:24 08-[30m[43mTheSompnoursTale[0m.txt",
@@ -73,7 +73,7 @@ module Glark
     end
 
     def test_before_no_context
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "    2   -rw-r--r--   1 jpace jpace  126084 2010-12-04 15:24 01-[30m[43mTheKnightsTale[0m.txt",
                   "    3   -rw-r--r--   1 jpace jpace   45450 2010-12-04 15:24 02-[30m[43mTheMillersTale[0m.txt",
@@ -92,7 +92,7 @@ module Glark
     end
 
     def test_no_matches_in_range
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                  ]
       run_app_test expected, [ '-R', '55%,90%', 'TheD\w+Tale' ], fname

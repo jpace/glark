@@ -2,12 +2,15 @@
 # -*- ruby -*-
 
 require 'glark/app/tc'
+require 'glark/resources'
 
 module Glark
   class ExpressionFileTestCase < AppTestCase
+    include Glark::Resources
+    
     def test_simple
-      infile = '/proj/org/incava/glark/test/resources/expressions.txt'
-      file = '/proj/org/incava/glark/test/resources/textfile.txt'
+      infile = to_path "expressions.txt"
+      file = to_path "textfile.txt"
       expected = [
                   "    3   -rw-r--r--   1 jpace jpace   45450 2010-12-04 15:24 02-[30m[42mTheMillersTale[0m.txt",
                   "    6   -rw-r--r--   1 jpace jpace   [30m[43m63290[0m 2010-12-04 15:24 05-[30m[42mTheManOfLawsTale[0m.txt",

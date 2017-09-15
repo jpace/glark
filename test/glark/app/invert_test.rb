@@ -5,8 +5,9 @@ require 'glark/app/tc'
 
 module Glark
   class InvertTestCase < AppTestCase
+    
     def test_simple
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "    2   -rw-r--r--   1 jpace jpace  126084 2010-12-04 15:24 01-TheKnightsTale.txt",
                   "    4   -rw-r--r--   1 jpace jpace   29296 2010-12-04 15:24 03-TheReevesTale.txt",
@@ -26,7 +27,7 @@ module Glark
     end
 
     def test_compound_expression
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "    1   -rw-r--r--   1 jpace jpace   [30m[43m52183[0m 2010-12-04 15:24 00-ThePrologue.txt",
                   "    2   -rw-r--r--   1 jpace jpace  126084 2010-12-04 15:24 01-TheKnightsTale.txt",

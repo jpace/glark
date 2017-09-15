@@ -2,11 +2,14 @@
 # -*- ruby -*-
 
 require 'glark/app/tc'
+require 'glark/resources'
 
 module Glark
   class IgnoreCaseTestCase < AppTestCase
+    include Glark::Resources
+    
     def test_simple
-      fname = '/proj/org/incava/glark/test/resources/spaces.txt'
+      fname = to_path "spaces.txt"
       expected = [
                   "    6 05 [30m[43mThe Man[0m Of Laws Tale.txt",
                   "    9 08 [30m[43mThe Sompn[0mours Tale.txt",

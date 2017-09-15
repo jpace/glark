@@ -21,7 +21,7 @@ module Glark
     end
 
     def read_rcfile opts, basename
-      opts.read_rcfile Pathname.new('/proj/org/incava/glark/test/resources') + basename
+      opts.read_rcfile Pathname.new(RES_DIR) + basename
     end
 
     def test_simple

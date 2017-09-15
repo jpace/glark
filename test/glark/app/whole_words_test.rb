@@ -6,7 +6,7 @@ require 'glark/app/tc'
 module Glark
   class WholeWordsTestCase < AppTestCase
     def test_no
-      fname = '/proj/org/incava/glark/test/resources/spaces.txt'
+      fname = to_path "spaces.txt"
       expected = [
                   "    6 05 The Man Of [30m[43mLaws[0m Tale.txt",
                   "    7 06 The Wife Of [30m[43mBaths[0m Tale.txt",
@@ -26,7 +26,7 @@ module Glark
     end
 
     def test_yes
-      fname = '/proj/org/incava/glark/test/resources/spaces.txt'
+      fname = to_path "spaces.txt"
       expected = [
                   "    6 05 The Man Of [30m[43mLaws[0m Tale.txt",
                   "    7 06 The Wife Of [30m[43mBaths[0m Tale.txt",

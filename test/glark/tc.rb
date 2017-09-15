@@ -5,6 +5,7 @@ require 'rubygems'
 require 'logue/log'
 require 'test/unit'
 require 'tempfile'
+require 'glark/resources'
 
 STDOUT.sync = true
 STDERR.sync = true
@@ -19,6 +20,7 @@ Logue::Log.verbose = false
 module Glark
   class TestCase < Test::Unit::TestCase
     include Logue::Loggable
+    include Glark::Resources    
 
     # Returns a list of instance methods, in sorted order, so that they are run
     # predictably by the unit test framework.

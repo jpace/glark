@@ -2,11 +2,14 @@
 # -*- ruby -*-
 
 require 'glark/app/tc'
+require 'glark/resources'
 
 module Glark
   class ExtractMatchesTestCase < AppTestCase
+    include Glark::Resources
+    
     def test_simple
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "    1 [30m[43mThePrologue[0m",
                   "    3 [30m[43mTheMillersTale[0m",

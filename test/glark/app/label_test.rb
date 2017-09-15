@@ -6,7 +6,7 @@ require 'glark/app/tc'
 module Glark
   class LabelTestCase < AppTestCase
     def test_one_file
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "[1mTheFileName[0m",
                   "   14   -rw-r--r--   1 jpace jpace   15615 2010-12-04 15:24 13-[30m[43mTheDoc[0mtorsTale.txt"
@@ -15,7 +15,7 @@ module Glark
     end
 
     def test_two_files
-      fnames = [ '/proj/org/incava/glark/test/resources/textfile.txt', '/proj/org/incava/glark/test/resources/spaces.txt' ]
+      fnames = [ to_path("textfile.txt"), to_path("spaces.txt") ]
       expected = [
                   "[1mTheFileName[0m",
                   "   14   -rw-r--r--   1 jpace jpace   15615 2010-12-04 15:24 13-[30m[43mTheDoc[0mtorsTale.txt",

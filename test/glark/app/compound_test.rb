@@ -2,11 +2,14 @@
 # -*- ruby -*-
 
 require 'glark/app/tc'
+require 'glark/resources'
 
 module Glark
   class CompoundTestCase < AppTestCase
+    include Glark::Resources
+    
     def test_hardly_simple
-      fname = '/proj/org/incava/glark/test/resources/textfile.txt'
+      fname = to_path "textfile.txt"
       expected = [
                   "    3   -rw-r--r--   1 jpace jpace   45450 2010-12-04 15:24 02-[33m[40mTheMillersTale[0m.txt",
                   "    4   -rw-r--r--   1 jpace jpace   29296 2010-12-04 15:24 03-TheReevesTale.txt",

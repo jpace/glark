@@ -59,8 +59,8 @@ module Glark
     end
 
     def version_to_number ver
-      vernums = ver.split('.')
-      num = vernums.inject(0) { |s, n| 1000 * s + n.to_i }
+      vernums = ver.split '.'
+      vernums.inject(0) { |s, n| 1000 * s + n.to_i }
     end
   end
 end

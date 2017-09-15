@@ -6,7 +6,7 @@ require 'glark/app/tc'
 module Glark
   class StdInTestCase < AppTestCase
     def run_stdin_test expected, args
-      file = '/proj/org/incava/glark/test/resources/textfile.txt'
+      file = to_path "textfile.txt"
 
       origstdin = $stdin
 
