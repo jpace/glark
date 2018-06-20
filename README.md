@@ -530,13 +530,13 @@ bold.
     Find references to "cout", starting at the 20th line in the file. Short
     form:
 
-    `glark -b 50% cout *.cpp`
+    `glark -a 20 cout *.cpp`
 
-  * `glark --range 20,50% cout *.cpp`:
-    Find references to "cout", in the first half of the file, starting at the 20th line.
+  * `glark --range 5,33% cout *.cpp`:
+    Find references to "cout", in the first third (33%) of the file, starting at the 5th line.
     Short form:
 
-    `glark -R 20,50% cout *.cpp`
+    `glark -R 5,3% cout *.cpp`
 
 ### FILE PROCESSING
 
@@ -549,8 +549,8 @@ bold.
   * `glark --match-path='/\.java$/' -r println org`:
     Search for "println" in all Java files at and below the "org" directory.
 
-  * `glark --match-name='!/CVS/' -r '\b\d\d:\d\d:\d\d\b' .`:
-    Search for a time pattern in all files without "CVS" in their basenames.
+  * `glark --match-name='!/\.git/' -r '\b\d\d:\d\d:\d\d\b' .`:
+    Search for a time pattern in all files without ".git" in their basenames.
 
   * `glark --size-limit=1024 -r main -r .`:
     Search for "main" in files no larger than 1024 bytes.
@@ -738,9 +738,9 @@ bold.
     local configuration file will override those settings.
     
   * `match-name`, `skip-name`, `match-path`, `skip-path`, `match-ext`, `skip-ext`, `match-dirname`, `skip-dirname`, `match-dirpath`, `skip-dirpath`:
-    See the equivalent options. For example, to omit files under CVS directories:
+    See the equivalent options. For example, to omit files under .git directories:
     
-        skip-dirname: CVS
+        skip-dirname: .git
 
     These fields can be specified multiple times.
     
