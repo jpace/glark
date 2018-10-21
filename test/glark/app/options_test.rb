@@ -7,7 +7,7 @@ require 'glark/app/tc'
 require 'glark/app/options'
 require 'glark/util/highlight'
 
-Logue::Log.level = Logue::Log::DEBUG
+Logue::Log.level = Logue::Level::DEBUG
 
 module Glark
   class OptionsTestCase < AppTestCase
